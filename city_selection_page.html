@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Welcome to Numera</title>
+    <style>
+      :root {
+        --primary-color: #000033;
+        --header-color: white;
+      }
+
+      body {
+        font-family: "Georgia", serif;
+        margin: 0;
+        padding: 0;
+        background-color: white;
+      }
+
+      .header {
+        position: relative;
+        background-color: var(--header-color);
+        color: var(--primary-color);
+        text-align: center;
+        padding: 10px;
+        margin-bottom: 30px;
+      }
+
+      .city-selector {
+        text-align: center;
+        margin: 20px;
+      }
+
+      .city-buttons button {
+        padding: 10px 20px;
+        margin: 5px;
+        border: 2px solid var(--primary-color);
+        border-radius: 15px;
+        background-color: var(--header-color);
+        color: var(--primary-color);
+        cursor: pointer;
+        font-size: 1rem;
+        transition: border 0.3s ease;
+      }
+
+      .city-buttons button:hover {
+        border: 4px solid var(--primary-color);
+      }
+
+      .content {
+        margin: auto;
+        max-width: 960px;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .box {
+        padding: 20px;
+        border: 2px solid var(--primary-color);
+        border-radius: 15px;
+        color: var(--primary-color);
+        background-color: var(--header-color);
+        margin: 20px 0;
+        transition: border 0.3s ease;
+      }
+
+      .box:hover {
+        border: 4px solid var(--primary-color);
+      }
+
+      .footer {
+        text-align: center;
+        background-color: var(--header-color);
+        color: var(--primary-color);
+        margin-top: 50px;
+        padding: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="header">
+      <h1 class="header__title">Numera</h1>
+    </div>
+
+    <div class="content">
+      <div class="box">
+        <h2 class="box__title">Welcome to Numera</h2>
+        <p class="box__text">Select your city to continue.</p>
+        <div class="city-selector">
+          <div class="city-buttons">
+            <a href="Camb_Grade_selection.page.html"><button>Cambridge</button></a>
+            <a href="NewYork_Grade_Selection_Page.html"><button>New York</button></a>
+            <a href="Toronto_Grade_selection.page.html"><button>Toronto</button></a>
+            <a href="Vancouver_Grade_Selection_Page.html"><button>Vancouver</button></a>
+            <a href="Cal_Grade_selection.page.html"><button>Calgary</button></a>
+            <a href="LosAngeles_Units_Selection_Page.html"><button>Los Angeles</button></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p class="footer__content">Numera, Inc &copy; 2024 | Established in MMXXIII</p>
+    </footer>
+
+    <script>
+      function navigateToCity(city) {
+        // Replace with the appropriate file name based on the selected city
+        if (city === "Cambridge") {
+          window.location.href = "Cambridge_Grade_selection.page.html";
+        } else if (city === "New York") {
+          window.location.href = "NewYork_Grade_Selection_Page.html";
+        } else if (city === "Toronto") {
+          window.location.href = "Toronto_Grade_selection.page.html";
+        } else if (city === "Vancouver") {
+          window.location.href = "Vancouver_Grade_Selection_Page.html";
+        } else if (city === "Calgary") {
+          window.location.href = "Cal_Grade_selection.page.html";
+        } else if (city === "Los Angeles") {
+          window.location.href = "LosAngeles_Units_Selection.Page.html";
+        } else {
+          alert("Invalid city selection!");
+        }
+      }
+    </script>
+  </body>
+</html>
