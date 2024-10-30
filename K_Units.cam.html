@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -75,21 +75,21 @@
                 <li>B. Count to tell the number of objects.</li>
                 <li>C. Compare numbers.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('counting')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('u1.html')">Launch</button>
         </div>
         <div class="box">
             <h2>Operations and Algebraic Thinking</h2>
             <ul>
                 <li>A. Understand addition as putting together and adding to, and understand subtraction as taking apart and taking from.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('operations')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('u2.html')">Launch</button>
         </div>
         <div class="box">
             <h2>Number and Operations in Base Ten</h2>
             <ul>
                 <li>A. Work with numbers 11–19 to gain foundations for place value.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('numbers')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('u3.html')">Launch</button>
         </div>
         <div class="box">
             <h2>Measurement and Data</h2>
@@ -97,7 +97,7 @@
                 <li>A. Describe and compare measurable attributes.</li>
                 <li>B. Classify objects and count the number of objects in each category.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('measurement')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('u4.html')">Launch</button>
         </div>
         <div class="box">
             <h2>Geometry</h2>
@@ -105,15 +105,16 @@
                 <li>A. Identify and describe shapes (squares, circles, triangles, rectangles, hexagons, cubes, cones, cylinders, and spheres).</li>
                 <li>B. Analyze, compare, create, and compose shapes.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('geometry')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('u5.html')">Launch</button>
         </div>
     </div>
     <footer class="footer">
         <p>Numera, Inc &copy; 2024</p>
     </footer>
     <script>
-        function launchCurriculum(section) {
-            console.log(`Launching ${section}`);
+        function launchCurriculum(unit) {
+            const path = `questions/K_units_cam/${unit}`;  // Ensure case-sensitive match
+            window.location.href = path;  // Navigate to the selected unit
         }
     </script>
 </body>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numera - Kindergarten: Geometry</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="question-container">
+        <h2>Geometry</h2>
+        <p>Identify and describe shapes.</p>
+        <div id="question-box">
+            <h3 id="question-text">Loading question...</h3>
+            <div id="answer-options-container"></div>
+            <button class="submit-button" onclick="nextQuestion()">Submit</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "Which shape has 3 sides?", answer: "triangle", choices: ["circle", "triangle", "square"] },
+            { question: "Which shape is round?", answer: "circle", choices: ["square", "triangle", "circle"] },
+            { question: "What shape has 4 equal sides?", answer: "square", choices: ["rectangle", "square", "triangle"] },
+            { question: "What shape has 4 sides but not necessarily a square?", answer: "square", choices: ["rectangle", "square", "triangle"] },
+            { question: "What shape has 0 sides", answer: "square", choices: ["rectangle", "circle", "triangle"] },
+            // Expand to 25 questions
+        ];
+
+        let currentIndex = 0;
+
+        function loadQuestion() {
+            const questionObj = questions[currentIndex];
+            document.getElementById("question-text").textContent = questionObj.question;
+            const options = document.getElementById("answer-options-container");
+            options.innerHTML = "";
+            questionObj.choices.forEach(choice => {
+                const button = document.createElement("button");
+                button.className = "choice-button";
+                button.textContent = choice;
+                button.onclick = () => checkAnswer(choice);
+                options.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selected) {
+            const correct = questions[currentIndex].answer;
+            if (selected === correct) {
+                alert("Correct!");
+                nextQuestion();
+            } else {
+                alert("Try Again.");
+            }
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex < questions.length) {
+                loadQuestion();
+            } else {
+                alert("You've completed all questions!");
+            }
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>

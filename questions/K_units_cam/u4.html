@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numera - Kindergarten: Measurement and Data</title>
+    <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+    <div class="question-container">
+        <h2>Measurement and Data</h2>
+        <p>Describe and compare measurable attributes.</p>
+        <div id="question-box">
+            <h3 id="question-text">Loading question...</h3>
+            <div id="answer-options-container"></div>
+            <button class="submit-button" onclick="nextQuestion()">Submit</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { question: "Which object is heavier: a book or a pencil?", answer: "book", choices: ["book", "pencil"] },
+            { question: "Which is taller: a chair or a table?", answer: "table", choices: ["chair", "table"] },
+            { question: "How many apples are in a group of 5 apples?", answer: "5", choices: ["4", "5", "6"] },
+            // Expand to 25 questions
+        ];
+
+        let currentIndex = 0;
+
+        function loadQuestion() {
+            const questionObj = questions[currentIndex];
+            document.getElementById("question-text").textContent = questionObj.question;
+            const options = document.getElementById("answer-options-container");
+            options.innerHTML = "";
+            questionObj.choices.forEach(choice => {
+                const button = document.createElement("button");
+                button.className = "choice-button";
+                button.textContent = choice;
+                button.onclick = () => checkAnswer(choice);
+                options.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selected) {
+            const correct = questions[currentIndex].answer;
+            if (selected === correct) {
+                alert("Correct!");
+                nextQuestion();
+            } else {
+                alert("Try Again.");
+            }
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex < questions.length) {
+                loadQuestion();
+            } else {
+                alert("You've completed all questions!");
+            }
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
