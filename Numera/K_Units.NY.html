@@ -16,9 +16,10 @@
             background-color: white;
         }
         .header {
+            position: relative;
             background-color: var(--header-color);
             color: var(--primary-color);
-            padding: 20px;
+            padding: 10px;
             text-align: center;
         }
         .content {
@@ -32,8 +33,8 @@
             color: var(--primary-color);
             background-color: var(--header-color);
             margin: 20px 0;
-            position: relative;
             transition: border 0.3s ease;
+            position: relative;
         }
         .box:hover {
             border: 4px solid var(--primary-color);
@@ -46,10 +47,10 @@
             cursor: pointer;
             font-size: 1rem;
             border-radius: 15px;
+            transition: border 0.3s ease;
             position: absolute;
             bottom: 10px;
             right: 10px;
-            transition: border 0.3s ease;
         }
         .launch-button:hover {
             border: 4px solid var(--primary-color);
@@ -58,7 +59,6 @@
             text-align: center;
             background-color: var(--header-color);
             color: var(--primary-color);
-            padding: 15px;
         }
     </style>
 </head>
@@ -75,21 +75,21 @@
                 <li>B. Count to tell the number of objects.</li>
                 <li>C. Compare numbers.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('u1.html')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('countingK')">Launch</button>
         </div>
         <div class="box">
             <h2>Operations and Algebraic Thinking</h2>
             <ul>
                 <li>A. Understand addition as putting together and adding to, and understand subtraction as taking apart and taking from.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('u2.html')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('operationsK')">Launch</button>
         </div>
         <div class="box">
             <h2>Number and Operations in Base Ten</h2>
             <ul>
                 <li>A. Work with numbers 11–19 to gain foundations for place value.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('u3.html')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('numbersK')">Launch</button>
         </div>
         <div class="box">
             <h2>Measurement and Data</h2>
@@ -97,7 +97,7 @@
                 <li>A. Describe and compare measurable attributes.</li>
                 <li>B. Classify objects and count the number of objects in each category.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('u4.html')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('measurementK')">Launch</button>
         </div>
         <div class="box">
             <h2>Geometry</h2>
@@ -105,16 +105,15 @@
                 <li>A. Identify and describe shapes (squares, circles, triangles, rectangles, hexagons, cubes, cones, cylinders, and spheres).</li>
                 <li>B. Analyze, compare, create, and compose shapes.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('u5.html')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('geometryK')">Launch</button>
         </div>
     </div>
     <footer class="footer">
         <p>Numera, Inc &copy; 2024</p>
     </footer>
     <script>
-        function launchCurriculum(unit) {
-            const path = `questions/k_units_cam/${unit}`;
-            window.location.href = path;
+        function launchCurriculum(section) {
+            console.log(`Launching ${section}`);
         }
     </script>
 </body>

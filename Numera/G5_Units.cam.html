@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Numera - Grade 2 Mathematical Mastery</title>
+    <title>Numera - Grade 5 Mathematical Mastery</title>
     <style>
         :root {
             --primary-color: #000033;
@@ -19,7 +19,7 @@
             position: relative;
             background-color: var(--header-color);
             color: var(--primary-color);
-            padding: 20px;
+            padding: 10px;
             text-align: center;
         }
         .content {
@@ -59,58 +59,61 @@
             text-align: center;
             background-color: var(--header-color);
             color: var(--primary-color);
-            padding: 15px;
-        }
-        .score-display {
-            margin-top: 10px;
-            font-size: 1rem;
-            color: var(--primary-color);
+            padding: 10px;
         }
     </style>
 </head>
 <body>
     <header class="header">
         <h1>Numera</h1>
-        <h2>Grade 2: Enriching Minds with Mathematics</h2>
+        <h2>Grade 5: Enriching Minds with Mathematics</h2>
     </header>
 
     <div class="content">
-        <div class="box" id="unit1-box">
+        <div class="box">
             <h2>Operations and Algebraic Thinking</h2>
             <ul>
-                <li>A. Represent and solve problems involving addition and subtraction.</li>
-                <li>B. Add and subtract within 20.</li>
-                <li>C. Work with equal groups of objects to gain foundations for multiplication.</li>
+                <li>A. Write and interpret numerical expressions.</li>
+                <li>B. Analyze patterns and relationships.</li>
             </ul>
             <button class="launch-button" onclick="launchCurriculum('u1.html')">Launch</button>
         </div>
 
-        <div class="box" id="unit2-box">
+        <div class="box">
             <h2>Number and Operations in Base Ten</h2>
             <ul>
-                <li>A. Understand place value.</li>
-                <li>B. Use place value understanding and properties of operations to add and subtract.</li>
+                <li>A. Understand the place value system.</li>
+                <li>B. Perform operations with multi-digit whole numbers and with decimals to hundredths.</li>
             </ul>
             <button class="launch-button" onclick="launchCurriculum('u2.html')">Launch</button>
         </div>
 
-        <div class="box" id="unit3-box">
-            <h2>Measurement and Data</h2>
+        <div class="box">
+            <h2>Number and Operations—Fractions</h2>
             <ul>
-                <li>A. Measure lengths indirectly and by iterating length units.</li>
-                <li>B. Relate addition and subtraction to length.</li>
-                <li>C. Work with time and money.</li>
-                <li>D. Represent and interpret data.</li>
+                <li>A. Use equivalent fractions as a strategy to add and subtract fractions.</li>
+                <li>B. Apply and extend previous understandings of multiplication and division to multiply and divide fractions.</li>
             </ul>
             <button class="launch-button" onclick="launchCurriculum('u3.html')">Launch</button>
         </div>
 
-        <div class="box" id="unit4-box">
-            <h2>Geometry</h2>
+        <div class="box">
+            <h2>Measurement and Data</h2>
             <ul>
-                <li>A. Reason with shapes and their attributes.</li>
+                <li>A. Convert like measurement units within a given measurement system.</li>
+                <li>B. Represent and interpret data.</li>
+                <li>C. Geometric measurement: Understand concepts of volume and relate volume to multiplication and to addition.</li>
             </ul>
             <button class="launch-button" onclick="launchCurriculum('u4.html')">Launch</button>
+        </div>
+
+        <div class="box">
+            <h2>Geometry</h2>
+            <ul>
+                <li>A. Graph points on the coordinate plane to solve real-world and mathematical problems.</li>
+                <li>B. Classify two-dimensional figures into categories based on their properties.</li>
+            </ul>
+            <button class="launch-button" onclick="launchCurriculum('u5.html')">Launch</button>
         </div>
     </div>
 
@@ -120,30 +123,9 @@
 
     <script>
         function launchCurriculum(unit) {
-            const path = `questions/G2_units_cam/${unit}`;
-            window.location.href = path;
+            const path = `questions/G5_units_cam/${unit}`;  // Construct correct path to unit pages
+            window.location.href = path;  // Redirect to the selected unit page
         }
-
-        function displayScore() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const scores = ['unit1score', 'unit2score', 'unit3score', 'unit4score'];
-
-            scores.forEach((scoreParam, index) => {
-                const score = urlParams.get(scoreParam);
-                if (score !== null) {
-                    const unitBox = document.getElementById(`unit${index + 1}-box`);
-                    const scoreDisplay = document.createElement('div');
-                    scoreDisplay.classList.add('score-display');
-                    scoreDisplay.innerHTML = `
-                        <p>Your last score: ${score}/20</p>
-                        <button class="launch-button" onclick="launchCurriculum('u${index + 1}.html')">Try Again</button>
-                    `;
-                    unitBox.appendChild(scoreDisplay);
-                }
-            });
-        }
-
-        displayScore();
     </script>
 </body>
 </html>

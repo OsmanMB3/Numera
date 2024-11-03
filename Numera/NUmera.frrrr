@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numera</title>
+    <style>
+        :root {
+            --primary-color: #000033;
+            --header-color: #FAFAFA;
+            --deep-blue: #000080;
+            --light-grey: #ECF0F1;
+            --black: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--header-color);
+        }
+
+        .header {
+            position: relative;
+            background-color: var(--header-color);
+            color: var(--primary-color);
+            padding: 10px;
+            text-align: left;
+        }
+
+        .header__title {
+            margin: 0;
+            display: inline-block;
+        }
+
+        .header__sub-title {
+            font-size: 14px;
+            margin: 0;
+            display: block;
+        }
+
+        .header__link {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+        }
+
+        .header__link a {
+            text-decoration: none;
+            color: #000033;
+            font-weight: bold;
+            font-size: 18px;
+            position: relative;
+            transition: all 0.5s ease-in-out;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .header__link a::after {
+            content: "";
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: #000033;
+            transition: all 0.3s ease-in-out;
+            transform: scaleX(0);
+            transform-origin: 0% 50%;
+        }
+
+        .header__link a:hover::after {
+            transform: scaleX(1);
+            background-color: #973bd1;
+        }
+
+        .header__link a:hover {
+            color: #973bd1;
+            text-shadow: 0px 0px 5px #FFFFFF;
+        }
+
+        .footer {
+            text-align: center;
+            background-color: var(--header-color);
+            color: var(--primary-color);
+        }
+
+        .content {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 5px 5px 15px var(--black);
+        }
+
+        .content > div {
+            flex-basis: 45%;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 5px 5px 15px var(--black);
+            color: var(--primary-color);
+            background-color: var(--header-color);
+            margin: 0 10px;
+        }
+
+        .extra {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .welcome-statement {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .google-login {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            text-align: center;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            background-color: var(--primary-color);
+            color: var(--header-color);
+        }
+
+        .google-login a {
+            color: var(--header-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-family: 'Georgia', serif;
+        }
+
+        .google-login:hover {
+            background-color: var(--deep-blue);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animated {
+            animation: slideIn 3s;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1 class="header__title">Numera</h1>
+        <div class="header__sub-title">Bridging Numbers and Minds</div>
+        <div class="header__link"><a href="our_team.html">Our Team</a></div>
+    </header>
+
+    <div class="content">
+        <div class="main">
+            <section class="section animated">
+                <h2 class="section__title">About</h2>
+                <p class="section__content">Numera is a revolutionary learning platform that brings together creativity, interaction, and pedagogy to help students from Kindergarten to 6th grade excel in mathematics. Our platform fosters a love for numbers, problem-solving, and critical thinking, empowering students to thrive in a technology-driven world. At Numera, we believe that every child is unique, and we aim to offer personalized, engaging, and enjoyable learning experiences that cater to individual learning styles and paces.</p>
+            </section>
+
+            <section class="section animated">
+                <h2 class="section__title">Features</h2>
+                <ul class="feature-list">
+                    <li class="feature-list__item">Personalized Learning Paths: Our adaptive technology tailors math lessons to each student's skill level, optimizing their learning potential.</li>
+                    <li class="feature-list__item">Captivating Virtual Lessons: Our platform transforms abstract mathematical concepts into visually appealing, understandable lessons that enhance comprehension and retention.</li>
+                    <li class="feature-list__item">Gamified Assessments: We gamify assessments to make learning fun and engaging, which boosts students' motivation and enjoyment of math.</li>
+                    <li class="feature-list__item">Real-Time Progress Tracking: Parents and educators can monitor students' progress in real-time, allowing for timely feedback and intervention.</li>
+                </ul>
+            </section>
+        </div>
+
+        <div class="extra animated">
+            <h2 class="welcome-statement">Welcome to Numera</h2>
+            <div class="google-login">
+                <a href="city_selection_page.html" target="_blank">Continue</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p class="footer__content">Numera, Inc &copy; 2024 | Established in MMXXIII</p>
+    </footer>
+</body>
+</html>

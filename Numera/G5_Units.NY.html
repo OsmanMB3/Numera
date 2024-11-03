@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Numera - Kindergarten Mathematical Mastery</title>
+    <title>Numera - Grade 5 Mathematical Mastery</title>
     <style>
         :root {
             --primary-color: #000033;
@@ -16,9 +16,10 @@
             background-color: white;
         }
         .header {
+            position: relative;
             background-color: var(--header-color);
             color: var(--primary-color);
-            padding: 20px;
+            padding: 10px;
             text-align: center;
         }
         .content {
@@ -32,8 +33,8 @@
             color: var(--primary-color);
             background-color: var(--header-color);
             margin: 20px 0;
-            position: relative;
             transition: border 0.3s ease;
+            position: relative;
         }
         .box:hover {
             border: 4px solid var(--primary-color);
@@ -46,10 +47,10 @@
             cursor: pointer;
             font-size: 1rem;
             border-radius: 15px;
+            transition: border 0.3s ease;
             position: absolute;
             bottom: 10px;
             right: 10px;
-            transition: border 0.3s ease;
         }
         .launch-button:hover {
             border: 4px solid var(--primary-color);
@@ -58,7 +59,6 @@
             text-align: center;
             background-color: var(--header-color);
             color: var(--primary-color);
-            padding: 15px;
         }
     </style>
 </head>
@@ -69,52 +69,53 @@
     </header>
     <div class="content">
         <div class="box">
-            <h2>Counting and Cardinality</h2>
-            <ul>
-                <li>A. Know number names and the counting sequence.</li>
-                <li>B. Count to tell the number of objects.</li>
-                <li>C. Compare numbers.</li>
-            </ul>
-            <button class="launch-button" onclick="launchCurriculum('u1.html')">Launch</button>
-        </div>
-        <div class="box">
             <h2>Operations and Algebraic Thinking</h2>
             <ul>
-                <li>A. Understand addition as putting together and adding to, and understand subtraction as taking apart and taking from.</li>
+                <li>A. Write and interpret numerical expressions.</li>
+                <li>B. Analyze patterns and relationships.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('u2.html')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('operationsG5')">Launch</button>
         </div>
         <div class="box">
             <h2>Number and Operations in Base Ten</h2>
             <ul>
-                <li>A. Work with numbers 11–19 to gain foundations for place value.</li>
+                <li>A. Understand the place value system.</li>
+                <li>B. Perform operations with multi-digit whole numbers and with decimals to hundredths.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('u3.html')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('numbersG5')">Launch</button>
+        </div>
+        <div class="box">
+            <h2>Number and Operations—Fractions</h2>
+            <ul>
+                <li>A. Use equivalent fractions as a strategy to add and subtract fractions.</li>
+                <li>B. Apply and extend previous understandings of multiplication and division to multiply and divide fractions.</li>
+            </ul>
+            <button class="launch-button" onclick="launchCurriculum('fractionsG5')">Launch</button>
         </div>
         <div class="box">
             <h2>Measurement and Data</h2>
             <ul>
-                <li>A. Describe and compare measurable attributes.</li>
-                <li>B. Classify objects and count the number of objects in each category.</li>
+                <li>A. Convert like measurement units within a given measurement system.</li>
+                <li>B. Represent and interpret data.</li>
+                <li>C. Geometric measurement: understand concepts of volume and relate volume to multiplication and to addition.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('u4.html')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('measurementG5')">Launch</button>
         </div>
         <div class="box">
             <h2>Geometry</h2>
             <ul>
-                <li>A. Identify and describe shapes (squares, circles, triangles, rectangles, hexagons, cubes, cones, cylinders, and spheres).</li>
-                <li>B. Analyze, compare, create, and compose shapes.</li>
+                <li>A. Graph points on the coordinate plane to solve real-world and mathematical problems.</li>
+                <li>B. Classify two-dimensional figures into categories based on their properties.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('u5.html')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('geometryG5')">Launch</button>
         </div>
     </div>
     <footer class="footer">
         <p>Numera, Inc &copy; 2024</p>
     </footer>
     <script>
-        function launchCurriculum(unit) {
-            const path = `questions/k_units_cam/${unit}`;
-            window.location.href = path;
+        function launchCurriculum(section) {
+            console.log(`Launching ${section}`);
         }
     </script>
 </body>

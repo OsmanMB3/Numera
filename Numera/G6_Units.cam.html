@@ -1,9 +1,11 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Numera - Kindergarten Mathematical Mastery</title>
+    <title>Numera - Grade 6 Mathematical Mastery</title>
     <style>
         :root {
             --primary-color: #000033;
@@ -16,9 +18,10 @@
             background-color: white;
         }
         .header {
+            position: relative;
             background-color: var(--header-color);
             color: var(--primary-color);
-            padding: 20px;
+            padding: 10px;
             text-align: center;
         }
         .content {
@@ -32,8 +35,8 @@
             color: var(--primary-color);
             background-color: var(--header-color);
             margin: 20px 0;
-            position: relative;
             transition: border 0.3s ease;
+            position: relative;
         }
         .box:hover {
             border: 4px solid var(--primary-color);
@@ -46,10 +49,10 @@
             cursor: pointer;
             font-size: 1rem;
             border-radius: 15px;
+            transition: border 0.3s ease;
             position: absolute;
             bottom: 10px;
             right: 10px;
-            transition: border 0.3s ease;
         }
         .launch-button:hover {
             border: 4px solid var(--primary-color);
@@ -58,63 +61,62 @@
             text-align: center;
             background-color: var(--header-color);
             color: var(--primary-color);
-            padding: 15px;
         }
     </style>
 </head>
 <body>
     <header class="header">
         <h1>Numera</h1>
-        <h2>Enriching Minds with Mathematics</h2>
+        <h2>Grade 6: Enriching Minds with Mathematics</h2>
     </header>
     <div class="content">
         <div class="box">
-            <h2>Counting and Cardinality</h2>
+            <h2>Ratios and Proportional Relationships</h2>
             <ul>
-                <li>A. Know number names and the counting sequence.</li>
-                <li>B. Count to tell the number of objects.</li>
-                <li>C. Compare numbers.</li>
+                <li>A. Understand ratio and rate concepts and use ratio reasoning to solve problems.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('u1.html')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('ratios')">Launch</button>
         </div>
         <div class="box">
-            <h2>Operations and Algebraic Thinking</h2>
+            <h2>The Number System</h2>
             <ul>
-                <li>A. Understand addition as putting together and adding to, and understand subtraction as taking apart and taking from.</li>
+                <li>A. Apply and extend previous understandings of multiplication and division to divide fractions by fractions.</li>
+                <li>B. Compute fluently with multi-digit numbers and find common factors and multiples.</li>
+                <li>C. Apply and extend previous understandings of numbers to the system of rational numbers.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('u2.html')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('numbers')">Launch</button>
         </div>
         <div class="box">
-            <h2>Number and Operations in Base Ten</h2>
+            <h2>Expressions and Equations</h2>
             <ul>
-                <li>A. Work with numbers 11–19 to gain foundations for place value.</li>
+                <li>A. Apply and extend previous understandings of arithmetic to algebraic expressions.</li>
+                <li>B. Reason about and solve one-variable equations and inequalities.</li>
+                <li>C. Represent and analyze quantitative relationships between dependent and independent variables.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('u3.html')">Launch</button>
-        </div>
-        <div class="box">
-            <h2>Measurement and Data</h2>
-            <ul>
-                <li>A. Describe and compare measurable attributes.</li>
-                <li>B. Classify objects and count the number of objects in each category.</li>
-            </ul>
-            <button class="launch-button" onclick="launchCurriculum('u4.html')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('expressions')">Launch</button>
         </div>
         <div class="box">
             <h2>Geometry</h2>
             <ul>
-                <li>A. Identify and describe shapes (squares, circles, triangles, rectangles, hexagons, cubes, cones, cylinders, and spheres).</li>
-                <li>B. Analyze, compare, create, and compose shapes.</li>
+                <li>A. Solve real-world and mathematical problems involving area, surface area, and volume.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('u5.html')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('geometry')">Launch</button>
+        </div>
+        <div class="box">
+            <h2>Statistics and Probability</h2>
+            <ul>
+                <li>A. Develop an understanding of statistical variability.</li>
+                <li>B. Summarize and describe distributions.</li>
+            </ul>
+            <button class="launch-button" onclick="launchCurriculum('statistics')">Launch</button>
         </div>
     </div>
     <footer class="footer">
         <p>Numera, Inc &copy; 2024</p>
     </footer>
     <script>
-        function launchCurriculum(unit) {
-            const path = `questions/k_units_cam/${unit}`;
-            window.location.href = path;
+        function launchCurriculum(section) {
+            console.log(`Launching ${section}`);
         }
     </script>
 </body>

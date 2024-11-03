@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grade 2 - Number and Operations in Base Ten</title>
+    <!-- Replace [Unit Title] with the actual unit name -->
+    <link rel="stylesheet" href="../styles.css" />
+    <!-- Adjust the path as needed -->
+  </head>
+  <body>
+    <div class="question-container">
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+      <div class="score-display">Score: <span id="score">0</span>/20</div>
+      <div class="question-box">
+        <h3>Question <span id="question-number">1</span>/20:</h3>
+        <p id="question-text">Loading question...</p>
+        <div id="answer-options-container"></div>
+      </div>
+    </div>
+
+    <div id="feedback-modal" class="feedback-modal">
+      <h2 id="feedback-title"></h2>
+      <p id="feedback-message"></p>
+      <button class="choice-button" onclick="closeFeedback()">Continue</button>
+    </div>
+
+    <script>
+      const questionsDatabase = [
+    {
+        question: "What is the place value of the digit 3 in the number 432?",
+        answer: "Tens",
+        choices: ["Ones", "Tens", "Hundreds", "Thousands"],
+        feedback: {
+            correct: "Correct! The 3 is in the tens place, representing 30.",
+            incorrect: "Think about the value of 3 in 432. It represents 30."
+        }
+    },
+    {
+        question: "What number is 100 more than 256?",
+        answer: "356",
+        choices: ["356", "266", "256", "366"],
+        feedback: {
+            correct: "Well done! 256 + 100 = 356.",
+            incorrect: "Add 100 to the hundreds place of 256."
+        }
+    },
+    {
+        question: "What number comes after 599?",
+        answer: "600",
+        choices: ["598", "599", "600", "601"],
+        feedback: {
+            correct: "Great! The number after 599 is 600.",
+            incorrect: "Count up from 599 to reach 600."
+        }
+    },
+    {
+        question: "How do you write 300 + 40 + 7 in standard form?",
+        answer: "347",
+        choices: ["3407", "374", "347", "437"],
+        feedback: {
+            correct: "Good job! 300 + 40 + 7 is written as 347.",
+            incorrect: "Combine the values to write the number in standard form."
+        }
+    },
+    {
+        question: "Which is greater: 562 or 526?",
+        answer: "562",
+        choices: ["526", "562", "They are equal", "Not sure"],
+        feedback: {
+            correct: "Correct! 562 is greater than 526.",
+            incorrect: "Compare the digits from left to right."
+        }
+    },
+    {
+        question: "What is 100 less than 850?",
+        answer: "750",
+        choices: ["650", "750", "800", "700"],
+        feedback: {
+            correct: "Correct! 850 - 100 = 750.",
+            incorrect: "Subtract 100 from the hundreds place."
+        }
+    },
+    {
+        question: "What is 32 + 57?",
+        answer: "89",
+        choices: ["85", "86", "88", "89"],
+        feedback: {
+            correct: "Excellent! 32 + 57 = 89.",
+            incorrect: "Try adding the tens and ones separately."
+        }
+    },
+    {
+        question: "What is the expanded form of 506?",
+        answer: "500 + 6",
+        choices: ["50 + 6", "500 + 6", "5060", "5 + 6"],
+        feedback: {
+            correct: "Correct! 506 in expanded form is 500 + 6.",
+            incorrect: "Break down 506 as 500 plus 6."
+        }
+    },
+    {
+        question: "How many tens are there in 340?",
+        answer: "34",
+        choices: ["30", "34", "40", "10"],
+        feedback: {
+            correct: "Great! 340 has 34 tens.",
+            incorrect: "Divide 340 by 10 to get the number of tens."
+        }
+    },
+    {
+        question: "What number comes before 701?",
+        answer: "700",
+        choices: ["699", "700", "702", "703"],
+        feedback: {
+            correct: "Correct! The number before 701 is 700.",
+            incorrect: "Count down from 701 to find the number before it."
+        }
+    },
+    {
+        question: "What is the value of the 4 in 482?",
+        answer: "400",
+        choices: ["4", "40", "400", "800"],
+        feedback: {
+            correct: "Correct! The 4 in 482 represents 400.",
+            incorrect: "Think of the place value of the 4 in the number."
+        }
+    },
+    {
+        question: "What is 178 + 120?",
+        answer: "298",
+        choices: ["288", "298", "300", "320"],
+        feedback: {
+            correct: "Good job! 178 + 120 = 298.",
+            incorrect: "Add the hundreds, tens, and ones separately."
+        }
+    },
+    {
+        question: "Which number is greater: 809 or 890?",
+        answer: "890",
+        choices: ["809", "890", "They are equal", "Not sure"],
+        feedback: {
+            correct: "Correct! 890 is greater than 809.",
+            incorrect: "Compare the digits in the hundreds place first."
+        }
+    },
+    {
+        question: "How do you write 702 in words?",
+        answer: "Seven hundred two",
+        choices: ["Seventy-two", "Seven hundred two", "Seven thousand two", "Seven hundred twenty"],
+        feedback: {
+            correct: "Well done! 702 in words is 'Seven hundred two.'",
+            incorrect: "Write out the number based on place values."
+        }
+    },
+    {
+        question: "What number is 50 less than 900?",
+        answer: "850",
+        choices: ["800", "850", "950", "750"],
+        feedback: {
+            correct: "Correct! 900 - 50 = 850.",
+            incorrect: "Subtract 50 from 900 to get the answer."
+        }
+    },
+    {
+        question: "Which is greater: 472 or 427?",
+        answer: "472",
+        choices: ["472", "427", "They are equal", "Not sure"],
+        feedback: {
+            correct: "Correct! 472 is greater than 427.",
+            incorrect: "Compare the digits from left to right."
+        }
+    },
+    {
+        question: "What is 3 less than 403?",
+        answer: "400",
+        choices: ["399", "400", "403", "406"],
+        feedback: {
+            correct: "Good job! 403 - 3 = 400.",
+            incorrect: "Think about subtracting 3 from 403."
+        }
+    },
+    {
+        question: "What is 250 + 150?",
+        answer: "400",
+        choices: ["300", "350", "400", "450"],
+        feedback: {
+            correct: "Well done! 250 + 150 = 400.",
+            incorrect: "Add the hundreds and tens separately."
+        }
+    },
+    {
+        question: "What is the expanded form of 214?",
+        answer: "200 + 10 + 4",
+        choices: ["210 + 4", "200 + 10 + 4", "20 + 14", "200 + 14"],
+        feedback: {
+            correct: "Correct! 214 in expanded form is 200 + 10 + 4.",
+            incorrect: "Break down the number based on place values."
+        }
+    },
+    {
+        question: "What is the value of the 5 in 567?",
+        answer: "500",
+        choices: ["5", "50", "500", "600"],
+        feedback: {
+            correct: "Great! The 5 in 567 represents 500.",
+            incorrect: "Think of the place value of the 5 in the number."
+        }
+    }
+];
+
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        // Shuffle choices
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          (currentQuestionIndex / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const percentage = (score / questionsDatabase.length) * 100;
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+                Your score: ${score}/${
+          questionsDatabase.length
+        } (${percentage.toFixed(1)}%)<br><br>
+                ${
+                  percentage >= 80
+                    ? "Outstanding work! You're a math superstar! 🌟"
+                    : percentage >= 60
+                    ? "Good job! Keep practicing to become even better! 💪"
+                    : "Keep practicing! You'll get better every time! 🌱"
+                }<br><br>
+                <button class="choice-button" onclick="returnToUnits()">Continue</button>
+            `;
+        feedbackModal.style.display = "block";
+      }
+
+      function returnToUnits() {
+        window.location.href = `../G2_Units.cam.html?unit1score=${score}`; 
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

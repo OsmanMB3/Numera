@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grade 1 - Measurement and Data</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="question-container">
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+      <div class="score-display">Score: <span id="score">0</span>/20</div>
+      <div class="question-box">
+        <h3>Question <span id="question-number">1</span>/20:</h3>
+        <p id="question-text">Loading question...</p>
+        <div id="answer-options-container"></div>
+      </div>
+    </div>
+
+    <div id="feedback-modal" class="feedback-modal">
+      <h2 id="feedback-title"></h2>
+      <p id="feedback-message"></p>
+      <button class="choice-button" onclick="closeFeedback()">Continue</button>
+    </div>
+
+    <script>
+      const questionsDatabase = [
+        {
+          question: "Which is longer: 2 pencils or 1 notebook?",
+          answer: "2 pencils",
+          choices: ["2 pencils", "1 notebook", "They are the same", "Not sure"],
+          feedback: {
+            correct: "Great job! 2 pencils are usually longer than 1 notebook.",
+            incorrect:
+              "Think about the length of a pencil compared to a notebook.",
+          },
+        },
+        {
+          question: "How many whole hours are between 3:00 and 6:00?",
+          answer: "3",
+          choices: ["2", "3", "4", "5"],
+          feedback: {
+            correct: "Correct! There are 3 whole hours between 3:00 and 6:00.",
+            incorrect: "Count the hours: 3 to 4, 4 to 5, and 5 to 6.",
+          },
+        },
+        {
+          question: "If you have 5 dimes, how much money do you have?",
+          answer: "50 cents",
+          choices: ["25 cents", "50 cents", "5 cents", "10 cents"],
+          feedback: {
+            correct: "Excellent! 5 dimes equal 50 cents.",
+            incorrect: "Remember, each dime is worth 10 cents.",
+          },
+        },
+        {
+          question: "How many minutes are in an hour?",
+          answer: "60",
+          choices: ["30", "45", "60", "100"],
+          feedback: {
+            correct: "Correct! There are 60 minutes in an hour.",
+            incorrect: "An hour is always made up of 60 minutes.",
+          },
+        },
+        {
+          question: "Which tool would you use to measure the length of a book?",
+          answer: "Ruler",
+          choices: ["Clock", "Ruler", "Scale", "Thermometer"],
+          feedback: {
+            correct: "Well done! A ruler is used for measuring length.",
+            incorrect: "A ruler is the correct tool for measuring length.",
+          },
+        },
+        {
+          question:
+            "What time is it if the hour hand is on 4 and the minute hand is on 12?",
+          answer: "4:00",
+          choices: ["3:30", "4:00", "4:30", "5:00"],
+          feedback: {
+            correct: "Great! The time is 4:00.",
+            incorrect:
+              "If the minute hand is on 12, it's the start of the hour.",
+          },
+        },
+        {
+          question: "Which is heavier: a feather or a book?",
+          answer: "Book",
+          choices: ["Feather", "Book", "Both weigh the same", "Not sure"],
+          feedback: {
+            correct: "Correct! A book is heavier than a feather.",
+            incorrect: "Think about their weights. A book is much heavier.",
+          },
+        },
+        {
+          question: "How many quarters make one dollar?",
+          answer: "4",
+          choices: ["2", "3", "4", "5"],
+          feedback: {
+            correct: "Excellent! 4 quarters equal one dollar.",
+            incorrect:
+              "Each quarter is 25 cents, so you need 4 to make a dollar.",
+          },
+        },
+        {
+          question: "How many seconds are in a minute?",
+          answer: "60",
+          choices: ["30", "60", "90", "120"],
+          feedback: {
+            correct: "Well done! There are 60 seconds in a minute.",
+            incorrect: "Remember, 1 minute equals 60 seconds.",
+          },
+        },
+        {
+          question:
+            "What time is it if the minute hand is on 6 and the hour hand is between 2 and 3?",
+          answer: "2:30",
+          choices: ["2:00", "2:30", "3:00", "3:30"],
+          feedback: {
+            correct: "Correct! The time is 2:30.",
+            incorrect: "The minute hand on 6 means it's half past the hour.",
+          },
+        },
+        {
+          question: "Which is shorter: a ruler or a pencil?",
+          answer: "Pencil",
+          choices: ["Ruler", "Pencil", "They are the same", "Not sure"],
+          feedback: {
+            correct: "Good job! A pencil is usually shorter than a ruler.",
+            incorrect:
+              "Think about their sizes. A ruler is longer than a pencil.",
+          },
+        },
+        {
+          question: "If you have 3 nickels, how much money do you have?",
+          answer: "15 cents",
+          choices: ["5 cents", "10 cents", "15 cents", "20 cents"],
+          feedback: {
+            correct: "Yes! 3 nickels equal 15 cents.",
+            incorrect:
+              "Each nickel is worth 5 cents, so 3 nickels equal 15 cents.",
+          },
+        },
+        {
+          question:
+            "What time is it if the hour hand is on 12 and the minute hand is on 12?",
+          answer: "12:00",
+          choices: ["12:00", "6:00", "3:00", "12:30"],
+          feedback: {
+            correct: "Correct! The time is 12:00.",
+            incorrect: "Both hands on 12 mean it's the start of the hour.",
+          },
+        },
+        {
+          question: "How many dimes are in a dollar?",
+          answer: "10",
+          choices: ["5", "8", "10", "12"],
+          feedback: {
+            correct: "Great! 10 dimes make one dollar.",
+            incorrect: "Each dime is 10 cents, so 10 dimes equal a dollar.",
+          },
+        },
+        {
+          question: "What tool would you use to tell the temperature outside?",
+          answer: "Thermometer",
+          choices: ["Ruler", "Scale", "Thermometer", "Clock"],
+          feedback: {
+            correct: "Correct! A thermometer measures temperature.",
+            incorrect: "A thermometer is used to tell the temperature.",
+          },
+        },
+        {
+          question: "What is the value of 4 nickels?",
+          answer: "20 cents",
+          choices: ["15 cents", "20 cents", "25 cents", "30 cents"],
+          feedback: {
+            correct: "Well done! 4 nickels equal 20 cents.",
+            incorrect:
+              "Each nickel is worth 5 cents, so 4 nickels equal 20 cents.",
+          },
+        },
+        {
+          question: "How many halves are in an hour?",
+          answer: "2",
+          choices: ["1", "2", "3", "4"],
+          feedback: {
+            correct: "Correct! There are 2 halves in an hour.",
+            incorrect:
+              "An hour has 60 minutes, so it can be divided into two 30-minute halves.",
+          },
+        },
+        {
+          question:
+            "What time is it if the hour hand is on 9 and the minute hand is on 12?",
+          answer: "9:00",
+          choices: ["8:30", "9:00", "9:30", "10:00"],
+          feedback: {
+            correct: "Great! The time is 9:00.",
+            incorrect:
+              "When the minute hand is on 12, it's the start of the hour.",
+          },
+        },
+        {
+          question: "Which is lighter: a rock or a feather?",
+          answer: "Feather",
+          choices: ["Rock", "Feather", "They are the same", "Not sure"],
+          feedback: {
+            correct: "Correct! A feather is much lighter than a rock.",
+            incorrect: "A rock is heavier; a feather is light.",
+          },
+        },
+        {
+          question: "How many pennies make a dime?",
+          answer: "10",
+          choices: ["5", "10", "15", "20"],
+          feedback: {
+            correct: "That's right! 10 pennies make a dime.",
+            incorrect: "Each penny is 1 cent, so you need 10 to make a dime.",
+          },
+        },
+      ];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          (currentQuestionIndex / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+    const percentage = (score / questionsDatabase.length) * 100;
+    const feedbackModal = document.getElementById("feedback-modal");
+    const feedbackTitle = document.getElementById("feedback-title");
+    const feedbackMessage = document.getElementById("feedback-message");
+
+    feedbackTitle.innerText = "Quiz Complete! 🎉";
+    feedbackMessage.innerHTML = `
+        Your score: ${score}/${questionsDatabase.length} (${percentage.toFixed(1)}%)<br><br>
+        ${percentage >= 80 ? "Outstanding work! You're a math superstar! 🌟"
+        : percentage >= 60 ? "Good job! Keep practicing to become even better! 💪"
+        : "Keep practicing! You'll get better every time! 🌱"}<br><br>
+        <button class="choice-button" onclick="returnToUnits()">Continue</button>
+    `;
+    feedbackModal.style.display = "block";
+}
+
+
+      function returnToUnits() {
+        window.location.href = "../../G1_units.cam.html?unit1score=" + score;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

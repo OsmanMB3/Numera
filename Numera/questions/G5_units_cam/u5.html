@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 5 - Geometry</title>
+    <style>
+        :root {
+            --primary-color: #000033;
+            --header-color: white;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--header-color);
+            color: var(--primary-color);
+        }
+
+        .header {
+            text-align: center;
+            background-color: var(--header-color);
+            padding: 20px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .question-container {
+            margin: 50px auto;
+            padding: 20px;
+            max-width: 800px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+
+        .choice-button {
+            margin: 10px;
+            padding: 12px;
+            border: 2px solid var(--primary-color);
+            background-color: var(--header-color);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .choice-button:hover {
+            background-color: #e6e6e6;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: var(--header-color);
+            color: var(--primary-color);
+            border-top: 2px solid var(--primary-color);
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1>Unit 5 - Geometry</h1>
+        <p>Challenge Your Knowledge on Shapes and Coordinates!</p>
+    </header>
+
+    <div class="question-container">
+        <h3>Question:</h3>
+        <p id="question-text">Loading...</p>
+        <div id="answer-options-container"></div>
+    </div>
+
+    <footer>
+        <p>Numera, Inc &copy; 2024</p>
+    </footer>
+
+    <script>
+        const questions = [
+            { question: "What is the point where the x-axis and y-axis meet?", answer: "Origin", choices: ["Origin", "Intersection", "Midpoint", "Central Axis"] },
+            { question: "How many sides does a parallelogram have?", answer: "4", choices: ["3", "4", "5", "6"] },
+            { question: "Plot the point (3, 4). Which quadrant is it in?", answer: "First", choices: ["First", "Second", "Third", "Fourth"] }
+        ];
+
+        let currentIndex = 0;
+
+        function loadQuestion() {
+            const q = questions[currentIndex];
+            document.getElementById('question-text').innerText = q.question;
+            const container = document.getElementById('answer-options-container');
+            container.innerHTML = '';
+
+            q.choices.forEach(choice => {
+                const button = document.createElement('button');
+                button.className = 'choice-button';
+                button.innerText = choice;
+                button.onclick = () => checkAnswer(choice, q.answer);
+                container.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selected, correct) {
+            if (selected === correct) {
+                currentIndex++;
+                if (currentIndex < questions.length) {
+                    loadQuestion();
+                } else {
+                    alert('Well done! You completed the unit.');
+                }
+            } else {
+                alert('Incorrect. Try again!');
+            }
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>

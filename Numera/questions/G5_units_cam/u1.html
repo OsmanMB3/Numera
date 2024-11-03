@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operations and Algebraic Thinking - Numera</title>
+    <style>
+        :root {
+            --primary-color: #000033;
+            --accent-color: #0055aa;
+            --header-color: white;
+            --button-hover-color: #e6e6e6;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            margin: 0;
+            padding: 0;
+            color: var(--primary-color);
+            background-color: white;
+        }
+
+        .header {
+            background-color: var(--header-color);
+            color: var(--primary-color);
+            text-align: center;
+            padding: 20px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .question-container {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: var(--header-color);
+        }
+
+        .question-box {
+            border: 2px solid var(--primary-color);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .choices-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 20px;
+            align-items: center;
+        }
+
+        .choice-button {
+            padding: 12px 20px;
+            border-radius: 15px;
+            background-color: white;
+            color: var(--primary-color);
+            border: 2px solid var(--accent-color);
+            cursor: pointer;
+            width: 80%;
+            max-width: 300px;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .choice-button:hover {
+            background-color: var(--button-hover-color);
+            transform: scale(1.05);
+        }
+
+        .submit-button {
+            margin-top: 30px;
+            padding: 12px 20px;
+            border-radius: 15px;
+            background-color: var(--primary-color);
+            color: var(--header-color);
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .submit-button:hover {
+            background-color: var(--accent-color);
+            transform: scale(1.05);
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px;
+            background-color: var(--header-color);
+            border-top: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <h1>Operations and Algebraic Thinking</h1>
+        <p>Challenge Yourself with Fun and Engaging Questions!</p>
+    </header>
+
+    <div class="question-container">
+        <div class="question-box">
+            <h3>Question:</h3>
+            <p id="question-text">Loading question...</p>
+            <div id="answer-options-container" class="choices-container"></div>
+            <button class="submit-button" onclick="checkAnswer()">Submit</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>Numera, Inc &copy; 2024</p>
+    </footer>
+
+    <script>
+        const questionsDatabase = [
+            { question: "In 123.456, what does the 4 represent?", answer: "Four hundreds", choices: ["Four tenths", "Four hundreds", "Four thousandths", "Four hundredths"] },
+            { question: "Multiply 10 by 100. How many zeros in total?", answer: "3", choices: ["2", "3", "4", "5"] },
+            { question: "Which is bigger, 0.501 or 0.510?", answer: "0.510", choices: ["0.501", "0.510", "They're the same", "Can't tell"] },
+            { question: "What's 0.6 rounded to the nearest whole number?", answer: "1", choices: ["0", "1", "0.5", "0.6"] },
+            { question: "Multiply 5 by 100. What do you get?", answer: "500", choices: ["50", "500", "5,000", "505"] },
+            { question: "Round 4.86 to the nearest whole number.", answer: "5", choices: ["4", "5", "4.8", "4.9"] },
+            { question: "If 5 x 3 = 15, what's 5 x 30?", answer: "150", choices: ["50", "150", "30", "15"] },
+            { question: "Start with 3. Multiply by 10 three times. What number do you get?", answer: "3000", choices: ["30", "300", "3,000", "300,000"] },
+            { question: "How do you express 4 added to 6 and then multiplied by 2?", answer: "(4 + 6) x 2", choices: ["4 + 6 x 2", "(4 + 6) x 2", "4 + (6 x 2)", "2 x 4 + 6"] },
+            { question: "What's 0.5 multiplied by 100?", answer: "50", choices: ["5", "50", "0.05", "500"] },
+            { question: "What's 23 times 45?", answer: "1035", choices: ["1035", "935", "1025", "950"] },
+            { question: "What's 8928 divided by 12?", answer: "744", choices: ["744", "764", "752", "734"] },
+            { question: "Round 3.75 to the nearest whole number.", answer: "4", choices: ["3", "4", "3.8", "3.7"] },
+            { question: "In the number 5,800, what does the 8 represent?", answer: "8 thousands", choices: ["8 ones", "8 tens", "8 hundreds", "8 thousands"] },
+            { question: "Starting with 0 and adding 3 each time, what's the fourth number?", answer: "9", choices: ["3", "6", "9", "12"] }
+        ];
+
+        let currentQuestionIndex = 0;
+
+        function displayNextQuestion() {
+            const questionObject = questionsDatabase[currentQuestionIndex];
+            document.getElementById('question-text').innerText = questionObject.question;
+
+            const answerOptionsContainer = document.getElementById('answer-options-container');
+            answerOptionsContainer.innerHTML = '';
+            questionObject.choices.forEach(choice => {
+                const choiceButton = document.createElement('button');
+                choiceButton.classList.add('choice-button');
+                choiceButton.innerText = choice;
+                choiceButton.onclick = () => checkAnswer(choice, questionObject.answer);
+                answerOptionsContainer.appendChild(choiceButton);
+            });
+        }
+
+        function checkAnswer(userAnswer, correctAnswer) {
+            if (userAnswer === correctAnswer) {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < questionsDatabase.length) {
+                    displayNextQuestion();
+                } else {
+                    alert('Congratulations! You completed all questions.');
+                }
+            } else {
+                alert('Incorrect! Try again.');
+            }
+        }
+
+        displayNextQuestion();
+    </script>
+</body>
+
+</html>

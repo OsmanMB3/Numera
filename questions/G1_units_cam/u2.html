@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grade 1 - Number and Operations in Base Ten</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="question-container">
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+      <div class="score-display">Score: <span id="score">0</span>/20</div>
+      <div class="question-box">
+        <h3>Question <span id="question-number">1</span>/20:</h3>
+        <p id="question-text">Loading question...</p>
+        <div id="answer-options-container"></div>
+      </div>
+    </div>
+
+    <div id="feedback-modal" class="feedback-modal">
+      <h2 id="feedback-title"></h2>
+      <p id="feedback-message"></p>
+      <button class="choice-button" onclick="closeFeedback()">Continue</button>
+    </div>
+
+    <script>
+      const questionsDatabase = [
+        {
+          question: "What is the number that comes after 59?",
+          answer: "60",
+          choices: ["58", "59", "60", "61"],
+          feedback: {
+            correct: "Great job! 59 comes just before 60.",
+            incorrect: "Remember, 60 follows 59 in the counting sequence.",
+          },
+        },
+        {
+          question: "How many tens are there in the number 40?",
+          answer: "4",
+          choices: ["3", "4", "5", "6"],
+          feedback: {
+            correct: "Correct! There are 4 tens in 40.",
+            incorrect: "Think of 40 as 4 groups of 10.",
+          },
+        },
+        {
+          question: "What is 10 more than 27?",
+          answer: "37",
+          choices: ["30", "37", "47", "17"],
+          feedback: {
+            correct: "Good work! 27 plus 10 equals 37.",
+            incorrect: "Adding 10 increases the tens place by one.",
+          },
+        },
+        {
+          question: "What is the value of the digit 5 in the number 53?",
+          answer: "50",
+          choices: ["5", "50", "3", "500"],
+          feedback: {
+            correct:
+              "Correct! The 5 is in the tens place, so it represents 50.",
+            incorrect: "Think of place value: tens place means 5 equals 50.",
+          },
+        },
+        {
+          question: "What is 10 less than 84?",
+          answer: "74",
+          choices: ["94", "74", "84", "64"],
+          feedback: {
+            correct: "Excellent! 84 minus 10 equals 74.",
+            incorrect: "Subtracting 10 reduces the tens place by one.",
+          },
+        },
+        {
+          question: "What is the number that comes before 100?",
+          answer: "99",
+          choices: ["98", "99", "101", "97"],
+          feedback: {
+            correct: "Well done! 99 comes right before 100.",
+            incorrect: "Remember, 99 is just one less than 100.",
+          },
+        },
+        {
+          question: "What is the value of 2 in the number 25?",
+          answer: "20",
+          choices: ["2", "20", "25", "200"],
+          feedback: {
+            correct: "Great! The 2 in 25 represents 20.",
+            incorrect: "In 25, the 2 is in the tens place, so it equals 20.",
+          },
+        },
+        {
+          question: "How many ones are there in the number 14?",
+          answer: "4",
+          choices: ["1", "4", "14", "10"],
+          feedback: {
+            correct: "Yes! There are 4 ones in 14.",
+            incorrect: "Look at the ones place in 14: it shows 4.",
+          },
+        },
+        {
+          question: "What is 20 more than 45?",
+          answer: "65",
+          choices: ["55", "65", "75", "85"],
+          feedback: {
+            correct: "Correct! 45 plus 20 equals 65.",
+            incorrect: "Adding 20 means increasing the tens place by 2.",
+          },
+        },
+        {
+          question: "How many tens are in 70?",
+          answer: "7",
+          choices: ["6", "7", "8", "10"],
+          feedback: {
+            correct: "That's right! 70 has 7 tens.",
+            incorrect: "Think of 70 as 7 groups of 10.",
+          },
+        },
+        {
+          question: "What is the value of 3 in the number 38?",
+          answer: "30",
+          choices: ["3", "30", "8", "300"],
+          feedback: {
+            correct: "Good job! The 3 in 38 represents 30.",
+            incorrect: "Remember, the 3 is in the tens place, so it equals 30.",
+          },
+        },
+        {
+          question: "What is 10 more than 52?",
+          answer: "62",
+          choices: ["42", "62", "72", "52"],
+          feedback: {
+            correct: "Excellent! 52 plus 10 equals 62.",
+            incorrect: "Adding 10 moves the tens place up by one.",
+          },
+        },
+        {
+          question: "What number comes before 20?",
+          answer: "19",
+          choices: ["18", "19", "21", "17"],
+          feedback: {
+            correct: "Correct! 19 comes before 20.",
+            incorrect: "Remember, 19 is one less than 20.",
+          },
+        },
+        {
+          question: "If you add 1 to 99, what number do you get?",
+          answer: "100",
+          choices: ["99", "100", "101", "98"],
+          feedback: {
+            correct: "Right! 99 plus 1 equals 100.",
+            incorrect: "Adding 1 to 99 takes you to 100.",
+          },
+        },
+        {
+          question: "What is 30 plus 40?",
+          answer: "70",
+          choices: ["60", "70", "80", "90"],
+          feedback: {
+            correct: "Good work! 30 + 40 equals 70.",
+            incorrect: "Add the tens: 30 + 40 = 70.",
+          },
+        },
+        {
+          question: "How many tens are in 90?",
+          answer: "9",
+          choices: ["8", "9", "10", "7"],
+          feedback: {
+            correct: "That's correct! 90 has 9 tens.",
+            incorrect: "90 is made up of 9 tens.",
+          },
+        },
+        {
+          question: "What number is 10 less than 50?",
+          answer: "40",
+          choices: ["30", "40", "50", "60"],
+          feedback: {
+            correct: "Yes! 50 minus 10 equals 40.",
+            incorrect: "Subtracting 10 from 50 reduces the tens place by one.",
+          },
+        },
+        {
+          question: "What is 25 + 10?",
+          answer: "35",
+          choices: ["30", "35", "45", "40"],
+          feedback: {
+            correct: "Great! 25 plus 10 equals 35.",
+            incorrect: "Add 10 to the tens place of 25 to get 35.",
+          },
+        },
+        {
+          question: "What comes next: 70, 80, __?",
+          answer: "90",
+          choices: ["75", "85", "90", "95"],
+          feedback: {
+            correct: "Correct! 90 follows 80 in this counting pattern.",
+            incorrect: "Count by tens: 70, 80, 90.",
+          },
+        },
+        {
+          question: "What is 40 minus 20?",
+          answer: "20",
+          choices: ["10", "20", "30", "40"],
+          feedback: {
+            correct: "Well done! 40 minus 20 is 20.",
+            incorrect: "Think of 40 as 4 tens and remove 2 tens.",
+          },
+        },
+      ];
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          (currentQuestionIndex / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+    const percentage = (score / questionsDatabase.length) * 100;
+    const feedbackModal = document.getElementById("feedback-modal");
+    const feedbackTitle = document.getElementById("feedback-title");
+    const feedbackMessage = document.getElementById("feedback-message");
+
+    feedbackTitle.innerText = "Quiz Complete! 🎉";
+    feedbackMessage.innerHTML = `
+        Your score: ${score}/${questionsDatabase.length} (${percentage.toFixed(1)}%)<br><br>
+        ${percentage >= 80 ? "Outstanding work! You're a math superstar! 🌟"
+        : percentage >= 60 ? "Good job! Keep practicing to become even better! 💪"
+        : "Keep practicing! You'll get better every time! 🌱"}<br><br>
+        <button class="choice-button" onclick="returnToUnits()">Continue</button>
+    `;
+    feedbackModal.style.display = "block";
+}
+
+
+      function returnToUnits() {
+        window.location.href = "../../G1_units.cam.html?unit1score=" + score;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

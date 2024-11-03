@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Grade 1 - Operations and Algebraic Thinking</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="question-container">
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+      <div class="score-display">Score: <span id="score">0</span>/20</div>
+      <div class="question-box">
+        <h3>Question <span id="question-number">1</span>/20:</h3>
+        <p id="question-text">Loading question...</p>
+        <div id="answer-options-container"></div>
+      </div>
+    </div>
+
+    <div id="feedback-modal" class="feedback-modal">
+      <h2 id="feedback-title"></h2>
+      <p id="feedback-message"></p>
+      <button
+        class="choice-button"
+        id="continue-button"
+        onclick="closeFeedback()"
+      >
+        Continue
+      </button>
+    </div>
+
+    <script>
+      const questionsDatabase = [
+        {
+          question:
+            "Mrs. Smith has 8 apples and gives 3 to her students. How many apples does she have left?",
+          answer: "5",
+          choices: ["4", "5", "6", "7"],
+          feedback: {
+            correct:
+              "Excellent! You've mastered subtraction within 10! 8 - 3 = 5",
+            incorrect:
+              "Let's try counting backwards from 8: 8, 7, 6, 5. When we take away 3 apples from 8, we get 5!",
+          },
+        },
+        {
+          question: "What number makes this equation true? 7 + __ = 10",
+          answer: "3",
+          choices: ["2", "3", "4", "5"],
+          feedback: {
+            correct: "Perfect! You found the missing number! 7 + 3 = 10",
+            incorrect:
+              "Think about counting up from 7 to reach 10. How many numbers do you count?",
+          },
+        },
+        {
+          question: "Which equation is true?",
+          answer: "4 + 3 = 3 + 4",
+          choices: [
+            "5 + 2 = 5 + 3",
+            "4 + 3 = 3 + 4",
+            "6 + 1 = 1 + 2",
+            "2 + 3 = 3 + 4",
+          ],
+          feedback: {
+            correct:
+              "Great job! You understand that addition works in any order (commutative property)!",
+            incorrect:
+              "Remember, when adding numbers, the order doesn't change the sum. 4 + 3 equals 7, and 3 + 4 also equals 7!",
+          },
+        },
+        {
+          question:
+            "Tom has 5 blue marbles and 6 red marbles. How many marbles does he have in total?",
+          answer: "11",
+          choices: ["9", "10", "11", "12"],
+          feedback: {
+            correct:
+              "Outstanding! You've solved a two-number addition problem! 5 + 6 = 11",
+            incorrect:
+              "Try counting all the marbles: 5 blue ones plus 6 red ones. Count up: 5...6,7,8,9,10,11",
+          },
+        },
+        {
+          question: "What is 10 take away 7?",
+          answer: "3",
+          choices: ["2", "3", "4", "5"],
+          feedback: {
+            correct: "Wonderful! You're great at subtraction! 10 - 7 = 3",
+            incorrect:
+              "Count backwards from 10: 10, 9, 8, 7, 6, 5, 4, 3. We counted back 7 numbers!",
+          },
+        },
+        {
+          question: "How many are left when you subtract 4 from 9?",
+          answer: "5",
+          choices: ["4", "5", "6", "7"],
+          feedback: {
+            correct: "Nice job! 9 - 4 = 5",
+            incorrect: "Think of counting down from 9. Subtract 4 to get to 5.",
+          },
+        },
+        {
+          question: "What is 6 + 4?",
+          answer: "10",
+          choices: ["9", "10", "11", "12"],
+          feedback: {
+            correct: "Well done! 6 + 4 equals 10.",
+            incorrect: "Try adding 6 and then counting up 4 more: 7, 8, 9, 10.",
+          },
+        },
+        {
+          question: "What number completes the equation? 5 + __ = 9",
+          answer: "4",
+          choices: ["3", "4", "5", "6"],
+          feedback: {
+            correct: "Great! 5 + 4 = 9.",
+            incorrect:
+              "Think about counting up from 5 until you reach 9. How many steps is that?",
+          },
+        },
+        {
+          question:
+            "Sally has 7 candies. She shares 2 with her friend. How many candies does she have left?",
+          answer: "5",
+          choices: ["4", "5", "6", "7"],
+          feedback: {
+            correct: "Correct! 7 - 2 = 5.",
+            incorrect: "Picture 7 candies and take away 2. Count what remains.",
+          },
+        },
+        {
+          question: "What is 3 + 8?",
+          answer: "11",
+          choices: ["10", "11", "12", "13"],
+          feedback: {
+            correct: "Awesome! 3 + 8 equals 11.",
+            incorrect:
+              "Try adding 3 and counting up by 8: 4, 5, 6, 7, 8, 9, 10, 11.",
+          },
+        },
+        {
+          question: "What is 15 - 6?",
+          answer: "9",
+          choices: ["8", "9", "10", "11"],
+          feedback: {
+            correct: "Great subtraction skills! 15 - 6 = 9.",
+            incorrect: "Think about counting down from 15 by 6.",
+          },
+        },
+        {
+          question: "If 6 + 4 = 10, what is 4 + 6?",
+          answer: "10",
+          choices: ["9", "10", "11", "12"],
+          feedback: {
+            correct:
+              "Good job! Addition is the same both ways (commutative property).",
+            incorrect:
+              "Remember, adding numbers in any order gives the same sum.",
+          },
+        },
+        {
+          question:
+            "There are 10 ducks in a pond. 4 swim away. How many ducks are left?",
+          answer: "6",
+          choices: ["5", "6", "7", "8"],
+          feedback: {
+            correct: "Correct! 10 - 4 = 6.",
+            incorrect:
+              "Visualize 10 ducks and imagine 4 leaving. Count the ones remaining.",
+          },
+        },
+        {
+          question: "What is 4 + 5?",
+          answer: "9",
+          choices: ["8", "9", "10", "11"],
+          feedback: {
+            correct: "Well done! 4 + 5 = 9.",
+            incorrect: "Add 4 and count up by 5 to get to 9.",
+          },
+        },
+        {
+          question: "What is 9 - 5?",
+          answer: "4",
+          choices: ["3", "4", "5", "6"],
+          feedback: {
+            correct: "Excellent! 9 - 5 = 4.",
+            incorrect: "Think about counting down from 9 by 5.",
+          },
+        },
+        {
+          question: "Which number comes next? 2, 4, 6, __?",
+          answer: "8",
+          choices: ["7", "8", "9", "10"],
+          feedback: {
+            correct: "Great! This is a pattern counting by 2s.",
+            incorrect: "Try counting by 2s: 2, 4, 6, 8.",
+          },
+        },
+        {
+          question: "What is 8 + 2?",
+          answer: "10",
+          choices: ["9", "10", "11", "12"],
+          feedback: {
+            correct: "Correct! 8 + 2 = 10.",
+            incorrect: "Add 8 and then 2 to reach 10.",
+          },
+        },
+        {
+          question: "What is 12 - 4?",
+          answer: "8",
+          choices: ["7", "8", "9", "10"],
+          feedback: {
+            correct: "Well done! 12 - 4 = 8.",
+            incorrect: "Count down from 12 by 4 to get to 8.",
+          },
+        },
+        {
+          question: "What is 3 + 7?",
+          answer: "10",
+          choices: ["9", "10", "11", "12"],
+          feedback: {
+            correct: "Correct! 3 + 7 = 10.",
+            incorrect: "Add 3 and then count up by 7 to reach 10.",
+          },
+        },
+        {
+          question: "What number makes this true? 10 - __ = 6",
+          answer: "4",
+          choices: ["3", "4", "5", "6"],
+          feedback: {
+            correct: "Excellent! 10 - 4 = 6.",
+            incorrect:
+              "Think about what number, when subtracted from 10, gives 6.",
+          },
+        },
+      ];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        // Shuffle choices
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          (currentQuestionIndex / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+    const percentage = (score / questionsDatabase.length) * 100;
+    const feedbackModal = document.getElementById("feedback-modal");
+    const feedbackTitle = document.getElementById("feedback-title");
+    const feedbackMessage = document.getElementById("feedback-message");
+
+    feedbackTitle.innerText = "Quiz Complete! 🎉";
+    feedbackMessage.innerHTML = `
+        Your score: ${score}/${questionsDatabase.length} (${percentage.toFixed(1)}%)<br><br>
+        ${percentage >= 80 ? "Outstanding work! You're a math superstar! 🌟"
+        : percentage >= 60 ? "Good job! Keep practicing to become even better! 💪"
+        : "Keep practicing! You'll get better every time! 🌱"}<br><br>
+        <button class="choice-button" onclick="returnToUnits()">Continue</button>
+    `;
+    feedbackModal.style.display = "block";
+}
+
+
+      function returnToUnits() {
+        window.location.href = "../../G1_units.cam.html?unit1score=" + score;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>
