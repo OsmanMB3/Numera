@@ -4,9 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Grade 2 - Operations and Algebraic Thinking</title>
-    <!-- Replace [Unit Title] with the actual unit name -->
     <link rel="stylesheet" href="../styles.css" />
-    <!-- Adjust the path as needed -->
   </head>
   <body>
     <div class="question-container">
@@ -24,197 +22,45 @@
     <div id="feedback-modal" class="feedback-modal">
       <h2 id="feedback-title"></h2>
       <p id="feedback-message"></p>
-      <button class="choice-button" onclick="closeFeedback()">Continue</button>
+      <button
+        class="choice-button"
+        id="continue-button"
+        onclick="closeFeedback()"
+      >
+        Continue
+      </button>
     </div>
 
     <script>
       const questionsDatabase = [
-    {
-        question: "What is 25 + 36?",
-        answer: "61",
-        choices: ["60", "61", "62", "63"],
-        feedback: {
+        {
+          question: "What is 25 + 36?",
+          answer: "61",
+          choices: ["60", "61", "62", "63"],
+          feedback: {
             correct: "Great job! 25 + 36 = 61.",
-            incorrect: "Try adding the tens and ones separately: 25 + 30 + 6 = 61."
-        }
-    },
-    {
-        question: "If Sarah has 42 pencils and gives away 15, how many does she have left?",
-        answer: "27",
-        choices: ["26", "27", "28", "29"],
-        feedback: {
+            incorrect:
+              "Try adding the tens and ones separately: 25 + 30 + 6 = 61.",
+          },
+        },
+        {
+          question:
+            "If Sarah has 42 pencils and gives away 15, how many does she have left?",
+          answer: "27",
+          choices: ["26", "27", "28", "29"],
+          feedback: {
             correct: "Correct! 42 - 15 = 27.",
-            incorrect: "Think about subtracting the ones and then the tens separately: 42 - 15."
-        }
-    },
-    {
-        question: "What is 16 - 9?",
-        answer: "7",
-        choices: ["6", "7", "8", "9"],
-        feedback: {
-            correct: "Good work! 16 - 9 = 7.",
-            incorrect: "Try counting down from 16 to 9 to find the difference."
-        }
-    },
-    {
-        question: "What number comes next in this pattern? 2, 4, 6, __",
-        answer: "8",
-        choices: ["7", "8", "9", "10"],
-        feedback: {
-            correct: "Correct! The pattern is counting by 2s.",
-            incorrect: "Check the pattern: 2, 4, 6... the next number is 8."
-        }
-    },
-    {
-        question: "How many equal groups of 4 are there in 12?",
-        answer: "3",
-        choices: ["2", "3", "4", "5"],
-        feedback: {
-            correct: "Great! 12 divided by 4 equals 3.",
-            incorrect: "Think about how many times 4 goes into 12."
-        }
-    },
-    {
-        question: "Is the number of apples in a group of 5 even or odd?",
-        answer: "Odd",
-        choices: ["Even", "Odd"],
-        feedback: {
-            correct: "Correct! 5 is an odd number.",
-            incorrect: "Try pairing the apples; one will be left without a pair."
-        }
-    },
-    {
-        question: "Which of these sums is correct? 8 + 5 = __",
-        answer: "13",
-        choices: ["11", "12", "13", "14"],
-        feedback: {
-            correct: "Excellent! 8 + 5 = 13.",
-            incorrect: "Count up from 8 by 5 to check your answer."
-        }
-    },
-    {
-        question: "What is the difference between 55 and 21?",
-        answer: "34",
-        choices: ["32", "33", "34", "35"],
-        feedback: {
-            correct: "Great job! 55 - 21 = 34.",
-            incorrect: "Try subtracting the tens and then the ones separately."
-        }
-    },
-    {
-        question: "What is 20 - 8?",
-        answer: "12",
-        choices: ["11", "12", "13", "14"],
-        feedback: {
-            correct: "Correct! 20 - 8 = 12.",
-            incorrect: "Count backwards from 20 to find the answer."
-        }
-    },
-    {
-        question: "What is 15 + 25?",
-        answer: "40",
-        choices: ["39", "40", "41", "42"],
-        feedback: {
-            correct: "Good work! 15 + 25 = 40.",
-            incorrect: "Add the tens first, then the ones: 10 + 20 + 5 + 5."
-        }
-    },
-    {
-        question: "What number makes this true? 18 - __ = 9",
-        answer: "9",
-        choices: ["8", "9", "10", "11"],
-        feedback: {
-            correct: "Excellent! 18 - 9 = 9.",
-            incorrect: "Think about what number subtracted from 18 gives 9."
-        }
-    },
-    {
-        question: "Which is true? 7 + 4 = __",
-        answer: "11",
-        choices: ["10", "11", "12", "13"],
-        feedback: {
-            correct: "Correct! 7 + 4 equals 11.",
-            incorrect: "Count up from 7 by 4 to get the correct answer."
-        }
-    },
-    {
-        question: "There are 24 cookies. If 6 kids share them equally, how many do they each get?",
-        answer: "4",
-        choices: ["3", "4", "5", "6"],
-        feedback: {
-            correct: "Correct! 24 divided by 6 is 4.",
-            incorrect: "Think of 24 cookies divided into 6 equal parts."
-        }
-    },
-    {
-        question: "What is 35 - 17?",
-        answer: "18",
-        choices: ["17", "18", "19", "20"],
-        feedback: {
-            correct: "Well done! 35 - 17 = 18.",
-            incorrect: "Subtract the tens and ones separately to get the answer."
-        }
-    },
-    {
-        question: "Which number comes next in the pattern? 5, 10, 15, __",
-        answer: "20",
-        choices: ["18", "20", "22", "25"],
-        feedback: {
-            correct: "Great! The pattern counts by 5s.",
-            incorrect: "Look at how the numbers are increasing."
-        }
-    },
-    {
-        question: "What is 9 + 9?",
-        answer: "18",
-        choices: ["16", "17", "18", "19"],
-        feedback: {
-            correct: "Good job! 9 + 9 = 18.",
-            incorrect: "Think about doubling 9 to get the answer."
-        }
-    },
-    {
-        question: "What is 8 + 6?",
-        answer: "14",
-        choices: ["12", "13", "14", "15"],
-        feedback: {
-            correct: "Well done! 8 + 6 = 14.",
-            incorrect: "Count up from 8 by 6."
-        }
-    },
-    {
-        question: "How many groups of 2 can you make with 14 items?",
-        answer: "7",
-        choices: ["6", "7", "8", "9"],
-        feedback: {
-            correct: "Correct! 14 divided by 2 equals 7.",
-            incorrect: "Think of how many times 2 fits into 14."
-        }
-    },
-    {
-        question: "What is 100 - 50?",
-        answer: "50",
-        choices: ["45", "50", "55", "60"],
-        feedback: {
-            correct: "Correct! 100 - 50 = 50.",
-            incorrect: "Try subtracting in steps: 100 - 50."
-        }
-    },
-    {
-        question: "What is 17 - 8?",
-        answer: "9",
-        choices: ["7", "8", "9", "10"],
-        feedback: {
-            correct: "Great job! 17 - 8 = 9.",
-            incorrect: "Count down from 17 by 8."
-        }
-    }
-];
-
+            incorrect:
+              "Think about subtracting the ones and then the tens separately: 42 - 15.",
+          },
+        },
+      ];
       let currentQuestionIndex = 0;
       let score = 0;
 
       function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
         const questionObject = questionsDatabase[currentQuestionIndex];
         document.getElementById("question-number").innerText =
           currentQuestionIndex + 1;
@@ -225,7 +71,6 @@
         );
         answerOptionsContainer.innerHTML = "";
 
-        // Shuffle choices
         const shuffledChoices = [...questionObject.choices];
         for (let i = shuffledChoices.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
@@ -277,35 +122,38 @@
 
       function updateProgress() {
         const progress =
-          (currentQuestionIndex / questionsDatabase.length) * 100;
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
         document.getElementById("progress").style.width = `${progress}%`;
       }
 
       function showFinalScore() {
-        const percentage = (score / questionsDatabase.length) * 100;
         const feedbackModal = document.getElementById("feedback-modal");
         const feedbackTitle = document.getElementById("feedback-title");
         const feedbackMessage = document.getElementById("feedback-message");
 
         feedbackTitle.innerText = "Quiz Complete! 🎉";
         feedbackMessage.innerHTML = `
-                Your score: ${score}/${
-          questionsDatabase.length
-        } (${percentage.toFixed(1)}%)<br><br>
-                ${
-                  percentage >= 80
-                    ? "Outstanding work! You're a math superstar! 🌟"
-                    : percentage >= 60
-                    ? "Good job! Keep practicing to become even better! 💪"
-                    : "Keep practicing! You'll get better every time! 🌱"
-                }<br><br>
-                <button class="choice-button" onclick="returnToUnits()">Continue</button>
-            `;
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
         feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
       }
 
       function returnToUnits() {
-        window.location.href = `../G2_Units.cam.html?unit1score=${score}`; // 
+        window.location.href = `.../G2_Units.cam.html?unit1score=${score}`;
       }
 
       displayNextQuestion();

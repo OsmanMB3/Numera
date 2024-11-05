@@ -16,7 +16,6 @@
             background-color: white;
         }
         .header {
-            position: relative;
             background-color: var(--header-color);
             color: var(--primary-color);
             padding: 20px;
@@ -33,8 +32,8 @@
             color: var(--primary-color);
             background-color: var(--header-color);
             margin: 20px 0;
-            transition: border 0.3s ease;
             position: relative;
+            transition: border 0.3s ease;
         }
         .box:hover {
             border: 4px solid var(--primary-color);
@@ -138,6 +137,11 @@
                         <p>Your last score: ${score}/20</p>
                         <button class="launch-button" onclick="launchCurriculum('u${index + 1}.html')">Try Again</button>
                     `;
+                    // Clear previous score displays to prevent duplication
+                    const existingScore = unitBox.querySelector('.score-display');
+                    if (existingScore) {
+                        existingScore.remove();
+                    }
                     unitBox.appendChild(scoreDisplay);
                 }
             });
