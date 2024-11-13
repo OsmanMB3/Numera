@@ -1,122 +1,363 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Unit 4 - Geometry</title>
-    <style>
-        :root {
-            --primary-color: #000033;
-            --header-color: white;
-            --button-hover-color: #e6e6e6;
-        }
-
-        body {
-            font-family: 'Georgia', serif;
-            margin: 0;
-            padding: 0;
-            color: var(--primary-color);
-            background-color: white;
-        }
-
-        .header {
-            background-color: var(--header-color);
-            color: var(--primary-color);
-            text-align: center;
-            padding: 20px;
-            border-bottom: 2px solid var(--primary-color);
-        }
-
-        .question-container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            background-color: var(--header-color);
-        }
-
-        .question-box {
-            border: 2px solid var(--primary-color);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .choices-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            align-items: center;
-            margin-top: 20px;
-        }
-
-        .choice-button {
-            padding: 12px 20px;
-            border-radius: 15px;
-            background-color: white;
-            color: var(--primary-color);
-            border: 2px solid var(--primary-color);
-            width: 80%;
-            max-width: 300px;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-
-        .choice-button:hover {
-            background-color: var(--button-hover-color);
-            transform: scale(1.05);
-        }
-
-        footer {
-            text-align: center;
-            padding: 15px;
-            background-color: var(--header-color);
-            color: var(--primary-color);
-            border-top: 2px solid var(--primary-color);
-        }
-    </style>
-</head>
-
-<body>
-    <header class="header">
-        <h1>Unit 4 - Geometry and Shapes</h1>
-        <p>Test Your Knowledge!</p>
-    </header>
-
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
     <div class="question-container">
-        <div class="question-box">
-            <h3>Question:</h3>
-            <p id="question-text">Loading question...</p>
-            <div id="answer-options-container" class="choices-container"></div>
-        </div>
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+      <div class="score-display">Score: <span id="score">0</span>/20</div>
+      <div class="question-box">
+        <h3>Question <span id="question-number">1</span>/20:</h3>
+        <p id="question-text">Loading question...</p>
+        <div id="answer-options-container"></div>
+      </div>
     </div>
 
-    <footer>
-        <p>Numera, Inc &copy; 2024</p>
-    </footer>
+    <div id="feedback-modal" class="feedback-modal">
+      <h2 id="feedback-title"></h2>
+      <p id="feedback-message"></p>
+      <button
+        class="choice-button"
+        id="continue-button"
+        onclick="closeFeedback()"
+      >
+        Continue
+      </button>
+    </div>
 
     <script>
-        const questionsDatabase = [
-            { question: "What is the point where the x-axis and y-axis meet?", answer: "Origin", choices: ["Origin", "Intersection", "Middle Point", "Axis"] },
-            { question: "How many sides does a parallelogram have?", answer: "4", choices: ["3", "4", "5", "6"] },
-            { question: "Which shape has four right angles?", answer: "Rectangle", choices: ["Circle", "Rectangle", "Rhombus", "Triangle"] },
-            { question: "If a shape has all sides equal and four right angles, what is it?", answer: "Square", choices: ["Square", "Rectangle", "Rhombus", "Circle"] }
-        ];
+      const questionsDatabase = [
+        {
+          question: "Convert 3 meters to centimeters.",
+          answer: "300 cm",
+          choices: ["300 cm", "30 cm", "3000 cm", "3 cm"],
+          feedback: {
+            correct: "Correct! 3 meters is 300 cm.",
+            incorrect: "Remember, 1 meter equals 100 centimeters.",
+          },
+        },
+        {
+          question: "How many inches are in 2 feet?",
+          answer: "24 inches",
+          choices: ["12 inches", "24 inches", "36 inches", "18 inches"],
+          feedback: {
+            correct: "Great! 2 feet equals 24 inches.",
+            incorrect: "Each foot has 12 inches, so 2 feet is 24 inches.",
+          },
+        },
+        {
+          question:
+            "What is the volume of a box with dimensions 5 cm x 3 cm x 2 cm?",
+          answer: "30 cubic cm",
+          choices: ["30 cubic cm", "10 cubic cm", "15 cubic cm", "25 cubic cm"],
+          feedback: {
+            correct:
+              "Correct! Volume = length x width x height, so 5 x 3 x 2 = 30.",
+            incorrect: "Multiply length, width, and height to find the volume.",
+          },
+        },
+        {
+          question: "If you have 1000 ml, how many liters do you have?",
+          answer: "1 liter",
+          choices: ["1 liter", "10 liters", "100 liters", "0.1 liters"],
+          feedback: {
+            correct: "Correct! 1000 ml equals 1 liter.",
+            incorrect: "There are 1000 milliliters in a liter.",
+          },
+        },
+        {
+          question: "Convert 4.5 kilometers to meters.",
+          answer: "4500 meters",
+          choices: ["4500 meters", "45 meters", "450 meters", "5000 meters"],
+          feedback: {
+            correct: "Great! 4.5 kilometers is 4500 meters.",
+            incorrect: "1 kilometer equals 1000 meters.",
+          },
+        },
+        {
+          question:
+            "A rectangle has a length of 7 cm and width of 3 cm. What is its area?",
+          answer: "21 square cm",
+          choices: [
+            "21 square cm",
+            "10 square cm",
+            "14 square cm",
+            "24 square cm",
+          ],
+          feedback: {
+            correct: "Good job! Area = length x width, so 7 x 3 = 21.",
+            incorrect: "Multiply the length by the width to find the area.",
+          },
+        },
+        {
+          question: "Convert 3.5 kilograms to grams.",
+          answer: "3500 grams",
+          choices: ["350 grams", "3500 grams", "35000 grams", "35 grams"],
+          feedback: {
+            correct: "Correct! 3.5 kilograms is 3500 grams.",
+            incorrect: "Remember, 1 kilogram equals 1000 grams.",
+          },
+        },
+        {
+          question:
+            "Which unit is best for measuring the length of a classroom?",
+          answer: "meters",
+          choices: ["meters", "centimeters", "millimeters", "kilometers"],
+          feedback: {
+            correct: "Correct! Meters are a good unit for classroom length.",
+            incorrect:
+              "Centimeters and millimeters are too small, and kilometers are too large.",
+          },
+        },
+        {
+          question:
+            "If a box is 4 cm wide, 5 cm high, and 6 cm long, what is its volume?",
+          answer: "120 cubic cm",
+          choices: [
+            "15 cubic cm",
+            "120 cubic cm",
+            "24 cubic cm",
+            "150 cubic cm",
+          ],
+          feedback: {
+            correct: "That's right! Volume = 4 x 5 x 6 = 120 cubic cm.",
+            incorrect:
+              "Volume is found by multiplying length, width, and height.",
+          },
+        },
+        {
+          question: "Convert 5000 milliliters to liters.",
+          answer: "5 liters",
+          choices: ["5 liters", "50 liters", "500 liters", "0.5 liters"],
+          feedback: {
+            correct: "Well done! 5000 milliliters is 5 liters.",
+            incorrect: "There are 1000 milliliters in a liter.",
+          },
+        },
+        {
+          question:
+            "What is the perimeter of a rectangle with a length of 8 cm and width of 3 cm?",
+          answer: "22 cm",
+          choices: ["22 cm", "24 cm", "20 cm", "16 cm"],
+          feedback: {
+            correct: "Correct! Perimeter = 2 x (8 + 3) = 22 cm.",
+            incorrect:
+              "Perimeter is the sum of all sides, so 2 x (length + width).",
+          },
+        },
+        {
+          question: "How many cups are in 2 pints?",
+          answer: "4 cups",
+          choices: ["4 cups", "2 cups", "8 cups", "6 cups"],
+          feedback: {
+            correct: "Good! 2 pints is 4 cups.",
+            incorrect: "There are 2 cups in each pint.",
+          },
+        },
+        {
+          question: "Convert 2500 grams to kilograms.",
+          answer: "2.5 kilograms",
+          choices: [
+            "2.5 kilograms",
+            "25 kilograms",
+            "0.25 kilograms",
+            "250 kilograms",
+          ],
+          feedback: {
+            correct: "Correct! 2500 grams is 2.5 kilograms.",
+            incorrect: "There are 1000 grams in a kilogram.",
+          },
+        },
+        {
+          question: "What is 5 feet in inches?",
+          answer: "60 inches",
+          choices: ["60 inches", "50 inches", "55 inches", "70 inches"],
+          feedback: {
+            correct: "Well done! 5 feet equals 60 inches.",
+            incorrect: "Each foot has 12 inches, so multiply 5 x 12.",
+          },
+        },
+        {
+          question: "Which is greater: 4.2 liters or 4200 milliliters?",
+          answer: "They are equal",
+          choices: [
+            "4.2 liters",
+            "4200 milliliters",
+            "They are equal",
+            "None of these",
+          ],
+          feedback: {
+            correct: "Correct! 4.2 liters is the same as 4200 milliliters.",
+            incorrect: "Convert liters to milliliters to compare.",
+          },
+        },
+        {
+          question: "How many seconds are in 2 hours?",
+          answer: "7200 seconds",
+          choices: [
+            "7200 seconds",
+            "3600 seconds",
+            "6000 seconds",
+            "5000 seconds",
+          ],
+          feedback: {
+            correct: "Great! There are 7200 seconds in 2 hours.",
+            incorrect: "Each hour has 3600 seconds, so 2 x 3600 = 7200.",
+          },
+        },
+        {
+          question:
+            "What is the volume of a rectangular prism with length 10 cm, width 4 cm, and height 3 cm?",
+          answer: "120 cubic cm",
+          choices: [
+            "120 cubic cm",
+            "100 cubic cm",
+            "80 cubic cm",
+            "60 cubic cm",
+          ],
+          feedback: {
+            correct:
+              "Correct! Volume = length x width x height = 120 cubic cm.",
+            incorrect: "Multiply length, width, and height to find the volume.",
+          },
+        },
+        {
+          question: "Convert 1.2 kilometers to meters.",
+          answer: "1200 meters",
+          choices: ["1200 meters", "120 meters", "12000 meters", "1000 meters"],
+          feedback: {
+            correct: "Correct! 1.2 kilometers is 1200 meters.",
+            incorrect: "Remember, 1 kilometer equals 1000 meters.",
+          },
+        },
+        {
+          question: "How many millimeters are in 3.5 meters?",
+          answer: "3500 mm",
+          choices: ["3500 mm", "350 mm", "35000 mm", "35 mm"],
+          feedback: {
+            correct: "Good! 3.5 meters equals 3500 mm.",
+            incorrect: "There are 1000 millimeters in a meter.",
+          },
+        },
+        {
+          question: "What is 25 cm converted to meters?",
+          answer: "0.25 meters",
+          choices: ["0.25 meters", "2.5 meters", "25 meters", "0.025 meters"],
+          feedback: {
+            correct: "Correct! 25 cm is 0.25 meters.",
+            incorrect: "There are 100 cm in a meter, so divide by 100.",
+          },
+        },
+      ];
 
-        let currentQuestionIndex = 0;
+      let currentQuestionIndex = 0;
+      let score = 0;
 
-        function displayNextQuestion() {
-            const questionObject = questionsDatabase[currentQuestionIndex];
-            document.getElementById('question-text').innerText = questionObject.question;
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
 
-            const answerOptionsContainer = document.getElementById('answer-options-container');
-            answerOptionsContainer.innerHTML = '';
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
 
-            questionObject.choices.forEach(choice => {
-                const choiceButton = document.createElement('button');
-                choiceButton.classList.add('choice-button');
-                choiceButton.innerText = choice;
-                choiceButton.onclick = () => checkAnswer(choice, questionObject.answer
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G5_Units.cam.html?unit4score=${score}`;
+    }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

@@ -210,7 +210,7 @@
 ];
 
 
-      let currentQuestionIndex = 0;
+let currentQuestionIndex = 0;
       let score = 0;
 
       function displayNextQuestion() {
@@ -224,7 +224,6 @@
         );
         answerOptionsContainer.innerHTML = "";
 
-        // Shuffle choices
         const shuffledChoices = [...questionObject.choices];
         for (let i = shuffledChoices.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
@@ -276,7 +275,7 @@
 
       function updateProgress() {
         const progress =
-          (currentQuestionIndex / questionsDatabase.length) * 100;
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
         document.getElementById("progress").style.width = `${progress}%`;
       }
 
@@ -286,25 +285,38 @@
         const feedbackTitle = document.getElementById("feedback-title");
         const feedbackMessage = document.getElementById("feedback-message");
 
+        const existingContinueButton = document.querySelector(
+          "#feedback-modal .choice-button"
+        );
+        if (existingContinueButton) {
+          existingContinueButton.remove();
+        }
+
         feedbackTitle.innerText = "Quiz Complete! 🎉";
         feedbackMessage.innerHTML = `
-                Your score: ${score}/${
-          questionsDatabase.length
-        } (${percentage.toFixed(1)}%)<br><br>
-                ${
-                  percentage >= 80
-                    ? "Outstanding work! You're a math superstar! 🌟"
-                    : percentage >= 60
-                    ? "Good job! Keep practicing to become even better! 💪"
-                    : "Keep practicing! You'll get better every time! 🌱"
-                }<br><br>
-                <button class="choice-button" onclick="returnToUnits()">Continue</button>
-            `;
+        Your score: ${score}/${questionsDatabase.length} (${percentage.toFixed(
+          1
+        )}%)<br><br>
+        ${
+          percentage >= 80
+            ? "Outstanding work! 🌟"
+            : percentage >= 60
+            ? "Good job! 💪"
+            : "Keep practicing! 🌱"
+        }<br><br>
+      `;
+
+        const continueButton = document.createElement("button");
+        continueButton.classList.add("choice-button");
+        continueButton.innerText = "Continue";
+        continueButton.onclick = returnToUnits;
+        feedbackMessage.appendChild(continueButton);
+
         feedbackModal.style.display = "block";
       }
 
       function returnToUnits() {
-        window.location.href = `../G2_Units.cam.html?unit1score=${score}`; 
+        window.location.href = "../../G2_units.cam.html?unit2score=" + score;
       }
 
       displayNextQuestion();

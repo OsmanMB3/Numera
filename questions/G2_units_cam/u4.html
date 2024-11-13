@@ -27,178 +27,197 @@
 
     <script>
       const questionsDatabase = [
-    {
-        question: "How many sides does a hexagon have?",
-        answer: "6",
-        choices: ["4", "5", "6", "8"],
-        feedback: {
+        {
+          question: "How many sides does a hexagon have?",
+          answer: "6",
+          choices: ["4", "5", "6", "8"],
+          feedback: {
             correct: "Excellent! A hexagon has 6 sides.",
-            incorrect: "Remember, 'hexa-' means six."
-        }
-    },
-    {
-        question: "Which shape has only one curved side?",
-        answer: "Circle",
-        choices: ["Square", "Triangle", "Rectangle", "Circle"],
-        feedback: {
+            incorrect: "Remember, 'hexa-' means six.",
+          },
+        },
+        {
+          question: "Which shape has only one curved side?",
+          answer: "Circle",
+          choices: ["Square", "Triangle", "Rectangle", "Circle"],
+          feedback: {
             correct: "Correct! A circle has one curved side.",
-            incorrect: "A circle is round with no straight sides."
-        }
-    },
-    {
-        question: "How many angles does a triangle have?",
-        answer: "3",
-        choices: ["2", "3", "4", "5"],
-        feedback: {
+            incorrect: "A circle is round with no straight sides.",
+          },
+        },
+        {
+          question: "How many angles does a triangle have?",
+          answer: "3",
+          choices: ["2", "3", "4", "5"],
+          feedback: {
             correct: "Great! A triangle has 3 angles.",
-            incorrect: "A triangle always has 3 angles."
-        }
-    },
-    {
-        question: "Which shape is made up of four equal sides and four right angles?",
-        answer: "Square",
-        choices: ["Rectangle", "Square", "Rhombus", "Trapezoid"],
-        feedback: {
+            incorrect: "A triangle always has 3 angles.",
+          },
+        },
+        {
+          question:
+            "Which shape is made up of four equal sides and four right angles?",
+          answer: "Square",
+          choices: ["Rectangle", "Square", "Rhombus", "Trapezoid"],
+          feedback: {
             correct: "Correct! A square has equal sides and right angles.",
-            incorrect: "A square has four equal sides and four right angles."
-        }
-    },
-    {
-        question: "How many sides does a pentagon have?",
-        answer: "5",
-        choices: ["4", "5", "6", "8"],
-        feedback: {
+            incorrect: "A square has four equal sides and four right angles.",
+          },
+        },
+        {
+          question: "How many sides does a pentagon have?",
+          answer: "5",
+          choices: ["4", "5", "6", "8"],
+          feedback: {
             correct: "Well done! A pentagon has 5 sides.",
-            incorrect: "A pentagon's prefix 'penta-' means five."
-        }
-    },
-    {
-        question: "What shape has opposite sides that are equal and four right angles?",
-        answer: "Rectangle",
-        choices: ["Square", "Trapezoid", "Rectangle", "Hexagon"],
-        feedback: {
-            correct: "Great job! A rectangle has opposite sides equal and four right angles.",
-            incorrect: "A rectangle has equal opposite sides and right angles."
-        }
-    },
-    {
-        question: "What is a shape with three sides called?",
-        answer: "Triangle",
-        choices: ["Triangle", "Square", "Hexagon", "Pentagon"],
-        feedback: {
+            incorrect: "A pentagon's prefix 'penta-' means five.",
+          },
+        },
+        {
+          question:
+            "What shape has opposite sides that are equal and four right angles?",
+          answer: "Rectangle",
+          choices: ["Square", "Trapezoid", "Rectangle", "Hexagon"],
+          feedback: {
+            correct:
+              "Great job! A rectangle has opposite sides equal and four right angles.",
+            incorrect: "A rectangle has equal opposite sides and right angles.",
+          },
+        },
+        {
+          question: "What is a shape with three sides called?",
+          answer: "Triangle",
+          choices: ["Triangle", "Square", "Hexagon", "Pentagon"],
+          feedback: {
             correct: "Correct! A three-sided shape is called a triangle.",
-            incorrect: "A shape with three sides is a triangle."
-        }
-    },
-    {
-        question: "Which shape has four sides but only one pair of parallel sides?",
-        answer: "Trapezoid",
-        choices: ["Rectangle", "Square", "Trapezoid", "Rhombus"],
-        feedback: {
+            incorrect: "A shape with three sides is a triangle.",
+          },
+        },
+        {
+          question:
+            "Which shape has four sides but only one pair of parallel sides?",
+          answer: "Trapezoid",
+          choices: ["Rectangle", "Square", "Trapezoid", "Rhombus"],
+          feedback: {
             correct: "Good job! A trapezoid has one pair of parallel sides.",
-            incorrect: "A trapezoid has only one pair of parallel sides."
-        }
-    },
-    {
-        question: "What is a solid shape with six faces, all of which are rectangles?",
-        answer: "Rectangular prism",
-        choices: ["Cube", "Square", "Rectangular prism", "Cylinder"],
-        feedback: {
+            incorrect: "A trapezoid has only one pair of parallel sides.",
+          },
+        },
+        {
+          question:
+            "What is a solid shape with six faces, all of which are rectangles?",
+          answer: "Rectangular prism",
+          choices: ["Cube", "Square", "Rectangular prism", "Cylinder"],
+          feedback: {
             correct: "Correct! A rectangular prism has six rectangular faces.",
-            incorrect: "A rectangular prism is a 3D shape with six rectangular faces."
-        }
-    },
-    {
-        question: "How many equal faces does a cube have?",
-        answer: "6",
-        choices: ["4", "5", "6", "8"],
-        feedback: {
+            incorrect:
+              "A rectangular prism is a 3D shape with six rectangular faces.",
+          },
+        },
+        {
+          question: "How many equal faces does a cube have?",
+          answer: "6",
+          choices: ["4", "5", "6", "8"],
+          feedback: {
             correct: "Great! A cube has 6 equal faces.",
-            incorrect: "A cube is made of 6 equal square faces."
-        }
-    },
-    {
-        question: "What shape is created when you fold a rectangle in half?",
-        answer: "Two equal halves",
-        choices: ["Two equal halves", "Triangle", "Circle", "Two rectangles"],
-        feedback: {
-            correct: "Correct! Folding a rectangle in half creates two equal halves.",
-            incorrect: "Think of how a rectangle divides symmetrically."
-        }
-    },
-    {
-        question: "What is a shape that can be divided into four equal triangles?",
-        answer: "Square",
-        choices: ["Rectangle", "Hexagon", "Square", "Circle"],
-        feedback: {
-            correct: "Good job! A square can be divided into four equal triangles.",
-            incorrect: "Try visualizing a square divided from corner to corner."
-        }
-    },
-    {
-        question: "How many vertices does a pentagon have?",
-        answer: "5",
-        choices: ["3", "4", "5", "6"],
-        feedback: {
+            incorrect: "A cube is made of 6 equal square faces.",
+          },
+        },
+        {
+          question: "What shape is created when you fold a rectangle in half?",
+          answer: "Two equal halves",
+          choices: ["Two equal halves", "Triangle", "Circle", "Two rectangles"],
+          feedback: {
+            correct:
+              "Correct! Folding a rectangle in half creates two equal halves.",
+            incorrect: "Think of how a rectangle divides symmetrically.",
+          },
+        },
+        {
+          question:
+            "What is a shape that can be divided into four equal triangles?",
+          answer: "Square",
+          choices: ["Rectangle", "Hexagon", "Square", "Circle"],
+          feedback: {
+            correct:
+              "Good job! A square can be divided into four equal triangles.",
+            incorrect:
+              "Try visualizing a square divided from corner to corner.",
+          },
+        },
+        {
+          question: "How many vertices does a pentagon have?",
+          answer: "5",
+          choices: ["3", "4", "5", "6"],
+          feedback: {
             correct: "Correct! A pentagon has 5 vertices.",
-            incorrect: "A pentagon has 5 corners or vertices."
-        }
-    },
-    {
-        question: "What is the name of a three-dimensional shape with a circular base and one vertex?",
-        answer: "Cone",
-        choices: ["Sphere", "Cylinder", "Cube", "Cone"],
-        feedback: {
+            incorrect: "A pentagon has 5 corners or vertices.",
+          },
+        },
+        {
+          question:
+            "What is the name of a three-dimensional shape with a circular base and one vertex?",
+          answer: "Cone",
+          choices: ["Sphere", "Cylinder", "Cube", "Cone"],
+          feedback: {
             correct: "Great! A cone has a circular base and one vertex.",
-            incorrect: "A cone has a round base and tapers to a point."
-        }
-    },
-    {
-        question: "Which shape has no sides and no corners?",
-        answer: "Circle",
-        choices: ["Square", "Triangle", "Circle", "Rectangle"],
-        feedback: {
+            incorrect: "A cone has a round base and tapers to a point.",
+          },
+        },
+        {
+          question: "Which shape has no sides and no corners?",
+          answer: "Circle",
+          choices: ["Square", "Triangle", "Circle", "Rectangle"],
+          feedback: {
             correct: "Correct! A circle has no sides or corners.",
-            incorrect: "A circle is round with no edges or corners."
-        }
-    },
-    {
-        question: "Which shape has equal opposite sides but not all sides equal?",
-        answer: "Rectangle",
-        choices: ["Square", "Rectangle", "Rhombus", "Trapezoid"],
-        feedback: {
+            incorrect: "A circle is round with no edges or corners.",
+          },
+        },
+        {
+          question:
+            "Which shape has equal opposite sides but not all sides equal?",
+          answer: "Rectangle",
+          choices: ["Square", "Rectangle", "Rhombus", "Trapezoid"],
+          feedback: {
             correct: "Great job! A rectangle has opposite sides equal.",
-            incorrect: "A rectangle's opposite sides are equal, but not all four sides are."
-        }
-    },
-    {
-        question: "What do you get if you divide a circle into four equal parts?",
-        answer: "Four quarters",
-        choices: ["Four halves", "Four quarters", "Four thirds", "Four angles"],
-        feedback: {
+            incorrect:
+              "A rectangle's opposite sides are equal, but not all four sides are.",
+          },
+        },
+        {
+          question:
+            "What do you get if you divide a circle into four equal parts?",
+          answer: "Four quarters",
+          choices: [
+            "Four halves",
+            "Four quarters",
+            "Four thirds",
+            "Four angles",
+          ],
+          feedback: {
             correct: "Correct! You get four quarters.",
-            incorrect: "Think of a circle divided evenly into four parts."
-        }
-    },
-    {
-        question: "How many faces does a cube have?",
-        answer: "6",
-        choices: ["4", "5", "6", "8"],
-        feedback: {
+            incorrect: "Think of a circle divided evenly into four parts.",
+          },
+        },
+        {
+          question: "How many faces does a cube have?",
+          answer: "6",
+          choices: ["4", "5", "6", "8"],
+          feedback: {
             correct: "Correct! A cube has 6 faces.",
-            incorrect: "A cube is made up of 6 square faces."
-        }
-    },
-    {
-        question: "Which shape has more than 4 sides?",
-        answer: "Pentagon",
-        choices: ["Triangle", "Square", "Pentagon", "Rectangle"],
-        feedback: {
+            incorrect: "A cube is made up of 6 square faces.",
+          },
+        },
+        {
+          question: "Which shape has more than 4 sides?",
+          answer: "Pentagon",
+          choices: ["Triangle", "Square", "Pentagon", "Rectangle"],
+          feedback: {
             correct: "Well done! A pentagon has more than 4 sides.",
-            incorrect: "A pentagon has 5 sides."
-        }
-    }
-];
+            incorrect: "A pentagon has 5 sides.",
+          },
+        },
+      ];
 
       let currentQuestionIndex = 0;
       let score = 0;
@@ -214,7 +233,6 @@
         );
         answerOptionsContainer.innerHTML = "";
 
-        // Shuffle choices
         const shuffledChoices = [...questionObject.choices];
         for (let i = shuffledChoices.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
@@ -266,7 +284,7 @@
 
       function updateProgress() {
         const progress =
-          (currentQuestionIndex / questionsDatabase.length) * 100;
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
         document.getElementById("progress").style.width = `${progress}%`;
       }
 
@@ -276,25 +294,38 @@
         const feedbackTitle = document.getElementById("feedback-title");
         const feedbackMessage = document.getElementById("feedback-message");
 
+        const existingContinueButton = document.querySelector(
+          "#feedback-modal .choice-button"
+        );
+        if (existingContinueButton) {
+          existingContinueButton.remove();
+        }
+
         feedbackTitle.innerText = "Quiz Complete! 🎉";
         feedbackMessage.innerHTML = `
-                Your score: ${score}/${
-          questionsDatabase.length
-        } (${percentage.toFixed(1)}%)<br><br>
-                ${
-                  percentage >= 80
-                    ? "Outstanding work! You're a math superstar! 🌟"
-                    : percentage >= 60
-                    ? "Good job! Keep practicing to become even better! 💪"
-                    : "Keep practicing! You'll get better every time! 🌱"
-                }<br><br>
-                <button class="choice-button" onclick="returnToUnits()">Continue</button>
-            `;
+        Your score: ${score}/${questionsDatabase.length} (${percentage.toFixed(
+          1
+        )}%)<br><br>
+        ${
+          percentage >= 80
+            ? "Outstanding work! 🌟"
+            : percentage >= 60
+            ? "Good job! 💪"
+            : "Keep practicing! 🌱"
+        }<br><br>
+      `;
+
+        const continueButton = document.createElement("button");
+        continueButton.classList.add("choice-button");
+        continueButton.innerText = "Continue";
+        continueButton.onclick = returnToUnits;
+        feedbackMessage.appendChild(continueButton);
+
         feedbackModal.style.display = "block";
       }
 
       function returnToUnits() {
-        window.location.href = `../G2_Units.cam.html?unit1score=${score}`; // 
+        window.location.href = "../../G2_units.cam.html?unit4score=" + score;
       }
 
       displayNextQuestion();

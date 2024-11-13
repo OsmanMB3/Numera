@@ -33,28 +33,178 @@
 
     <script>
       const questionsDatabase = [
-        {
-          question: "What is 25 + 36?",
-          answer: "61",
-          choices: ["60", "61", "62", "63"],
-          feedback: {
-            correct: "Great job! 25 + 36 = 61.",
-            incorrect:
-              "Try adding the tens and ones separately: 25 + 30 + 6 = 61.",
-          },
-        },
-        {
-          question:
-            "If Sarah has 42 pencils and gives away 15, how many does she have left?",
-          answer: "27",
-          choices: ["26", "27", "28", "29"],
-          feedback: {
-            correct: "Correct! 42 - 15 = 27.",
-            incorrect:
-              "Think about subtracting the ones and then the tens separately: 42 - 15.",
-          },
-        },
-      ];
+  {
+    question: "Emma has 23 apples, and she buys 17 more. How many apples does she have now?",
+    answer: "40",
+    choices: ["40", "39", "41", "38"],
+    feedback: {
+      correct: "Great job! 23 + 17 = 40.",
+      incorrect: "Try adding the tens and ones separately: 20 + 10 = 30, then 3 + 7 = 10, so 30 + 10 = 40.",
+    },
+  },
+  {
+    question: "A store has 45 toy cars. It sells 29 of them. How many toy cars are left in the store?",
+    answer: "16",
+    choices: ["16", "15", "14", "17"],
+    feedback: {
+      correct: "Correct! 45 - 29 = 16.",
+      incorrect: "Think about subtracting the tens first and then the ones: 40 - 20 = 20, and 5 - 9 gives us 16.",
+    },
+  },
+  {
+    question: "Which of the following equations is true?",
+    answer: "9 + 8 = 17",
+    choices: ["9 + 8 = 17", "9 + 8 = 18", "9 + 8 = 16", "9 + 8 = 15"],
+    feedback: {
+      correct: "Perfect! 9 + 8 = 17.",
+      incorrect: "Remember to add both numbers carefully: 9 + 8 equals 17.",
+    },
+  },
+  {
+    question: "Sara has 6 packs of crayons. Each pack has 4 crayons. How many crayons does she have in total?",
+    answer: "24",
+    choices: ["24", "20", "22", "26"],
+    feedback: {
+      correct: "Well done! 6 groups of 4 crayons each equals 24.",
+      incorrect: "Multiply the number of packs by crayons in each pack: 6 x 4 = 24.",
+    },
+  },
+  {
+    question: "What is 13 + 6?",
+    answer: "19",
+    choices: ["18", "19", "20", "21"],
+    feedback: {
+      correct: "Good work! 13 + 6 = 19.",
+      incorrect: "Try adding the tens and then the ones separately to solve this.",
+    },
+  },
+  {
+    question: "Which of these sums is correct?",
+    answer: "12 + 8 = 20",
+    choices: ["12 + 8 = 20", "12 + 8 = 21", "12 + 8 = 22", "12 + 8 = 19"],
+    feedback: {
+      correct: "Great! 12 + 8 equals 20.",
+      incorrect: "Check your addition by adding the tens first, then the ones.",
+    },
+  },
+  {
+    question: "A basket has 16 apples. If you take away 9, how many apples are left?",
+    answer: "7",
+    choices: ["7", "6", "5", "8"],
+    feedback: {
+      correct: "Correct! 16 - 9 = 7.",
+      incorrect: "Count backwards from 16 by 9 to find the answer.",
+    },
+  },
+  {
+    question: "What is the result of 18 - 7?",
+    answer: "11",
+    choices: ["10", "11", "12", "13"],
+    feedback: {
+      correct: "Well done! 18 - 7 equals 11.",
+      incorrect: "Try subtracting by breaking down the numbers for easier calculation.",
+    },
+  },
+  {
+    question: "If 4 + 5 = 9, what is 9 - 4?",
+    answer: "5",
+    choices: ["5", "4", "6", "3"],
+    feedback: {
+      correct: "Excellent! You've recognized the relationship between addition and subtraction.",
+      incorrect: "Think of how 9 - 4 should equal 5 because 4 + 5 = 9.",
+    },
+  },
+  {
+    question: "Which number sentence shows an even number?",
+    answer: "6 + 6 = 12",
+    choices: ["5 + 4 = 9", "6 + 6 = 12", "7 + 5 = 12", "8 + 7 = 15"],
+    feedback: {
+      correct: "Good job! 6 + 6 = 12 is an even number because it's a sum of two equal parts.",
+      incorrect: "Check if each sum makes pairs for an even total.",
+    },
+  },
+  {
+    question: "Mike arranged 12 marbles into 3 equal groups. How many marbles are in each group?",
+    answer: "4",
+    choices: ["3", "4", "6", "5"],
+    feedback: {
+      correct: "That's right! 12 divided by 3 equals 4 marbles in each group.",
+      incorrect: "Divide the marbles equally among the groups to find the answer.",
+    },
+  },
+  {
+    question: "Which statement shows an odd number?",
+    answer: "5 + 4 = 9",
+    choices: ["5 + 4 = 9", "6 + 6 = 12", "7 + 3 = 10", "8 + 8 = 16"],
+    feedback: {
+      correct: "Good job! 5 + 4 = 9 is an odd number.",
+      incorrect: "Check if the sum is not divisible by 2.",
+    },
+  },
+  {
+    question: "Find the missing number: 15 - __ = 8",
+    answer: "7",
+    choices: ["6", "7", "8", "9"],
+    feedback: {
+      correct: "Great! 15 - 7 equals 8.",
+      incorrect: "Subtract the given number to check if you get 8.",
+    },
+  },
+  {
+    question: "What is the total of 7 groups of 2?",
+    answer: "14",
+    choices: ["14", "12", "16", "13"],
+    feedback: {
+      correct: "Well done! 7 groups of 2 equals 14.",
+      incorrect: "Multiply 7 by 2 to find the total.",
+    },
+  },
+  {
+    question: "Which of these equations is correct?",
+    answer: "6 + 7 = 13",
+    choices: ["6 + 7 = 13", "6 + 8 = 13", "6 + 7 = 14", "6 + 6 = 13"],
+    feedback: {
+      correct: "Correct! 6 + 7 = 13.",
+      incorrect: "Add carefully to check your answer.",
+    },
+  },
+  {
+    question: "Lisa arranged 15 candies into 5 equal groups. How many candies are in each group?",
+    answer: "3",
+    choices: ["3", "5", "4", "6"],
+    feedback: {
+      correct: "Great! 15 divided by 5 equals 3.",
+      incorrect: "Divide the candies equally to find the answer.",
+    },
+  },
+  {
+    question: "What is 14 + 9?",
+    answer: "23",
+    choices: ["23", "22", "24", "21"],
+    feedback: {
+      correct: "Good work! 14 + 9 equals 23.",
+      incorrect: "Add the numbers carefully to check your answer.",
+    },
+  },
+  {
+    question: "If 12 + 8 = 20, what is 20 - 8?",
+    answer: "12",
+    choices: ["12", "13", "11", "14"],
+    feedback: {
+      correct: "Correct! You've identified the inverse operation.",
+      incorrect: "Think of how addition and subtraction are related.",
+    },
+  },
+  {
+    question: "What is the sum of 15 and 5?",
+    answer: "20",
+    choices: ["20", "21", "19", "18"],
+    feedback: {
+      correct: "Excellent! 15 + 5 equals 20.",
+      incorrect: "Try adding 15 and 5 carefully.",
+    },
+  }
+];
       let currentQuestionIndex = 0;
       let score = 0;
 

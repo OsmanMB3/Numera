@@ -1,117 +1,364 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Unit 5 - Geometry</title>
-    <style>
-        :root {
-            --primary-color: #000033;
-            --header-color: white;
-        }
-
-        body {
-            font-family: 'Georgia', serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--header-color);
-            color: var(--primary-color);
-        }
-
-        .header {
-            text-align: center;
-            background-color: var(--header-color);
-            padding: 20px;
-            border-bottom: 2px solid var(--primary-color);
-        }
-
-        .question-container {
-            margin: 50px auto;
-            padding: 20px;
-            max-width: 800px;
-            border-radius: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            background-color: white;
-        }
-
-        .choice-button {
-            margin: 10px;
-            padding: 12px;
-            border: 2px solid var(--primary-color);
-            background-color: var(--header-color);
-            border-radius: 15px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .choice-button:hover {
-            background-color: #e6e6e6;
-        }
-
-        footer {
-            text-align: center;
-            padding: 15px;
-            background-color: var(--header-color);
-            color: var(--primary-color);
-            border-top: 2px solid var(--primary-color);
-        }
-    </style>
-</head>
-
-<body>
-    <header class="header">
-        <h1>Unit 5 - Geometry</h1>
-        <p>Challenge Your Knowledge on Shapes and Coordinates!</p>
-    </header>
-
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
     <div class="question-container">
-        <h3>Question:</h3>
-        <p id="question-text">Loading...</p>
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+      <div class="score-display">Score: <span id="score">0</span>/20</div>
+      <div class="question-box">
+        <h3>Question <span id="question-number">1</span>/20:</h3>
+        <p id="question-text">Loading question...</p>
         <div id="answer-options-container"></div>
+      </div>
     </div>
 
-    <footer>
-        <p>Numera, Inc &copy; 2024</p>
-    </footer>
+    <div id="feedback-modal" class="feedback-modal">
+      <h2 id="feedback-title"></h2>
+      <p id="feedback-message"></p>
+      <button
+        class="choice-button"
+        id="continue-button"
+        onclick="closeFeedback()"
+      >
+        Continue
+      </button>
+    </div>
 
     <script>
-        const questions = [
-            { question: "What is the point where the x-axis and y-axis meet?", answer: "Origin", choices: ["Origin", "Intersection", "Midpoint", "Central Axis"] },
-            { question: "How many sides does a parallelogram have?", answer: "4", choices: ["3", "4", "5", "6"] },
-            { question: "Plot the point (3, 4). Which quadrant is it in?", answer: "First", choices: ["First", "Second", "Third", "Fourth"] }
-        ];
+      const questionsDatabase = [
+        {
+          question:
+            "What are the coordinates of a point that is 5 units right and 3 units up from the origin?",
+          answer: "(5, 3)",
+          choices: ["(5, 3)", "(3, 5)", "(-5, 3)", "(5, -3)"],
+          feedback: {
+            correct:
+              "Correct! Moving 5 units right and 3 units up gives (5, 3).",
+            incorrect:
+              "The first number represents horizontal movement, and the second represents vertical.",
+          },
+        },
+        {
+          question:
+            "Classify a shape with four right angles and four equal sides.",
+          answer: "Square",
+          choices: ["Square", "Rectangle", "Rhombus", "Parallelogram"],
+          feedback: {
+            correct:
+              "Correct! Four equal sides and right angles make it a square.",
+            incorrect: "A square has equal sides and four right angles.",
+          },
+        },
+        {
+          question: "Which of these figures is a quadrilateral?",
+          answer: "Trapezoid",
+          choices: ["Triangle", "Trapezoid", "Pentagon", "Hexagon"],
+          feedback: {
+            correct: "That's right! A trapezoid is a four-sided figure.",
+            incorrect: "Quadrilaterals have four sides.",
+          },
+        },
+        {
+          question: "What is the x-coordinate of the origin?",
+          answer: "0",
+          choices: ["0", "1", "-1", "10"],
+          feedback: {
+            correct: "Correct! The origin has an x-coordinate of 0.",
+            incorrect: "The origin is at (0, 0), so x-coordinate is 0.",
+          },
+        },
+        {
+          question: "How many sides does a pentagon have?",
+          answer: "5",
+          choices: ["5", "4", "6", "8"],
+          feedback: {
+            correct: "Correct! A pentagon has 5 sides.",
+            incorrect: "Remember, 'pent' indicates five sides.",
+          },
+        },
+        {
+          question:
+            "Classify a triangle with two equal sides and one different side.",
+          answer: "Isosceles",
+          choices: ["Isosceles", "Equilateral", "Scalene", "Right"],
+          feedback: {
+            correct: "Good! An isosceles triangle has two equal sides.",
+            incorrect: "Isosceles triangles have two equal sides.",
+          },
+        },
+        {
+          question: "What quadrant is the point (-3, -4) located in?",
+          answer: "Quadrant III",
+          choices: ["Quadrant I", "Quadrant II", "Quadrant III", "Quadrant IV"],
+          feedback: {
+            correct: "Correct! (-3, -4) is in Quadrant III.",
+            incorrect:
+              "Both coordinates are negative, placing it in Quadrant III.",
+          },
+        },
+        {
+          question: "What do you call a polygon with eight sides?",
+          answer: "Octagon",
+          choices: ["Octagon", "Hexagon", "Pentagon", "Nonagon"],
+          feedback: {
+            correct: "That's right! An octagon has eight sides.",
+            incorrect: "Think of an octagon like a stop sign with eight sides.",
+          },
+        },
+        {
+          question: "How many lines of symmetry does a square have?",
+          answer: "4",
+          choices: ["4", "2", "1", "None"],
+          feedback: {
+            correct: "Correct! A square has 4 lines of symmetry.",
+            incorrect:
+              "A square can be folded along 4 different lines to reflect onto itself.",
+          },
+        },
+        {
+          question: "What is the y-coordinate of the point (6, 2)?",
+          answer: "2",
+          choices: ["6", "2", "0", "-2"],
+          feedback: {
+            correct: "Correct! The y-coordinate is 2.",
+            incorrect:
+              "The second number in an ordered pair is the y-coordinate.",
+          },
+        },
+        {
+          question: "Which shape has all sides equal and all angles equal?",
+          answer: "Equilateral Triangle",
+          choices: [
+            "Equilateral Triangle",
+            "Scalene Triangle",
+            "Rectangle",
+            "Right Triangle",
+          ],
+          feedback: {
+            correct:
+              "Good job! An equilateral triangle has equal sides and angles.",
+            incorrect: "Equilateral triangles have all sides and angles equal.",
+          },
+        },
+        {
+          question: "What type of angle is 90 degrees?",
+          answer: "Right Angle",
+          choices: [
+            "Right Angle",
+            "Acute Angle",
+            "Obtuse Angle",
+            "Reflex Angle",
+          ],
+          feedback: {
+            correct: "Correct! A 90-degree angle is a right angle.",
+            incorrect: "Right angles are exactly 90 degrees.",
+          },
+        },
+        {
+          question:
+            "In the coordinate plane, what does the point (0, 5) represent?",
+          answer: "Point on y-axis",
+          choices: [
+            "Point on y-axis",
+            "Point on x-axis",
+            "Origin",
+            "Quadrant I",
+          ],
+          feedback: {
+            correct: "Correct! (0, 5) lies on the y-axis.",
+            incorrect: "Points on the y-axis have an x-coordinate of 0.",
+          },
+        },
+        {
+          question: "What is the shape of a cross-section of a cylinder?",
+          answer: "Circle",
+          choices: ["Circle", "Square", "Rectangle", "Triangle"],
+          feedback: {
+            correct: "Correct! A cylinder's cross-section is a circle.",
+            incorrect: "When you cut a cylinder, you get a circle.",
+          },
+        },
+        {
+          question: "Which shape has only one pair of parallel sides?",
+          answer: "Trapezoid",
+          choices: ["Trapezoid", "Square", "Rectangle", "Pentagon"],
+          feedback: {
+            correct:
+              "Correct! A trapezoid has only one pair of parallel sides.",
+            incorrect: "Only trapezoids have a single pair of parallel sides.",
+          },
+        },
+        {
+          question:
+            "What is the length of each side of a square with a perimeter of 20 cm?",
+          answer: "5 cm",
+          choices: ["5 cm", "10 cm", "4 cm", "20 cm"],
+          feedback: {
+            correct: "Good! Each side is 5 cm because 4 x 5 = 20.",
+            incorrect: "Divide the perimeter by 4 for side length.",
+          },
+        },
+        {
+          question:
+            "How many degrees are in the sum of the interior angles of a quadrilateral?",
+          answer: "360 degrees",
+          choices: ["360 degrees", "180 degrees", "270 degrees", "90 degrees"],
+          feedback: {
+            correct:
+              "Correct! A quadrilateral’s interior angles sum to 360 degrees.",
+            incorrect:
+              "All quadrilaterals' interior angles sum to 360 degrees.",
+          },
+        },
+        {
+          question:
+            "If two sides of a triangle are 5 cm and 7 cm, can the third side be 13 cm?",
+          answer: "No",
+          choices: [
+            "No",
+            "Yes",
+            "Only if it's an equilateral triangle",
+            "Only if it's an isosceles triangle",
+          ],
+          feedback: {
+            correct:
+              "Correct! 13 cm is too long for a triangle with sides 5 cm and 7 cm.",
+            incorrect:
+              "The sum of two sides of a triangle must be greater than the third.",
+          },
+        },
+        {
+          question:
+            "What is the perimeter of a pentagon if each side measures 6 cm?",
+          answer: "30 cm",
+          choices: ["30 cm", "36 cm", "18 cm", "25 cm"],
+          feedback: {
+            correct: "Great! The perimeter is 5 x 6 = 30 cm.",
+            incorrect:
+              "Multiply the side length by the number of sides for perimeter.",
+          },
+        },
+        {
+          question:
+            "What is the distance between (3, 4) and (3, 8) on the coordinate plane?",
+          answer: "4 units",
+          choices: ["4 units", "5 units", "3 units", "8 units"],
+          feedback: {
+            correct: "Correct! The distance is 4 units.",
+            incorrect: "The points differ by 4 in the y-coordinate.",
+          },
+        },
+      ];
 
-        let currentIndex = 0;
+      let currentQuestionIndex = 0;
+      let score = 0;
 
-        function loadQuestion() {
-            const q = questions[currentIndex];
-            document.getElementById('question-text').innerText = q.question;
-            const container = document.getElementById('answer-options-container');
-            container.innerHTML = '';
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
 
-            q.choices.forEach(choice => {
-                const button = document.createElement('button');
-                button.className = 'choice-button';
-                button.innerText = choice;
-                button.onclick = () => checkAnswer(choice, q.answer);
-                container.appendChild(button);
-            });
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
         }
 
-        function checkAnswer(selected, correct) {
-            if (selected === correct) {
-                currentIndex++;
-                if (currentIndex < questions.length) {
-                    loadQuestion();
-                } else {
-                    alert('Well done! You completed the unit.');
-                }
-            } else {
-                alert('Incorrect. Try again!');
-            }
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
         }
 
-        loadQuestion();
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G5_Units.cam.html?unit5score=${score}`;
+    }
+
+      displayNextQuestion();
     </script>
-</body>
+  </body>
 </html>

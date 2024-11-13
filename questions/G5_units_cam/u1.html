@@ -1,172 +1,343 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Operations and Algebraic Thinking - Numera</title>
-    <style>
-        :root {
-            --primary-color: #000033;
-            --accent-color: #0055aa;
-            --header-color: white;
-            --button-hover-color: #e6e6e6;
-        }
-
-        body {
-            font-family: 'Georgia', serif;
-            margin: 0;
-            padding: 0;
-            color: var(--primary-color);
-            background-color: white;
-        }
-
-        .header {
-            background-color: var(--header-color);
-            color: var(--primary-color);
-            text-align: center;
-            padding: 20px;
-            border-bottom: 2px solid var(--primary-color);
-        }
-
-        .question-container {
-            max-width: 800px;
-            margin: 50px auto;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            background-color: var(--header-color);
-        }
-
-        .question-box {
-            border: 2px solid var(--primary-color);
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .choices-container {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 20px;
-            align-items: center;
-        }
-
-        .choice-button {
-            padding: 12px 20px;
-            border-radius: 15px;
-            background-color: white;
-            color: var(--primary-color);
-            border: 2px solid var(--accent-color);
-            cursor: pointer;
-            width: 80%;
-            max-width: 300px;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-
-        .choice-button:hover {
-            background-color: var(--button-hover-color);
-            transform: scale(1.05);
-        }
-
-        .submit-button {
-            margin-top: 30px;
-            padding: 12px 20px;
-            border-radius: 15px;
-            background-color: var(--primary-color);
-            color: var(--header-color);
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s, transform 0.2s;
-        }
-
-        .submit-button:hover {
-            background-color: var(--accent-color);
-            transform: scale(1.05);
-        }
-
-        footer {
-            text-align: center;
-            padding: 15px;
-            background-color: var(--header-color);
-            border-top: 2px solid var(--primary-color);
-            color: var(--primary-color);
-        }
-    </style>
+    <link rel="stylesheet" href="../styles.css" />
 </head>
-
 <body>
-    <header class="header">
-        <h1>Operations and Algebraic Thinking</h1>
-        <p>Challenge Yourself with Fun and Engaging Questions!</p>
-    </header>
-
-    <div class="question-container">
-        <div class="question-box">
-            <h3>Question:</h3>
-            <p id="question-text">Loading question...</p>
-            <div id="answer-options-container" class="choices-container"></div>
-            <button class="submit-button" onclick="checkAnswer()">Submit</button>
-        </div>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
     </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
 
-    <footer>
-        <p>Numera, Inc &copy; 2024</p>
-    </footer>
-
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
     <script>
-        const questionsDatabase = [
-            { question: "In 123.456, what does the 4 represent?", answer: "Four hundreds", choices: ["Four tenths", "Four hundreds", "Four thousandths", "Four hundredths"] },
-            { question: "Multiply 10 by 100. How many zeros in total?", answer: "3", choices: ["2", "3", "4", "5"] },
-            { question: "Which is bigger, 0.501 or 0.510?", answer: "0.510", choices: ["0.501", "0.510", "They're the same", "Can't tell"] },
-            { question: "What's 0.6 rounded to the nearest whole number?", answer: "1", choices: ["0", "1", "0.5", "0.6"] },
-            { question: "Multiply 5 by 100. What do you get?", answer: "500", choices: ["50", "500", "5,000", "505"] },
-            { question: "Round 4.86 to the nearest whole number.", answer: "5", choices: ["4", "5", "4.8", "4.9"] },
-            { question: "If 5 x 3 = 15, what's 5 x 30?", answer: "150", choices: ["50", "150", "30", "15"] },
-            { question: "Start with 3. Multiply by 10 three times. What number do you get?", answer: "3000", choices: ["30", "300", "3,000", "300,000"] },
-            { question: "How do you express 4 added to 6 and then multiplied by 2?", answer: "(4 + 6) x 2", choices: ["4 + 6 x 2", "(4 + 6) x 2", "4 + (6 x 2)", "2 x 4 + 6"] },
-            { question: "What's 0.5 multiplied by 100?", answer: "50", choices: ["5", "50", "0.05", "500"] },
-            { question: "What's 23 times 45?", answer: "1035", choices: ["1035", "935", "1025", "950"] },
-            { question: "What's 8928 divided by 12?", answer: "744", choices: ["744", "764", "752", "734"] },
-            { question: "Round 3.75 to the nearest whole number.", answer: "4", choices: ["3", "4", "3.8", "3.7"] },
-            { question: "In the number 5,800, what does the 8 represent?", answer: "8 thousands", choices: ["8 ones", "8 tens", "8 hundreds", "8 thousands"] },
-            { question: "Starting with 0 and adding 3 each time, what's the fourth number?", answer: "9", choices: ["3", "6", "9", "12"] }
-        ];
+      const questionsDatabase = [
+        {
+          question: "In 347.892, what does the 7 represent?",
+          answer: "7 tenths",
+          choices: ["7 tens", "7 tenths", "7 hundredths", "7 thousandths"],
+          feedback: {
+            correct:
+              "Correct! The 7 is in the tenths place, representing 7 tenths.",
+            incorrect:
+              "Remember, in decimal numbers, the first place after the decimal is the tenths place.",
+          },
+        },
+        {
+          question: "Multiply 25 by 1,000. How many zeros are in the result?",
+          answer: "3",
+          choices: ["2", "3", "4", "5"],
+          feedback: {
+            correct:
+              "Well done! 25 multiplied by 1,000 gives 25,000, which has 3 zeros.",
+            incorrect:
+              "When you multiply by 1,000, you add three zeros to the end of the number.",
+          },
+        },
+        {
+          question: "Which is larger, 0.604 or 0.640?",
+          answer: "0.640",
+          choices: ["0.604", "0.640", "They are the same", "Can't determine"],
+          feedback: {
+            correct: "That's right! 0.640 is larger than 0.604.",
+            incorrect:
+              "Compare the digits in the tenths, hundredths, and thousandths places to determine which is larger.",
+          },
+        },
+        {
+          question: "What is 0.8 rounded to the nearest whole number?",
+          answer: "1",
+          choices: ["0", "1", "0.5", "0.8"],
+          feedback: {
+            correct:
+              "Correct! Rounding 0.8 to the nearest whole number gives 1.",
+            incorrect:
+              "When rounding decimals, look at the tenths place. If it's 5 or more, round up.",
+          },
+        },
+        {
+          question: "Multiply 6 by 100. What do you get?",
+          answer: "600",
+          choices: ["60", "600", "6,000", "66"],
+          feedback: {
+            correct: "Good job! 6 multiplied by 100 is 600.",
+            incorrect:
+              "When multiplying by 100, move each digit two places to the left, adding two zeros at the end.",
+          },
+        },
+        {
+          question: "Round 5.92 to the nearest whole number.",
+          answer: "6",
+          choices: ["5", "6", "5.9", "5.8"],
+          feedback: {
+            correct:
+              "Correct! Rounding 5.92 to the nearest whole number gives 6.",
+            incorrect:
+              "If the tenths place is 5 or more, round up the whole number.",
+          },
+        },
+        {
+          question: "If 7 x 4 = 28, what is 7 x 40?",
+          answer: "280",
+          choices: ["70", "280", "400", "28"],
+          feedback: {
+            correct: "Well done! 7 times 40 equals 280.",
+            incorrect:
+              "Think of 7 times 4, then add a zero to adjust for the 40.",
+          },
+        },
+        {
+          question:
+            "Start with 5. Multiply by 10 twice. What number do you get?",
+          answer: "500",
+          choices: ["50", "500", "5,000", "50,000"],
+          feedback: {
+            correct: "Great! 5 multiplied by 10 twice is 500.",
+            incorrect:
+              "Each multiplication by 10 moves the decimal point one place to the right.",
+          },
+        },
+        {
+          question: "How do you express 'add 8 to 7, then multiply by 3'?",
+          answer: "(8 + 7) x 3",
+          choices: ["8 + 7 x 3", "(8 + 7) x 3", "8 + (7 x 3)", "3 x 8 + 7"],
+          feedback: {
+            correct:
+              "Correct! To add 8 to 7 first, you need parentheses around (8 + 7).",
+            incorrect:
+              "Remember, operations in parentheses are performed first.",
+          },
+        },
+        {
+          question: "What is 0.75 multiplied by 100?",
+          answer: "75",
+          choices: ["7.5", "75", "0.075", "750"],
+          feedback: {
+            correct: "Nice! 0.75 times 100 equals 75.",
+            incorrect:
+              "Multiply by 100 by moving the decimal point two places to the right.",
+          },
+        },
+        {
+          question: "What's 64 times 23?",
+          answer: "1472",
+          choices: ["1472", "1342", "1600", "1448"],
+          feedback: {
+            correct: "Good job! 64 times 23 equals 1472.",
+            incorrect:
+              "Try using long multiplication to calculate 64 times 23.",
+          },
+        },
+        {
+          question: "What's 936 divided by 12?",
+          answer: "78",
+          choices: ["76", "78", "82", "74"],
+          feedback: {
+            correct: "Well done! 936 divided by 12 is 78.",
+            incorrect: "Divide each part of 936 by 12 or use long division.",
+          },
+        },
+        {
+          question: "Round 2.49 to the nearest whole number.",
+          answer: "2",
+          choices: ["2", "3", "2.4", "2.5"],
+          feedback: {
+            correct: "Correct! Rounding 2.49 gives 2.",
+            incorrect:
+              "If the tenths place is 4 or lower, round down to the nearest whole number.",
+          },
+        },
+        {
+          question: "In the number 4,620, what does the 6 represent?",
+          answer: "6 hundreds",
+          choices: ["6 tens", "6 hundreds", "6 thousands", "6 ones"],
+          feedback: {
+            correct: "Nice! The 6 is in the hundreds place, representing 600.",
+            incorrect:
+              "Remember, in a four-digit number, the hundreds place is the third from the right.",
+          },
+        },
+        {
+          question:
+            "Using the rule 'Add 5', what's the fourth term in the sequence starting at 0?",
+          answer: "15",
+          choices: ["5", "10", "15", "20"],
+          feedback: {
+            correct:
+              "Good job! The sequence 0, 5, 10, 15 shows the fourth term is 15.",
+            incorrect: "Add 5 to each previous term starting from 0.",
+          },
+        },
+        {
+          question: "What is the value of the expression 6 x (4 + 5)?",
+          answer: "54",
+          choices: ["20", "54", "24", "36"],
+          feedback: {
+            correct: "Well done! 6 times (4 + 5) equals 54.",
+            incorrect: "Add 4 and 5 first, then multiply by 6.",
+          },
+        },
+        {
+          question: "How many times does 8 fit into 72?",
+          answer: "9",
+          choices: ["8", "9", "10", "12"],
+          feedback: {
+            correct: "Correct! 8 fits into 72 nine times.",
+            incorrect: "Divide 72 by 8 to find how many times 8 fits.",
+          },
+        },
+        {
+          question: "If 4 x 3 = 12, then 4 x 30 equals?",
+          answer: "120",
+          choices: ["12", "120", "300", "30"],
+          feedback: {
+            correct: "Nice! 4 times 30 is 120.",
+            incorrect: "Use 4 times 3 and add a zero to adjust for the 30.",
+          },
+        },
+        {
+          question: "What's 12 divided by 0.1?",
+          answer: "120",
+          choices: ["1.2", "12", "120", "1.0"],
+          feedback: {
+            correct:
+              "Well done! Dividing by 0.1 moves the decimal one place right, making it 120.",
+            incorrect: "Dividing by 0.1 is like multiplying by 10.",
+          },
+        },
+        {
+          question: "What is the result of 6 x (8 - 2)?",
+          answer: "36",
+          choices: ["42", "36", "30", "48"],
+          feedback: {
+            correct: "Correct! 6 times (8 - 2) equals 36.",
+            incorrect: "Subtract 8 - 2 first, then multiply by 6.",
+          },
+        },
+      ];
 
-        let currentQuestionIndex = 0;
+      let currentQuestionIndex = 0;
+      let score = 0;
 
-        function displayNextQuestion() {
-            const questionObject = questionsDatabase[currentQuestionIndex];
-            document.getElementById('question-text').innerText = questionObject.question;
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
 
-            const answerOptionsContainer = document.getElementById('answer-options-container');
-            answerOptionsContainer.innerHTML = '';
-            questionObject.choices.forEach(choice => {
-                const choiceButton = document.createElement('button');
-                choiceButton.classList.add('choice-button');
-                choiceButton.innerText = choice;
-                choiceButton.onclick = () => checkAnswer(choice, questionObject.answer);
-                answerOptionsContainer.appendChild(choiceButton);
-            });
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
         }
 
-        function checkAnswer(userAnswer, correctAnswer) {
-            if (userAnswer === correctAnswer) {
-                currentQuestionIndex++;
-                if (currentQuestionIndex < questionsDatabase.length) {
-                    displayNextQuestion();
-                } else {
-                    alert('Congratulations! You completed all questions.');
-                }
-            } else {
-                alert('Incorrect! Try again.');
-            }
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
         }
 
-        displayNextQuestion();
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G5_Units.cam.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
     </script>
-</body>
-
+  </body>
 </html>

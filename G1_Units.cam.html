@@ -102,7 +102,7 @@
         </button>
       </div>
 
-      <div class="box">
+      <div class="box" id="unit2-box">
         <h2>Number and Operations in Base Ten</h2>
         <ul>
           <li>Extend the counting sequence.</li>
@@ -117,7 +117,7 @@
         </button>
       </div>
 
-      <div class="box">
+      <div class="box" id="unit3-box">
         <h2>Measurement and Data</h2>
         <ul>
           <li>Measure lengths indirectly and by iterating length units.</li>
@@ -130,7 +130,7 @@
         </button>
       </div>
 
-      <div class="box">
+      <div class="box" id="unit4-box">
         <h2>Geometry</h2>
         <ul>
           <li>Reason with shapes and their attributes.</li>
@@ -146,26 +146,42 @@
     </footer>
 
     <script>
+      // Function to launch the selected unit
       function launchCurriculum(unit) {
         const path = `questions/G1_units_cam/${unit}`;
         window.location.href = path;
       }
 
+      // Function to display scores for each unit based on URL parameters
       function displayScore() {
         const urlParams = new URLSearchParams(window.location.search);
-        const unit1Score = urlParams.get("unit1score");
+        const scores = {
+          unit1: urlParams.get("unit1score"),
+          unit2: urlParams.get("unit2score"),
+          unit3: urlParams.get("unit3score"),
+          unit4: urlParams.get("unit4score"),
+        };
 
-        if (unit1Score !== null) {
-          const unitBox = document.getElementById("unit1-box");
-          const scoreDisplay = document.createElement("div");
-          scoreDisplay.classList.add("score-display");
-          scoreDisplay.innerHTML = `
-            <p>Your last score: ${unit1Score}/20</p>
-            <button class="launch-button" onclick="launchCurriculum('u1.html')">Try Again</button>
-        `;
-          unitBox.appendChild(scoreDisplay);
-        }
+        Object.entries(scores).forEach(([unit, score], index) => {
+          if (score !== null) {
+            const unitBox = document.getElementById(`unit${index + 1}-box`);
+            const scoreDisplay = document.createElement("div");
+            scoreDisplay.classList.add("score-display");
+            scoreDisplay.innerHTML = `
+            <p>Your last score: ${score}/20</p>
+            <button class="launch-button" onclick="launchCurriculum('u${
+              index + 1
+            }.html')">Try Again</button>
+          `;
+            // Remove any existing score display to prevent duplication
+            const existingScore = unitBox.querySelector(".score-display");
+            if (existingScore) existingScore.remove();
+            unitBox.appendChild(scoreDisplay);
+          }
+        });
       }
+
+      // Call the function to display scores on page load
       displayScore();
     </script>
   </body>
