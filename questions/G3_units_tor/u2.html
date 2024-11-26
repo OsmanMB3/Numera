@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Measurement</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+      
+      const questionsDatabase = [
+  {
+    question: "How many centimeters are in 1 meter?",
+    answer: "100",
+    choices: ["10", "100", "1000", "50"],
+    feedback: {
+      correct: "Great job! There are 100 centimeters in 1 meter.",
+      incorrect: "Not quite. Remember, 1 meter equals 100 centimeters.",
+    },
+  },
+  {
+    question: "What is the perimeter of a rectangle with a length of 6 cm and a width of 4 cm?",
+    answer: "20 cm",
+    choices: ["10 cm", "20 cm", "24 cm", "12 cm"],
+    feedback: {
+      correct: "That's right! Perimeter is 2 × (length + width), so 20 cm.",
+      incorrect: "Not quite. Add the lengths and widths, then multiply by 2.",
+    },
+  },
+  {
+    question: "If a book is 2 kg heavier than a bag that weighs 5 kg, how much does the book weigh?",
+    answer: "7 kg",
+    choices: ["3 kg", "7 kg", "10 kg", "5 kg"],
+    feedback: {
+      correct: "Correct! Adding 2 kg to 5 kg gives 7 kg.",
+      incorrect: "Not quite. Add the weight difference to the bag's weight.",
+    },
+  },
+  {
+    question: "How many minutes are in an hour?",
+    answer: "60",
+    choices: ["60", "100", "30", "120"],
+    feedback: {
+      correct: "Good job! There are 60 minutes in an hour.",
+      incorrect: "Not quite. Think of how many minutes fit into one hour.",
+    },
+  },
+  {
+    question: "What is the area of a square with a side length of 5 cm?",
+    answer: "25 square cm",
+    choices: ["10 square cm", "20 square cm", "25 square cm", "30 square cm"],
+    feedback: {
+      correct: "Correct! Area of a square is side × side, so 5 × 5 = 25.",
+      incorrect: "Not quite. Multiply the side length by itself to find the area.",
+    },
+  },
+  {
+    question: "How many liters are in 2000 milliliters?",
+    answer: "2 liters",
+    choices: ["0.2 liters", "2 liters", "20 liters", "200 liters"],
+    feedback: {
+      correct: "Great! 2000 milliliters is equal to 2 liters.",
+      incorrect: "Not quite. Divide milliliters by 1000 to get liters.",
+    },
+  },
+  {
+    question: "Which unit would you use to measure the weight of an apple?",
+    answer: "grams",
+    choices: ["kilograms", "grams", "liters", "meters"],
+    feedback: {
+      correct: "Good job! Grams are best for measuring an apple's weight.",
+      incorrect: "Not quite. Apples are light, so grams are the best choice.",
+    },
+  },
+  {
+    question: "How many hours are in 2 days?",
+    answer: "48 hours",
+    choices: ["24 hours", "36 hours", "48 hours", "60 hours"],
+    feedback: {
+      correct: "That's right! Each day has 24 hours, so 2 × 24 = 48.",
+      incorrect: "Not quite. Multiply the number of days by 24.",
+    },
+  },
+  {
+    question: "If the temperature outside is 15°C, what is a warmer temperature?",
+    answer: "20°C",
+    choices: ["10°C", "15°C", "20°C", "5°C"],
+    feedback: {
+      correct: "Correct! 20°C is warmer than 15°C.",
+      incorrect: "Not quite. Compare the numbers to find the warmer one.",
+    },
+  },
+  {
+    question: "What is the perimeter of a square with sides of 8 cm?",
+    answer: "32 cm",
+    choices: ["16 cm", "24 cm", "32 cm", "64 cm"],
+    feedback: {
+      correct: "Great! Perimeter of a square is 4 × side, so 4 × 8 = 32 cm.",
+      incorrect: "Not quite. Multiply the side length by 4 for the perimeter.",
+    },
+  },
+  {
+    question: "Which object has a greater capacity: a cup or a bucket?",
+    answer: "Bucket",
+    choices: ["Cup", "Bucket", "They have the same capacity", "Not enough information"],
+    feedback: {
+      correct: "Correct! A bucket holds much more than a cup.",
+      incorrect: "Not quite. Think about which one can hold more water.",
+    },
+  },
+  {
+    question: "How many seconds are in 5 minutes?",
+    answer: "300 seconds",
+    choices: ["30 seconds", "300 seconds", "500 seconds", "600 seconds"],
+    feedback: {
+      correct: "Good job! Multiply 60 seconds by 5 minutes to get 300 seconds.",
+      incorrect: "Not quite. Multiply minutes by 60 to find the total seconds.",
+    },
+  },
+  {
+    question: "Which is longer: 2 meters or 200 centimeters?",
+    answer: "They are the same length",
+    choices: ["2 meters", "200 centimeters", "They are the same length", "Not enough information"],
+    feedback: {
+      correct: "Correct! 2 meters is the same as 200 centimeters.",
+      incorrect: "Not quite. Convert meters to centimeters to compare.",
+    },
+  },
+  {
+    question: "What tool would you use to measure the length of a pencil?",
+    answer: "Ruler",
+    choices: ["Ruler", "Scale", "Thermometer", "Measuring cup"],
+    feedback: {
+      correct: "That's right! A ruler is best for measuring a pencil's length.",
+      incorrect: "Not quite. Think about tools used for length measurement.",
+    },
+  },
+  {
+    question: "What is the temperature at freezing point in Celsius?",
+    answer: "0°C",
+    choices: ["-10°C", "0°C", "10°C", "100°C"],
+    feedback: {
+      correct: "Great! Water freezes at 0°C.",
+      incorrect: "Not quite. Think about the temperature when water freezes.",
+    },
+  },
+  {
+    question: "How many milliliters are in 1.5 liters?",
+    answer: "1500 milliliters",
+    choices: ["150 milliliters", "1500 milliliters", "15 milliliters", "1000 milliliters"],
+    feedback: {
+      correct: "Good job! Multiply 1.5 by 1000 to get 1500 milliliters.",
+      incorrect: "Not quite. Multiply liters by 1000 to convert to milliliters.",
+    },
+  },
+  {
+    question: "Which is heavier: a feather or a rock?",
+    answer: "Rock",
+    choices: ["Feather", "Rock", "They weigh the same", "Not enough information"],
+    feedback: {
+      correct: "Correct! Rocks are much heavier than feathers.",
+      incorrect: "Not quite. Think about which is typically heavier.",
+    },
+  },
+  {
+    question: "How many sides does a triangle have?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "That's right! A triangle has 3 sides.",
+      incorrect: "Not quite. Count the sides of a triangle carefully.",
+    },
+  },
+  {
+    question: "What is the area of a rectangle with a length of 10 cm and width of 4 cm?",
+    answer: "40 square cm",
+    choices: ["20 square cm", "30 square cm", "40 square cm", "50 square cm"],
+    feedback: {
+      correct: "Great! Area is length × width, so 10 × 4 = 40.",
+      incorrect: "Not quite. Multiply the length by the width for the area.",
+    },
+  },
+  {
+    question: "Which unit would you use to measure the weight of a watermelon?",
+    answer: "Kilograms",
+    choices: ["Grams", "Kilograms", "Liters", "Centimeters"],
+    feedback: {
+      correct: "Correct! Kilograms are best for measuring a watermelon's weight.",
+      incorrect: "Not quite. Think about the size of a watermelon.",
+    },
+  },
+];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G3_Units.Tor.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

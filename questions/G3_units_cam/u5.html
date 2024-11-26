@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit Geometry</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="question-container">
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+      <div class="score-display">Score: <span id="score">0</span>/20</div>
+      <div class="question-box">
+        <h3>Question <span id="question-number">1</span>/20:</h3>
+        <p id="question-text">Loading question...</p>
+        <div id="answer-options-container"></div>
+      </div>
+    </div>
+
+    <div id="feedback-modal" class="feedback-modal">
+      <h2 id="feedback-title"></h2>
+      <p id="feedback-message"></p>
+      <button
+        class="choice-button"
+        id="continue-button"
+        onclick="closeFeedback()"
+      >
+        Continue
+      </button>
+    </div>
+
+    <script>
+     const questionsDatabase = [
+  {
+    question: "What is the name of a polygon with five sides?",
+    answer: "Pentagon",
+    choices: ["Pentagon", "Hexagon", "Quadrilateral", "Triangle"],
+    feedback: {
+      correct: "Correct! A pentagon is a polygon with five sides.",
+      incorrect: "Remember, polygons are named based on the number of sides they have.",
+    },
+  },
+  {
+    question: "Which of these shapes is a quadrilateral?",
+    answer: "Trapezoid",
+    choices: ["Triangle", "Pentagon", "Trapezoid", "Circle"],
+    feedback: {
+      correct: "Correct! A quadrilateral is a shape with four sides, like a trapezoid.",
+      incorrect: "A quadrilateral has exactly four sides. Look for a four-sided shape.",
+    },
+  },
+  {
+    question: "A square is a type of what shape?",
+    answer: "Rectangle",
+    choices: ["Rectangle", "Triangle", "Pentagon", "Circle"],
+    feedback: {
+      correct: "Correct! A square is a special type of rectangle with equal sides.",
+      incorrect: "Think about how squares have four sides and right angles, like a rectangle.",
+    },
+  },
+  {
+    question: "What is the sum of the interior angles of a triangle?",
+    answer: "180°",
+    choices: ["90°", "180°", "360°", "120°"],
+    feedback: {
+      correct: "Correct! The interior angles of a triangle always add up to 180°.",
+      incorrect: "Remember, a triangle has three angles that always sum up to 180°.",
+    },
+  },
+  {
+    question: "How many vertices does a hexagon have?",
+    answer: "6",
+    choices: ["5", "6", "7", "8"],
+    feedback: {
+      correct: "Correct! A hexagon has 6 vertices and 6 sides.",
+      incorrect: "A hexagon has 6 sides and therefore 6 vertices.",
+    },
+  },
+  {
+    question: "What do you call a three-dimensional shape with 6 faces, all squares?",
+    answer: "Cube",
+    choices: ["Cube", "Rectangular prism", "Pyramid", "Cylinder"],
+    feedback: {
+      correct: "Correct! A cube has 6 square faces and is three-dimensional.",
+      incorrect: "Think about shapes with equal square faces on all sides.",
+    },
+  },
+  {
+    question: "Which shape is an example of a quadrilateral?",
+    answer: "Rhombus",
+    choices: ["Hexagon", "Rhombus", "Triangle", "Circle"],
+    feedback: {
+      correct: "Correct! A rhombus is a quadrilateral with four equal sides.",
+      incorrect: "A quadrilateral is any shape with four sides.",
+    },
+  },
+  {
+    question: "How many sides does an octagon have?",
+    answer: "8",
+    choices: ["6", "8", "10", "12"],
+    feedback: {
+      correct: "Correct! An octagon has 8 sides.",
+      incorrect: "Remember, 'octo' means 8, like in 'octopus.'",
+    },
+  },
+  {
+    question: "What is the difference between a square and a rectangle?",
+    answer: "A square has all equal sides.",
+    choices: [
+      "A square has all equal sides.",
+      "A rectangle has all equal sides.",
+      "A square has no right angles.",
+      "There is no difference.",
+    ],
+    feedback: {
+      correct: "Correct! A square has all sides equal, unlike a rectangle.",
+      incorrect: "Think about how squares and rectangles differ in their side lengths.",
+    },
+  },
+  {
+    question: "Which shape has no edges or vertices?",
+    answer: "Sphere",
+    choices: ["Sphere", "Cube", "Cone", "Cylinder"],
+    feedback: {
+      correct: "Correct! A sphere is a smooth, round shape with no edges or vertices.",
+      incorrect: "Consider shapes with no corners or edges, like a sphere.",
+    },
+  },
+  {
+    question: "What is a shape with all sides equal and all angles 90° called?",
+    answer: "Square",
+    choices: ["Square", "Rectangle", "Rhombus", "Hexagon"],
+    feedback: {
+      correct: "Correct! A square has equal sides and right angles.",
+      incorrect: "Think about a shape with equal sides and angles.",
+    },
+  },
+  {
+    question: "What do you call the point where two sides of a polygon meet?",
+    answer: "Vertex",
+    choices: ["Vertex", "Edge", "Face", "Angle"],
+    feedback: {
+      correct: "Correct! A vertex is where two sides meet in a polygon.",
+      incorrect: "Think about the corners of a shape. Those are vertices.",
+    },
+  },
+  {
+    question: "How many edges does a cube have?",
+    answer: "12",
+    choices: ["8", "12", "6", "10"],
+    feedback: {
+      correct: "Correct! A cube has 12 edges.",
+      incorrect: "Count all the lines where two faces meet on a cube.",
+    },
+  },
+  {
+    question: "What shape is formed by cutting a square diagonally?",
+    answer: "Two triangles",
+    choices: ["Two rectangles", "Two triangles", "Two squares", "One rectangle and one triangle"],
+    feedback: {
+      correct: "Correct! Cutting a square diagonally forms two triangles.",
+      incorrect: "Think about what happens when a diagonal line splits a square.",
+    },
+  },
+  {
+    question: "Which shape has exactly one pair of parallel sides?",
+    answer: "Trapezoid",
+    choices: ["Trapezoid", "Square", "Hexagon", "Pentagon"],
+    feedback: {
+      correct: "Correct! A trapezoid has one pair of parallel sides.",
+      incorrect: "Think about shapes with one set of parallel sides.",
+    },
+  },
+  {
+    question: "Which 3D shape is made by rotating a circle?",
+    answer: "Sphere",
+    choices: ["Sphere", "Cylinder", "Cone", "Cube"],
+    feedback: {
+      correct: "Correct! Rotating a circle creates a sphere.",
+      incorrect: "Think about a round shape with no edges or corners.",
+    },
+  },
+  {
+    question: "How many lines of symmetry does a rectangle have?",
+    answer: "2",
+    choices: ["2", "4", "6", "1"],
+    feedback: {
+      correct: "Correct! A rectangle has two lines of symmetry.",
+      incorrect: "Remember, symmetry divides a shape into two identical halves.",
+    },
+  },
+  {
+    question: "What is the name of a shape with all sides of different lengths?",
+    answer: "Scalene triangle",
+    choices: ["Scalene triangle", "Isosceles triangle", "Equilateral triangle", "Rectangle"],
+    feedback: {
+      correct: "Correct! A scalene triangle has all sides of different lengths.",
+      incorrect: "Think about triangles and how their sides vary.",
+    },
+  },
+  {
+    question: "How many faces does a cylinder have?",
+    answer: "3",
+    choices: ["2", "3", "4", "1"],
+    feedback: {
+      correct: "Correct! A cylinder has 3 faces: 2 circular and 1 curved.",
+      incorrect: "Count the flat and curved surfaces of a cylinder.",
+    },
+  },
+  {
+    question: "What do you call a triangle with two equal sides?",
+    answer: "Isosceles triangle",
+    choices: ["Isosceles triangle", "Equilateral triangle", "Scalene triangle", "Right triangle"],
+    feedback: {
+      correct: "Correct! An isosceles triangle has two equal sides.",
+      incorrect: "Think about triangles with two sides of equal length.",
+    },
+  },
+];
+
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const percentage = (score / questionsDatabase.length) * 100;
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        // Ensure any previous buttons are removed first to avoid duplication
+        const existingContinueButton = document.querySelector(
+          "#feedback-modal .choice-button"
+        );
+        if (existingContinueButton) {
+          existingContinueButton.remove();
+        }
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+        Your score: ${score}/${questionsDatabase.length} (${percentage.toFixed(
+          1
+        )}%)<br><br>
+        ${
+          percentage >= 80
+            ? "Outstanding work! 🌟"
+            : percentage >= 60
+            ? "Good job! 💪"
+            : "Keep practicing! 🌱"
+        }<br><br>
+      `;
+
+        const continueButton = document.createElement("button");
+        continueButton.classList.add("choice-button");
+        continueButton.innerText = "Continue";
+        continueButton.onclick = returnToUnits;
+        feedbackMessage.appendChild(continueButton);
+
+        feedbackModal.style.display = "block";
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G3_units.cam.html?unit5score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 4 - Patterning and Algebra</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+     const questionsDatabase = [
+  {
+    question: "If x = 4, what is the value of 2x + 3?",
+    answer: "11",
+    choices: ["7", "8", "11", "13"],
+    feedback: {
+      correct: "Correct! Substitute x = 4: 2(4) + 3 = 11.",
+      incorrect: "Not quite. Replace x with 4 and solve."
+    }
+  },
+  {
+    question: "What is the solution to the inequality: x + 5 > 10?",
+    answer: "x > 5",
+    choices: ["x < 5", "x = 5", "x > 5", "x ≤ 5"],
+    feedback: {
+      correct: "Correct! Subtract 5 from both sides to get x > 5.",
+      incorrect: "Not quite. Solve the inequality by isolating x."
+    }
+  },
+  {
+    question: "If the pattern is 2, 5, 8, 11, ..., what is the rule?",
+    answer: "Add 3",
+    choices: ["Add 2", "Add 3", "Multiply by 2", "Multiply by 3"],
+    feedback: {
+      correct: "Correct! The pattern increases by 3 each time.",
+      incorrect: "Not quite. Check the difference between consecutive terms."
+    }
+  },
+  {
+    question: "Solve for y: 3y = 15",
+    answer: "y = 5",
+    choices: ["y = 3", "y = 5", "y = 6", "y = 7"],
+    feedback: {
+      correct: "Correct! Divide both sides by 3: y = 15 ÷ 3 = 5.",
+      incorrect: "Not quite. Solve by dividing both sides by 3."
+    }
+  },
+  {
+    question: "If 4x - 7 = 9, what is the value of x?",
+    answer: "x = 4",
+    choices: ["x = 3", "x = 4", "x = 5", "x = 6"],
+    feedback: {
+      correct: "Correct! Add 7 to both sides: 4x = 16, then divide by 4: x = 4.",
+      incorrect: "Not quite. Solve step by step to isolate x."
+    }
+  },
+  {
+    question: "What is the next term in the pattern: 1, 4, 9, 16, ...?",
+    answer: "25",
+    choices: ["20", "22", "25", "30"],
+    feedback: {
+      correct: "Correct! The pattern is the square of consecutive numbers: 1², 2², 3², 4², and so on.",
+      incorrect: "Not quite. Think about the squares of consecutive numbers."
+    }
+  },
+  {
+    question: "Which equation matches the rule: Start at 5 and multiply by 2?",
+    answer: "y = 5 × 2",
+    choices: ["y = 5 + 2", "y = 5 × 2", "y = 2 + 5", "y = 2x + 5"],
+    feedback: {
+      correct: "Correct! The rule is to multiply 5 by 2, which gives y = 5 × 2.",
+      incorrect: "Not quite. Match the operation (multiplication) and the starting value (5)."
+    }
+  },
+  {
+    question: "What is the inequality for 'A number x is less than or equal to 10'?",
+    answer: "x ≤ 10",
+    choices: ["x ≥ 10", "x ≤ 10", "x < 10", "x = 10"],
+    feedback: {
+      correct: "Correct! x ≤ 10 means x is less than or equal to 10.",
+      incorrect: "Not quite. ≤ means less than or equal to."
+    }
+  },
+  {
+    question: "If n = 3, what is the value of 2n² + n?",
+    answer: "21",
+    choices: ["9", "15", "21", "27"],
+    feedback: {
+      correct: "Correct! Substitute n = 3: 2(3²) + 3 = 2(9) + 3 = 21.",
+      incorrect: "Not quite. Replace n with 3 and follow the order of operations."
+    }
+  },
+  {
+    question: "Solve for x: 2x + 6 = 14",
+    answer: "x = 4",
+    choices: ["x = 2", "x = 4", "x = 6", "x = 8"],
+    feedback: {
+      correct: "Correct! Subtract 6 from both sides: 2x = 8, then divide by 2: x = 4.",
+      incorrect: "Not quite. Solve step by step to isolate x."
+    }
+  },
+  {
+    question: "Which is true for the inequality x > 7?",
+    answer: "x can be 8.",
+    choices: ["x can be 7.", "x can be 8.", "x can be 6.", "x can be any number."],
+    feedback: {
+      correct: "Correct! x > 7 means x must be greater than 7, like 8.",
+      incorrect: "Not quite. Values for x must be greater than 7."
+    }
+  },
+  {
+    question: "If the pattern is 10, 20, 40, 80, ..., what is the rule?",
+    answer: "Multiply by 2",
+    choices: ["Add 10", "Multiply by 2", "Multiply by 4", "Add 20"],
+    feedback: {
+      correct: "Correct! The pattern multiplies by 2 each time.",
+      incorrect: "Not quite. Check how each term is related to the previous one."
+    }
+  },
+  {
+    question: "Which equation matches the rule: Start at 3 and add 5 each time?",
+    answer: "y = 3 + 5x",
+    choices: ["y = 3 + 5x", "y = 3x + 5", "y = 5 + 3", "y = 5x + 3"],
+    feedback: {
+      correct: "Correct! Start at 3 and add 5 for each step, so y = 3 + 5x.",
+      incorrect: "Not quite. Use the rule to form the equation correctly."
+    }
+  },
+  {
+    question: "If the equation is y = 2x + 3, what is y when x = 4?",
+    answer: "11",
+    choices: ["9", "10", "11", "12"],
+    feedback: {
+      correct: "Correct! Substitute x = 4: y = 2(4) + 3 = 11.",
+      incorrect: "Not quite. Replace x with 4 and solve the equation."
+    }
+  },
+  {
+    question: "Which inequality represents 'x is greater than 8'?",
+    answer: "x > 8",
+    choices: ["x ≥ 8", "x > 8", "x ≤ 8", "x < 8"],
+    feedback: {
+      correct: "Correct! x > 8 means x is greater than 8.",
+      incorrect: "Not quite. 'Greater than' is represented by >."
+    }
+  },
+  {
+    question: "What is the solution to the inequality: 5x < 20?",
+    answer: "x < 4",
+    choices: ["x < 5", "x > 4", "x < 4", "x = 4"],
+    feedback: {
+      correct: "Correct! Divide both sides by 5: x < 4.",
+      incorrect: "Not quite. Solve the inequality step by step."
+    }
+  },
+  {
+    question: "What is the next term in the pattern: 3, 9, 27, ...?",
+    answer: "81",
+    choices: ["54", "81", "108", "243"],
+    feedback: {
+      correct: "Correct! The pattern multiplies by 3 each time: 27 × 3 = 81.",
+      incorrect: "Not quite. Multiply the previous term by 3."
+    }
+  },
+  {
+    question: "Which equation represents the sum of 4 and twice a number x?",
+    answer: "y = 4 + 2x",
+    choices: ["y = 4 + 2x", "y = 2x + 4", "y = 4x + 2", "y = 2 + 4x"],
+    feedback: {
+      correct: "Correct! The equation 4 + 2x represents adding 4 and twice x.",
+      incorrect: "Not quite. Focus on the order and operations in the equation."
+    }
+  },
+  {
+    question: "What is the value of y if y/2 + 5 = 9?",
+    answer: "y = 8",
+    choices: ["y = 2", "y = 4", "y = 6", "y = 8"],
+    feedback: {
+      correct: "Correct! Subtract 5 from both sides: y/2 = 4, then multiply by 2: y = 8.",
+      incorrect: "Not quite. Solve step by step to isolate y."
+    }
+  },
+  {
+    question: "Which inequality represents 'x is at most 6'?",
+    answer: "x ≤ 6",
+    choices: ["x ≤ 6", "x ≥ 6", "x > 6", "x < 6"],
+    feedback: {
+      correct: "Correct! x ≤ 6 means x is at most 6.",
+      incorrect: "Not quite. At most means less than or equal to."
+    }
+  }
+];
+
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G6_Units.Tor.html?unit4score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

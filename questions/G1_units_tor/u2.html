@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Measurement</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+      const questionsDatabase = [
+  {
+    question: "Which object is taller: a pencil or a ruler?",
+    answer: "Ruler",
+    choices: ["Pencil", "Ruler", "They are the same height", "Not enough information"],
+    feedback: {
+      correct: "That's right! The ruler is taller than the pencil.",
+      incorrect: "Not quite. Think about how much taller a ruler usually is compared to a pencil.",
+    },
+  },
+  {
+    question: "How many hours are in one day? 🕒",
+    answer: "24",
+    choices: ["12", "24", "60", "7"],
+    feedback: {
+      correct: "Correct! There are 24 hours in one day.",
+      incorrect: "Close! Remember, there are 24 hours in a full day.",
+    },
+  },
+  {
+    question: "Which season is the coldest in Canada? ❄️",
+    answer: "Winter",
+    choices: ["Spring", "Summer", "Winter", "Fall"],
+    feedback: {
+      correct: "That's correct! Winter is the coldest season in Canada.",
+      incorrect: "Not quite. Winter is known for its chilly weather and snow in Canada.",
+    },
+  },
+  {
+    question: "Which is bigger: your school bag 🎒 or a pencil case ✏️?",
+    answer: "School bag",
+    choices: ["School bag", "Pencil case", "They are the same size", "Not sure"],
+    feedback: {
+      correct: "Great! A school bag is much bigger than a pencil case.",
+      incorrect: "Think again. A pencil case fits inside a school bag, so the bag must be bigger.",
+    },
+  },
+  {
+    question: "What tool do we use to measure time?",
+    answer: "Clock",
+    choices: ["Clock", "Ruler", "Thermometer", "Scale"],
+    feedback: {
+      correct: "Well done! We use a clock to measure time.",
+      incorrect: "Close! A clock is the correct tool for measuring time.",
+    },
+  },
+  {
+    question: "If today is Monday, what day will it be tomorrow?",
+    answer: "Tuesday",
+    choices: ["Sunday", "Monday", "Tuesday", "Wednesday"],
+    feedback: {
+      correct: "That's correct! The day after Monday is Tuesday.",
+      incorrect: "Not quite. Try reciting the days of the week in order.",
+    },
+  },
+  {
+    question: "Which is heavier: a feather or a textbook 📚?",
+    answer: "Textbook",
+    choices: ["Feather", "Textbook", "They weigh the same", "Not sure"],
+    feedback: {
+      correct: "That's correct! A textbook is much heavier than a feather.",
+      incorrect: "Not quite. A feather is very light compared to a textbook.",
+    },
+  },
+  {
+    question: "Which unit do we use to measure temperature? 🌡️",
+    answer: "Degrees",
+    choices: ["Kilograms", "Meters", "Degrees", "Liters"],
+    feedback: {
+      correct: "Correct! Temperature is measured in degrees.",
+      incorrect: "Close! Remember, temperature is measured in degrees, not weight or length.",
+    },
+  },
+  {
+    question: "How many days are in a week? 📅",
+    answer: "7",
+    choices: ["5", "6", "7", "8"],
+    feedback: {
+      correct: "That's right! A week has 7 days.",
+      incorrect: "Not quite. Try counting the days of the week to find the answer.",
+    },
+  },
+  {
+    question: "What tool do we use to measure length? 📏",
+    answer: "Ruler",
+    choices: ["Clock", "Ruler", "Thermometer", "Scale"],
+    feedback: {
+      correct: "Correct! We use a ruler to measure length.",
+      incorrect: "Not quite. A ruler is the tool used to measure length.",
+    },
+  },
+  {
+    question: "Which season comes after winter? 🌱",
+    answer: "Spring",
+    choices: ["Fall", "Winter", "Spring", "Summer"],
+    feedback: {
+      correct: "That's right! Spring comes after winter.",
+      incorrect: "Not quite. Think about how the snow melts and flowers bloom after winter.",
+    },
+  },
+  {
+    question: "Which is longer: a shoelace or a pencil?",
+    answer: "Shoelace",
+    choices: ["Shoelace", "Pencil", "They are the same length", "Not sure"],
+    feedback: {
+      correct: "Great! A shoelace is usually longer than a pencil.",
+      incorrect: "Not quite. Shoelaces are often longer than pencils.",
+    },
+  },
+  {
+    question: "What season do the leaves fall? 🍂",
+    answer: "Fall",
+    choices: ["Spring", "Summer", "Fall", "Winter"],
+    feedback: {
+      correct: "Correct! Leaves fall in the autumn or fall season.",
+      incorrect: "Not quite. Think of the season when trees shed their leaves.",
+    },
+  },
+  {
+    question: "How many minutes are in one hour? ⏰",
+    answer: "60",
+    choices: ["30", "60", "90", "100"],
+    feedback: {
+      correct: "Correct! There are 60 minutes in one hour.",
+      incorrect: "Not quite. Remember, there are 60 minutes in an hour.",
+    },
+  },
+  {
+    question: "Which object is shorter: a spoon 🥄 or a broom? 🧹",
+    answer: "Spoon",
+    choices: ["Spoon", "Broom", "They are the same length", "Not sure"],
+    feedback: {
+      correct: "That's right! A spoon is much shorter than a broom.",
+      incorrect: "Not quite. A broom is much longer than a spoon.",
+    },
+  },
+  {
+    question: "What do we call a tool that measures weight? ⚖️",
+    answer: "Scale",
+    choices: ["Scale", "Clock", "Thermometer", "Ruler"],
+    feedback: {
+      correct: "Correct! A scale is used to measure weight.",
+      incorrect: "Not quite. A scale measures weight, not time or length.",
+    },
+  },
+  {
+    question: "Which is wider: a door 🚪 or a book 📖?",
+    answer: "Door",
+    choices: ["Door", "Book", "They are the same width", "Not sure"],
+    feedback: {
+      correct: "That's right! A door is much wider than a book.",
+      incorrect: "Not quite. A door is much wider than a book.",
+    },
+  },
+  {
+    question: "If today is Friday, what day was it yesterday? 📅",
+    answer: "Thursday",
+    choices: ["Wednesday", "Thursday", "Friday", "Saturday"],
+    feedback: {
+      correct: "Correct! The day before Friday is Thursday.",
+      incorrect: "Not quite. Think of the day that comes right before Friday.",
+    },
+  },
+  {
+    question: "Which is colder: ice cream 🍦 or soup 🍲?",
+    answer: "Ice cream",
+    choices: ["Ice cream", "Soup", "They are the same temperature", "Not sure"],
+    feedback: {
+      correct: "Correct! Ice cream is much colder than soup.",
+      incorrect: "Not quite. Ice cream is a frozen dessert, so it’s colder than soup.",
+    },
+  },
+  {
+    question: "What season is the warmest? ☀️",
+    answer: "Summer",
+    choices: ["Spring", "Summer", "Fall", "Winter"],
+    feedback: {
+      correct: "That's correct! Summer is the warmest season.",
+      incorrect: "Not quite. Summer is the season with the hottest temperatures.",
+    },
+  },
+];
+
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G1_Units.Tor.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

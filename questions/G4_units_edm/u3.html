@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Geometry</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+   const questionsDatabase = [
+  {
+    question: "What do we call a four-sided shape where all sides are equal and all angles are right angles?",
+    answer: "Square",
+    choices: ["Rectangle", "Square", "Rhombus", "Parallelogram"],
+    feedback: {
+      correct: "Correct! A square has equal sides and right angles.",
+      incorrect: "Not quite. Think about the shape with all sides equal and 90-degree angles."
+    }
+  },
+  {
+    question: "Which quadrilateral has opposite sides equal and all angles are right angles?",
+    answer: "Rectangle",
+    choices: ["Rhombus", "Rectangle", "Parallelogram", "Trapezoid"],
+    feedback: {
+      correct: "Correct! A rectangle has opposite sides equal and all angles are right angles.",
+      incorrect: "Not quite. Think about the properties of a rectangle."
+    }
+  },
+  {
+    question: "What do we call a three-sided shape with all sides equal?",
+    answer: "Equilateral triangle",
+    choices: ["Equilateral triangle", "Isosceles triangle", "Scalene triangle", "Right triangle"],
+    feedback: {
+      correct: "Correct! An equilateral triangle has all sides equal.",
+      incorrect: "Not quite. A triangle with all sides equal is equilateral."
+    }
+  },
+  {
+    question: "Which quadrilateral has one pair of parallel sides?",
+    answer: "Trapezoid",
+    choices: ["Square", "Rectangle", "Trapezoid", "Rhombus"],
+    feedback: {
+      correct: "Correct! A trapezoid has one pair of parallel sides.",
+      incorrect: "Not quite. Think about the shape with only one pair of parallel sides."
+    }
+  },
+  {
+    question: "What do we call a triangle with two equal sides?",
+    answer: "Isosceles triangle",
+    choices: ["Equilateral triangle", "Isosceles triangle", "Scalene triangle", "Right triangle"],
+    feedback: {
+      correct: "Correct! An isosceles triangle has two equal sides.",
+      incorrect: "Not quite. A triangle with two equal sides is isosceles."
+    }
+  },
+  {
+    question: "Which quadrilateral has four equal sides but no right angles?",
+    answer: "Rhombus",
+    choices: ["Square", "Rectangle", "Rhombus", "Trapezoid"],
+    feedback: {
+      correct: "Correct! A rhombus has four equal sides but no right angles.",
+      incorrect: "Not quite. Think about the shape with equal sides but slanted angles."
+    }
+  },
+  {
+    question: "What is the name of a shape with six sides?",
+    answer: "Hexagon",
+    choices: ["Pentagon", "Hexagon", "Octagon", "Heptagon"],
+    feedback: {
+      correct: "Correct! A hexagon has six sides.",
+      incorrect: "Not quite. Count the sides of a hexagon."
+    }
+  },
+  {
+    question: "What is the name of a shape with eight sides?",
+    answer: "Octagon",
+    choices: ["Hexagon", "Octagon", "Nonagon", "Decagon"],
+    feedback: {
+      correct: "Correct! An octagon has eight sides.",
+      incorrect: "Not quite. Count the sides of an octagon."
+    }
+  },
+  {
+    question: "Which shape has all angles equal and all sides equal?",
+    answer: "Regular polygon",
+    choices: ["Regular polygon", "Irregular polygon", "Trapezoid", "Parallelogram"],
+    feedback: {
+      correct: "Correct! A regular polygon has all sides and angles equal.",
+      incorrect: "Not quite. Think about shapes with equal sides and angles."
+    }
+  },
+  {
+    question: "What is the name of a three-sided shape with one right angle?",
+    answer: "Right triangle",
+    choices: ["Equilateral triangle", "Isosceles triangle", "Scalene triangle", "Right triangle"],
+    feedback: {
+      correct: "Correct! A right triangle has one right angle.",
+      incorrect: "Not quite. A triangle with a right angle is called a right triangle."
+    }
+  },
+  {
+    question: "Which shape has two pairs of parallel sides and all sides equal?",
+    answer: "Rhombus",
+    choices: ["Square", "Rectangle", "Rhombus", "Trapezoid"],
+    feedback: {
+      correct: "Correct! A rhombus has two pairs of parallel sides and all sides equal.",
+      incorrect: "Not quite. Think about the properties of a rhombus."
+    }
+  },
+  {
+    question: "What is the name of a polygon with five sides?",
+    answer: "Pentagon",
+    choices: ["Triangle", "Quadrilateral", "Pentagon", "Hexagon"],
+    feedback: {
+      correct: "Correct! A pentagon has five sides.",
+      incorrect: "Not quite. Count the sides of the polygon."
+    }
+  },
+  {
+    question: "Which quadrilateral has all sides equal and all angles equal?",
+    answer: "Square",
+    choices: ["Square", "Rectangle", "Rhombus", "Parallelogram"],
+    feedback: {
+      correct: "Correct! A square has all sides and angles equal.",
+      incorrect: "Not quite. Think about the properties of a square."
+    }
+  },
+  {
+    question: "What do we call a triangle where all sides have different lengths?",
+    answer: "Scalene triangle",
+    choices: ["Equilateral triangle", "Isosceles triangle", "Scalene triangle", "Right triangle"],
+    feedback: {
+      correct: "Correct! A scalene triangle has all sides of different lengths.",
+      incorrect: "Not quite. A triangle with no equal sides is scalene."
+    }
+  },
+  {
+    question: "What is the name of a shape with seven sides?",
+    answer: "Heptagon",
+    choices: ["Pentagon", "Hexagon", "Heptagon", "Octagon"],
+    feedback: {
+      correct: "Correct! A heptagon has seven sides.",
+      incorrect: "Not quite. Count the sides of a heptagon."
+    }
+  },
+  {
+    question: "What is the name of a shape with four sides?",
+    answer: "Quadrilateral",
+    choices: ["Triangle", "Quadrilateral", "Pentagon", "Hexagon"],
+    feedback: {
+      correct: "Correct! A quadrilateral has four sides.",
+      incorrect: "Not quite. Count the sides of the polygon."
+    }
+  },
+  {
+    question: "Which shape has opposite sides parallel but not all sides equal?",
+    answer: "Parallelogram",
+    choices: ["Square", "Parallelogram", "Rhombus", "Trapezoid"],
+    feedback: {
+      correct: "Correct! A parallelogram has opposite sides parallel but not necessarily equal.",
+      incorrect: "Not quite. Think about the properties of a parallelogram."
+    }
+  },
+  {
+    question: "What do we call a triangle where two sides are equal and one angle is 90°?",
+    answer: "Isosceles right triangle",
+    choices: ["Equilateral triangle", "Isosceles right triangle", "Scalene triangle", "Right triangle"],
+    feedback: {
+      correct: "Correct! An isosceles right triangle has two equal sides and one 90° angle.",
+      incorrect: "Not quite. A triangle with two equal sides and one right angle is isosceles right."
+    }
+  },
+  {
+    question: "What is the name of a ten-sided polygon?",
+    answer: "Decagon",
+    choices: ["Octagon", "Nonagon", "Decagon", "Hexagon"],
+    feedback: {
+      correct: "Correct! A decagon has ten sides.",
+      incorrect: "Not quite. Count the sides of a decagon."
+    }
+  },
+  {
+    question: "Which quadrilateral has no pairs of parallel sides?",
+    answer: "Kite",
+    choices: ["Square", "Trapezoid", "Kite", "Rhombus"],
+    feedback: {
+      correct: "Correct! A kite has no pairs of parallel sides.",
+      incorrect: "Not quite. Think about the properties of a kite."
+    }
+  }
+];
+ 
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_units.edm.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

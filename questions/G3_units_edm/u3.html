@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Geometry   </title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    
+    const questionsDatabase = [
+  {
+    question: "What do we call lines that never meet and are always the same distance apart?",
+    answer: "Parallel lines",
+    choices: ["Parallel lines", "Perpendicular lines", "Intersecting lines", "Diagonal lines"],
+    feedback: {
+      correct: "Correct! Parallel lines never meet and stay the same distance apart.",
+      incorrect: "Not quite. Parallel lines never intersect."
+    }
+  },
+  {
+    question: "What do we call lines that meet at a right angle?",
+    answer: "Perpendicular lines",
+    choices: ["Parallel lines", "Perpendicular lines", "Intersecting lines", "Diagonal lines"],
+    feedback: {
+      correct: "Correct! Perpendicular lines meet at a right angle.",
+      incorrect: "Not quite. Perpendicular lines form 90-degree angles."
+    }
+  },
+  {
+    question: "Which shape has 4 equal sides and 4 right angles?",
+    answer: "Square",
+    choices: ["Rectangle", "Square", "Triangle", "Rhombus"],
+    feedback: {
+      correct: "Correct! A square has 4 equal sides and 4 right angles.",
+      incorrect: "Not quite. Think about a shape with all equal sides and 90-degree angles."
+    }
+  },
+  {
+    question: "How many sides does a pentagon have?",
+    answer: "5",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! A pentagon has 5 sides.",
+      incorrect: "Not quite. Count the sides of a pentagon."
+    }
+  },
+  {
+    question: "What do we call a shape with opposite sides equal and 4 right angles?",
+    answer: "Rectangle",
+    choices: ["Square", "Rectangle", "Rhombus", "Triangle"],
+    feedback: {
+      correct: "Correct! A rectangle has opposite sides equal and 4 right angles.",
+      incorrect: "Not quite. Think about shapes with opposite sides equal."
+    }
+  },
+  {
+    question: "What is the name of a shape with 6 sides?",
+    answer: "Hexagon",
+    choices: ["Pentagon", "Hexagon", "Heptagon", "Octagon"],
+    feedback: {
+      correct: "Correct! A hexagon has 6 sides.",
+      incorrect: "Not quite. Count the sides of a hexagon."
+    }
+  },
+  {
+    question: "Which of these shapes has parallel sides?",
+    answer: "Rectangle",
+    choices: ["Circle", "Rectangle", "Triangle", "Hexagon"],
+    feedback: {
+      correct: "Correct! A rectangle has parallel sides.",
+      incorrect: "Not quite. Think about shapes with opposite sides parallel."
+    }
+  },
+  {
+    question: "What do we call the point where two lines meet?",
+    answer: "Vertex",
+    choices: ["Angle", "Vertex", "Edge", "Intersection"],
+    feedback: {
+      correct: "Correct! A vertex is the point where two lines meet.",
+      incorrect: "Not quite. The meeting point of two lines is a vertex."
+    }
+  },
+  {
+    question: "Which shape has only one curved side?",
+    answer: "Circle",
+    choices: ["Triangle", "Rectangle", "Circle", "Square"],
+    feedback: {
+      correct: "Correct! A circle has one curved side.",
+      incorrect: "Not quite. Think about shapes without corners."
+    }
+  },
+  {
+    question: "What is the name of a shape with 3 sides?",
+    answer: "Triangle",
+    choices: ["Circle", "Square", "Triangle", "Rectangle"],
+    feedback: {
+      correct: "Correct! A triangle has 3 sides.",
+      incorrect: "Not quite. Count the sides of the shape."
+    }
+  },
+  {
+    question: "Which shape has opposite sides equal in length but not all sides are the same?",
+    answer: "Rectangle",
+    choices: ["Square", "Rectangle", "Rhombus", "Hexagon"],
+    feedback: {
+      correct: "Correct! A rectangle has opposite sides equal in length.",
+      incorrect: "Not quite. Think about shapes with opposite sides equal."
+    }
+  },
+  {
+    question: "Which shape has 4 equal sides but does not always have right angles?",
+    answer: "Rhombus",
+    choices: ["Square", "Rectangle", "Rhombus", "Hexagon"],
+    feedback: {
+      correct: "Correct! A rhombus has 4 equal sides but does not always have right angles.",
+      incorrect: "Not quite. Think about shapes with equal sides but slanted corners."
+    }
+  },
+  {
+    question: "How many parallel sides does a square have?",
+    answer: "2 pairs",
+    choices: ["1 pair", "2 pairs", "3 pairs", "None"],
+    feedback: {
+      correct: "Correct! A square has 2 pairs of parallel sides.",
+      incorrect: "Not quite. Opposite sides of a square are parallel."
+    }
+  },
+  {
+    question: "Which of these shapes has no parallel sides?",
+    answer: "Triangle",
+    choices: ["Square", "Rectangle", "Triangle", "Pentagon"],
+    feedback: {
+      correct: "Correct! A triangle has no parallel sides.",
+      incorrect: "Not quite. Think about the sides of a triangle."
+    }
+  },
+  {
+    question: "Which shape has 8 sides?",
+    answer: "Octagon",
+    choices: ["Hexagon", "Octagon", "Heptagon", "Nonagon"],
+    feedback: {
+      correct: "Correct! An octagon has 8 sides.",
+      incorrect: "Not quite. Count the sides of an octagon."
+    }
+  },
+  {
+    question: "What do we call lines that meet but do not form right angles?",
+    answer: "Intersecting lines",
+    choices: ["Parallel lines", "Perpendicular lines", "Intersecting lines", "Diagonal lines"],
+    feedback: {
+      correct: "Correct! Intersecting lines meet but do not form right angles.",
+      incorrect: "Not quite. Think about lines that cross but aren’t perpendicular."
+    }
+  },
+  {
+    question: "What is the name of a shape with 4 sides?",
+    answer: "Quadrilateral",
+    choices: ["Triangle", "Quadrilateral", "Pentagon", "Hexagon"],
+    feedback: {
+      correct: "Correct! A quadrilateral has 4 sides.",
+      incorrect: "Not quite. Count the sides of the shape."
+    }
+  },
+  {
+    question: "Which shape has two parallel sides but no right angles?",
+    answer: "Trapezoid",
+    choices: ["Trapezoid", "Square", "Rectangle", "Triangle"],
+    feedback: {
+      correct: "Correct! A trapezoid has two parallel sides but no right angles.",
+      incorrect: "Not quite. Think about the shape of a trapezoid."
+    }
+  },
+  {
+    question: "Which shape has 10 sides?",
+    answer: "Decagon",
+    choices: ["Octagon", "Nonagon", "Decagon", "Hexagon"],
+    feedback: {
+      correct: "Correct! A decagon has 10 sides.",
+      incorrect: "Not quite. Count the sides of a decagon."
+    }
+  },
+  {
+    question: "Which shape has exactly one pair of parallel sides?",
+    answer: "Trapezoid",
+    choices: ["Square", "Rectangle", "Trapezoid", "Triangle"],
+    feedback: {
+      correct: "Correct! A trapezoid has exactly one pair of parallel sides.",
+      incorrect: "Not quite. Think about the sides of a trapezoid."
+    }
+  }
+];
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G3_units.edm.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

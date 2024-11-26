@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 5 - Data Management and Probability</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+      
+      const questionsDatabase = [
+  {
+    question: "If you roll a standard die 🎲, which number is most likely to appear?",
+    answer: "All numbers are equally likely",
+    choices: ["1", "6", "3", "All numbers are equally likely"],
+    feedback: {
+      correct: "Correct! Each number on a standard die has an equal chance of appearing.",
+      incorrect: "Not quite. Each number has the same probability of appearing on a die.",
+    },
+  },
+  {
+    question: "A survey shows that 8 students like apples 🍎, and 12 students like bananas 🍌. Which fruit do more students like?",
+    answer: "Bananas 🍌",
+    choices: ["Apples 🍎", "Bananas 🍌", "Both are the same", "Not enough information"],
+    feedback: {
+      correct: "That's right! More students like bananas than apples.",
+      incorrect: "Not quite. Compare the numbers for apples and bananas.",
+    },
+  },
+  {
+    question: "Which graph is best for showing how many pets each student has?",
+    answer: "Bar graph",
+    choices: ["Line graph", "Bar graph", "Pie chart", "Scatter plot"],
+    feedback: {
+      correct: "Correct! A bar graph is great for comparing amounts.",
+      incorrect: "Not quite. Think about which graph is best for comparing quantities.",
+    },
+  },
+  {
+    question: "If a bag has 5 red marbles 🔴 and 3 blue marbles 🔵, what color is more likely to be picked?",
+    answer: "Red 🔴",
+    choices: ["Red 🔴", "Blue 🔵", "Both are equally likely", "Not enough information"],
+    feedback: {
+      correct: "Good job! There are more red marbles, so red is more likely to be picked.",
+      incorrect: "Not quite. There are more red marbles than blue.",
+    },
+  },
+  {
+    question: "Which is an example of a certain event?",
+    answer: "The sun will rise tomorrow 🌅",
+    choices: ["The sun will rise tomorrow 🌅", "You roll a 7 on a die 🎲", "It will rain tomorrow 🌧", "A coin lands on heads 🪙"],
+    feedback: {
+      correct: "That's right! The sun rising is a certain event.",
+      incorrect: "Not quite. Think about something that is guaranteed to happen.",
+    },
+  },
+  {
+    question: "What is the least likely event if a spinner 🎡 has 8 sections, with 1 blue and 7 red?",
+    answer: "Landing on blue",
+    choices: ["Landing on red", "Landing on blue", "Landing on either color", "All are equally likely"],
+    feedback: {
+      correct: "Correct! Blue has the fewest sections, so it's the least likely.",
+      incorrect: "Not quite. Look at how many sections each color has on the spinner.",
+    },
+  },
+  {
+    question: "If 15 students like pizza 🍕 and 10 like burgers 🍔, how many students like pizza and burgers in total?",
+    answer: "25",
+    choices: ["15", "25", "10", "5"],
+    feedback: {
+      correct: "Good job! Adding 15 and 10 gives 25 students.",
+      incorrect: "Not quite. Add the number of students for both pizza and burgers.",
+    },
+  },
+  {
+    question: "What is the probability of flipping a coin 🪙 and it landing on tails?",
+    answer: "1/2",
+    choices: ["1/4", "1/2", "1", "2"],
+    feedback: {
+      correct: "That's right! A coin has an equal chance of landing on heads or tails.",
+      incorrect: "Not quite. A coin has two sides, so the probability is 1/2.",
+    },
+  },
+  {
+    question: "Which statement is true about a bar graph?",
+    answer: "It uses bars to show data",
+    choices: [
+      "It uses bars to show data",
+      "It uses a circle to show data",
+      "It is only used for time data",
+      "It cannot compare categories",
+    ],
+    feedback: {
+      correct: "Correct! Bar graphs use bars to display data.",
+      incorrect: "Not quite. Think about how bar graphs represent information.",
+    },
+  },
+  {
+    question: "A bag contains 4 green marbles 🟢, 3 blue marbles 🔵, and 1 yellow marble 🟡. What is the chance of picking a yellow marble?",
+    answer: "1/8",
+    choices: ["1/8", "1/3", "1/4", "1/2"],
+    feedback: {
+      correct: "Good job! Only 1 out of 8 marbles is yellow.",
+      incorrect: "Not quite. Count the total marbles and the yellow marbles.",
+    },
+  },
+  {
+    question: "Which of these shows a possible outcome of rolling a die 🎲?",
+    answer: "5",
+    choices: ["5", "7", "8", "10"],
+    feedback: {
+      correct: "Correct! A die has numbers 1 through 6, and 5 is one of them.",
+      incorrect: "Not quite. Think about the numbers on a standard die.",
+    },
+  },
+  {
+    question: "Which is an impossible event?",
+    answer: "Rolling a 7 on a standard die 🎲",
+    choices: [
+      "Rolling a 7 on a standard die 🎲",
+      "Flipping heads on a coin 🪙",
+      "Drawing a card from a deck",
+      "Spinning a color on a spinner 🎡",
+    ],
+    feedback: {
+      correct: "That's right! A die only has numbers 1 to 6.",
+      incorrect: "Not quite. Think about what cannot happen with a die.",
+    },
+  },
+  {
+    question: "If you spin a spinner 🎡 divided into 4 equal parts (red, blue, yellow, green), what is the chance of landing on red?",
+    answer: "1/4",
+    choices: ["1/2", "1/3", "1/4", "1"],
+    feedback: {
+      correct: "Good job! Each section is equally likely, so the chance is 1/4.",
+      incorrect: "Not quite. Divide the spinner into 4 equal parts.",
+    },
+  },
+  {
+    question: "A bar graph shows 6 apples 🍎 and 8 oranges 🍊. How many fruits are there in total?",
+    answer: "14",
+    choices: ["6", "8", "14", "16"],
+    feedback: {
+      correct: "That's right! Adding 6 and 8 gives a total of 14 fruits.",
+      incorrect: "Not quite. Add the number of apples and oranges together.",
+    },
+  },
+  {
+    question: "If a coin is flipped 10 times, and it lands on heads 6 times, how many times did it land on tails?",
+    answer: "4",
+    choices: ["4", "6", "8", "10"],
+    feedback: {
+      correct: "Good job! 10 flips minus 6 heads equals 4 tails.",
+      incorrect: "Not quite. Subtract the number of heads from the total flips.",
+    },
+  },
+  {
+    question: "What is the most likely outcome when spinning a spinner with 3 green sections and 1 red section?",
+    answer: "Landing on green",
+    choices: ["Landing on green", "Landing on red", "Both are equally likely", "None of these"],
+    feedback: {
+      correct: "Correct! Green is most likely because it has more sections.",
+      incorrect: "Not quite. Look at which color has the most sections.",
+    },
+  },
+  {
+    question: "What does a line graph show?",
+    answer: "Changes over time",
+    choices: ["Changes over time", "Comparisons of categories", "Parts of a whole", "Random data points"],
+    feedback: {
+      correct: "That's right! A line graph is used to show changes over time.",
+      incorrect: "Not quite. Think about what kind of data changes over time.",
+    },
+  },
+  {
+    question: "If you roll two dice 🎲🎲, how many total outcomes are possible?",
+    answer: "36",
+    choices: ["6", "12", "36", "18"],
+    feedback: {
+      correct: "Correct! Each die has 6 faces, so 6 x 6 = 36 outcomes.",
+      incorrect: "Not quite. Multiply the number of outcomes for each die.",
+    },
+  },
+  {
+    question: "Which of these is most likely?",
+    answer: "Drawing a red card from a deck of cards",
+    choices: [
+      "Drawing a red card from a deck of cards",
+      "Rolling a 7 on a die 🎲",
+      "Flipping a coin and landing on its edge 🪙",
+      "None of these",
+    ],
+    feedback: {
+      correct: "That's right! Half the cards in a deck are red.",
+      incorrect: "Not quite. Think about which event has a higher chance.",
+    },
+  },
+  {
+    question: "Which is a way to organize data?",
+    answer: "Using a chart or graph",
+    choices: ["Using a chart or graph", "Guessing", "Flipping a coin", "Drawing shapes"],
+    feedback: {
+      correct: "Good job! Charts and graphs help organize data.",
+      incorrect: "Not quite. Think about tools used to display information.",
+    },
+  },
+];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G2_Units.Tor.html?unit5score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

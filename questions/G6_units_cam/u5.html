@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 5 - Statistics and Probability</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+      const questionsDatabase = [
+  {
+    question: "Which of the following is a statistical question?",
+    answer: "What is the average height of students in my class?",
+    choices: [
+      "What is the average height of students in my class?",
+      "What is the color of my shirt?",
+      "What is my age?",
+      "How many legs does a dog have?",
+    ],
+    feedback: {
+      correct: "Correct! Statistical questions anticipate variability in data.",
+      incorrect: "Statistical questions involve variability, not fixed answers.",
+    },
+  },
+  {
+    question: "Which measure represents the center of a data set?",
+    answer: "Mean",
+    choices: ["Mean", "Range", "Interquartile Range", "Spread"],
+    feedback: {
+      correct: "Correct! The mean is a measure of the center of a data set.",
+      incorrect: "Measures like range describe spread, not the center.",
+    },
+  },
+  {
+    question: "What type of plot is used to display fractions of a unit?",
+    answer: "Line plot (dot plot)",
+    choices: ["Line plot (dot plot)", "Bar graph", "Circle graph", "Histogram"],
+    feedback: {
+      correct: "Correct! Line plots (dot plots) are used to display fractions of a unit.",
+      incorrect: "Line plots represent data points and their frequency.",
+    },
+  },
+  {
+    question: "What does the range of a data set measure?",
+    answer: "The difference between the highest and lowest values",
+    choices: [
+      "The difference between the highest and lowest values",
+      "The average of all data points",
+      "The middle value of the data set",
+      "The frequency of data points",
+    ],
+    feedback: {
+      correct: "Correct! Range measures the spread by subtracting the smallest value from the largest.",
+      incorrect: "Range is the difference between the highest and lowest values.",
+    },
+  },
+  {
+    question: "Which graph divides data into equal-sized intervals?",
+    answer: "Histogram",
+    choices: ["Histogram", "Dot plot", "Bar graph", "Line graph"],
+    feedback: {
+      correct: "Correct! A histogram divides data into intervals to show frequency.",
+      incorrect: "Histograms group data into ranges, unlike bar graphs.",
+    },
+  },
+  {
+    question: "What is the median of the data set: 2, 4, 6, 8, 10?",
+    answer: "6",
+    choices: ["6", "5", "8", "4"],
+    feedback: {
+      correct: "Correct! The median is the middle value when data is ordered.",
+      incorrect: "Reorder the data and find the middle value for the median.",
+    },
+  },
+  {
+    question: "What is the mode of the data set: 3, 3, 4, 5, 6?",
+    answer: "3",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! The mode is the most frequently occurring value.",
+      incorrect: "Identify the number that appears most often in the data set.",
+    },
+  },
+  {
+    question: "Which of the following is NOT a measure of center?",
+    answer: "Range",
+    choices: ["Range", "Mean", "Median", "Mode"],
+    feedback: {
+      correct: "Correct! Range measures spread, not center.",
+      incorrect: "Measures of center include mean, median, and mode.",
+    },
+  },
+  {
+    question: "What is a circle graph also called?",
+    answer: "Pie chart",
+    choices: ["Pie chart", "Histogram", "Bar graph", "Line graph"],
+    feedback: {
+      correct: "Correct! A circle graph is also known as a pie chart.",
+      incorrect: "Circle graphs represent data as portions of a whole.",
+    },
+  },
+  {
+    question: "Which graph would best display percentages?",
+    answer: "Circle graph (Pie chart)",
+    choices: ["Circle graph (Pie chart)", "Bar graph", "Line graph", "Histogram"],
+    feedback: {
+      correct: "Correct! Circle graphs (pie charts) are ideal for showing percentages.",
+      incorrect: "Circle graphs display data as parts of a whole.",
+    },
+  },
+  {
+    question: "What does interquartile range (IQR) measure?",
+    answer: "The spread of the middle 50% of data",
+    choices: [
+      "The spread of the middle 50% of data",
+      "The largest value in the data set",
+      "The total range of all data",
+      "The mean of all data points",
+    ],
+    feedback: {
+      correct: "Correct! IQR measures the range of the middle 50% of data.",
+      incorrect: "IQR focuses on the middle 50% of the data.",
+    },
+  },
+  {
+    question: "What does a box plot represent?",
+    answer: "The distribution of a data set using quartiles",
+    choices: [
+      "The distribution of a data set using quartiles",
+      "The frequency of individual data points",
+      "A comparison of categories",
+      "The relationship between two variables",
+    ],
+    feedback: {
+      correct: "Correct! A box plot shows the spread and center of a data set.",
+      incorrect: "A box plot divides data into quartiles to show distribution.",
+    },
+  },
+  {
+    question: "What is the mean of 3, 6, 9, and 12?",
+    answer: "7.5",
+    choices: ["7.5", "8", "9", "6"],
+    feedback: {
+      correct: "Correct! Mean = (3 + 6 + 9 + 12) ÷ 4 = 7.5.",
+      incorrect: "Add all numbers and divide by the count of numbers to find the mean.",
+    },
+  },
+  {
+    question: "Which statistical measure describes the spread of data?",
+    answer: "Range",
+    choices: ["Range", "Median", "Mode", "Mean"],
+    feedback: {
+      correct: "Correct! Range shows the spread between the highest and lowest values.",
+      incorrect: "Range describes how spread out the data values are.",
+    },
+  },
+  {
+    question: "What is the shape of a symmetrical data distribution?",
+    answer: "Bell-shaped",
+    choices: ["Bell-shaped", "Skewed", "Flat", "Irregular"],
+    feedback: {
+      correct: "Correct! Symmetrical data often forms a bell-shaped curve.",
+      incorrect: "Symmetrical data is evenly distributed around the center.",
+    },
+  },
+  {
+    question: "What is the sum of the first quartile (Q1) and the third quartile (Q3) called?",
+    answer: "Interquartile range",
+    choices: ["Interquartile range", "Mean", "Median", "Range"],
+    feedback: {
+      correct: "Correct! Interquartile range = Q3 - Q1.",
+      incorrect: "The interquartile range measures the spread of the middle 50%.",
+    },
+  },
+  {
+    question: "Which measure is least affected by outliers?",
+    answer: "Median",
+    choices: ["Median", "Mean", "Range", "Mode"],
+    feedback: {
+      correct: "Correct! The median is not influenced by extreme values.",
+      incorrect: "Median is robust to outliers, unlike the mean.",
+    },
+  },
+  {
+    question: "What does a histogram represent?",
+    answer: "Frequency distribution of data",
+    choices: [
+      "Frequency distribution of data",
+      "Relationships between two variables",
+      "Exact values of data points",
+      "Percentage distribution",
+    ],
+    feedback: {
+      correct: "Correct! A histogram shows how often values occur in intervals.",
+      incorrect: "Histograms group data into intervals to show frequency.",
+    },
+  },
+  {
+    question: "What is the difference between the highest and lowest quartiles called?",
+    answer: "Range",
+    choices: ["Range", "Interquartile range", "Mode", "Variance"],
+    feedback: {
+      correct: "Correct! The range is the difference between the highest and lowest values.",
+      incorrect: "Range measures the overall spread of the data.",
+    },
+  },
+  {
+    question: "What is a statistical question likely to involve?",
+    answer: "Variability in data",
+    choices: [
+      "Variability in data",
+      "A fixed, single answer",
+      "A question about one individual",
+      "Simple arithmetic",
+    ],
+    feedback: {
+      correct: "Correct! Statistical questions expect variability in data.",
+      incorrect: "Statistical questions involve data collection and analysis.",
+    },
+  },
+];
+
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G6_Units.cam.html?unit5score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

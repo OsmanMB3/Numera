@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1 - Operations and Algebraic Thinking</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="question-container">
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+      <div class="score-display">Score: <span id="score">0</span>/20</div>
+      <div class="question-box">
+        <h3>Question <span id="question-number">1</span>/20:</h3>
+        <p id="question-text">Loading question...</p>
+        <div id="answer-options-container"></div>
+      </div>
+    </div>
+
+    <div id="feedback-modal" class="feedback-modal">
+      <h2 id="feedback-title"></h2>
+      <p id="feedback-message"></p>
+      <button
+        class="choice-button"
+        id="continue-button"
+        onclick="closeFeedback()"
+      >
+        Continue
+      </button>
+    </div>
+
+    <script>
+      // Question Database Template
+      const questionsDatabase = [
+  {
+    question: "What is the product of 6 and 7?",
+    answer: "42",
+    choices: ["40", "42", "46", "48"],
+    feedback: {
+      correct: "Fantastic! 6 groups of 7 equals 42.",
+      incorrect: "Think of 6 groups with 7 objects each. Count: 7, 14, 21, 28, 35, 42.",
+    },
+  },
+  {
+    question: "Which equation represents 8 groups of 5?",
+    answer: "8 x 5 = 40",
+    choices: ["8 + 5 = 13", "8 x 5 = 40", "8 ÷ 5 = 1.6", "8 - 5 = 3"],
+    feedback: {
+      correct: "Excellent! Multiplication is used to find the total in equal groups.",
+      incorrect: "Think of repeated addition: 5 + 5 + 5 + 5 + 5 + 5 + 5 + 5 = 40.",
+    },
+  },
+  {
+    question: "If you divide 45 by 5, how many groups do you have?",
+    answer: "9",
+    choices: ["8", "9", "10", "11"],
+    feedback: {
+      correct: "Great! 45 divided into groups of 5 equals 9 groups.",
+      incorrect: "Think about division as repeated subtraction: 45 - 5 - 5... until you reach 0.",
+    },
+  },
+  {
+    question: "Solve for the missing number: 9 x ? = 54",
+    answer: "6",
+    choices: ["5", "6", "7", "8"],
+    feedback: {
+      correct: "Well done! Multiplying 9 by 6 gives 54.",
+      incorrect: "Try dividing 54 by 9 to find the missing number.",
+    },
+  },
+  {
+    question: "Which property explains why 3 x 4 = 4 x 3?",
+    answer: "Commutative property",
+    choices: [
+      "Associative property",
+      "Commutative property",
+      "Distributive property",
+      "Identity property",
+    ],
+    feedback: {
+      correct: "Excellent! The commutative property says order doesn’t matter in multiplication.",
+      incorrect: "Remember, the commutative property allows you to swap numbers in multiplication.",
+    },
+  },
+  {
+    question: "What is 48 ÷ 8?",
+    answer: "6",
+    choices: ["5", "6", "7", "8"],
+    feedback: {
+      correct: "Perfect! 48 divided by 8 equals 6.",
+      incorrect: "Think about how many times you can add 8 to reach 48.",
+    },
+  },
+  {
+    question: "If 36 = ? x 6, what is the missing number?",
+    answer: "6",
+    choices: ["5", "6", "7", "8"],
+    feedback: {
+      correct: "Great work! 6 x 6 = 36.",
+      incorrect: "Divide 36 by 6 to find the missing factor.",
+    },
+  },
+  {
+    question: "Solve: 12 ÷ 4 + 6 = ?",
+    answer: "9",
+    choices: ["3", "9", "6", "15"],
+    feedback: {
+      correct: "Nice job! First divide, then add: 12 ÷ 4 + 6 = 9.",
+      incorrect: "Follow the order of operations: divide first, then add.",
+    },
+  },
+  {
+    question: "What is the pattern in multiples of 5?",
+    answer: "End in 0 or 5",
+    choices: [
+      "Are even numbers",
+      "End in 0 or 5",
+      "Increase by 10",
+      "Are always prime",
+    ],
+    feedback: {
+      correct: "Correct! Multiples of 5 always end in 0 or 5.",
+      incorrect: "Check a multiplication table for the pattern of numbers in the 5s column.",
+    },
+  },
+  {
+    question: "How many groups of 6 are in 36?",
+    answer: "6",
+    choices: ["5", "6", "7", "8"],
+    feedback: {
+      correct: "Exactly! 36 divided by 6 gives 6 groups.",
+      incorrect: "Visualize dividing 36 objects into groups of 6.",
+    },
+  },
+  {
+    question: "What is the product of 8 and 9?",
+    answer: "72",
+    choices: ["64", "72", "80", "88"],
+    feedback: {
+      correct: "Nice work! 8 x 9 equals 72.",
+      incorrect: "Try multiplying: 8 x 9 = 72. Use skip counting if needed!",
+    },
+  },
+  {
+    question: "Which equation is true?",
+    answer: "7 x 5 = 35",
+    choices: ["7 x 5 = 40", "7 x 5 = 35", "7 x 5 = 30", "7 x 5 = 25"],
+    feedback: {
+      correct: "Well done! 7 x 5 equals 35.",
+      incorrect: "Revisit the multiplication table for 7.",
+    },
+  },
+  {
+    question: "What number completes this: 4 x ? = 28?",
+    answer: "7",
+    choices: ["5", "6", "7", "8"],
+    feedback: {
+      correct: "Great! 4 x 7 = 28.",
+      incorrect: "Divide 28 by 4 to find the missing number.",
+    },
+  },
+  {
+    question: "What is the missing number: ? x 9 = 81?",
+    answer: "9",
+    choices: ["8", "9", "10", "11"],
+    feedback: {
+      correct: "Good thinking! 9 x 9 = 81.",
+      incorrect: "Think of 81 divided by 9 to find the factor.",
+    },
+  },
+  {
+    question: "What is 63 ÷ 7?",
+    answer: "9",
+    choices: ["6", "7", "8", "9"],
+    feedback: {
+      correct: "Correct! 63 divided by 7 equals 9.",
+      incorrect: "Work out the division: 63 ÷ 7 = 9.",
+    },
+  },
+  {
+    question: "What is the pattern in multiples of 3?",
+    answer: "Increase by 3",
+    choices: [
+      "Increase by 3",
+      "Increase by 4",
+      "End in even numbers",
+      "Are always greater than 10",
+    ],
+    feedback: {
+      correct: "Great! Multiples of 3 increase by 3.",
+      incorrect: "Use a multiplication table for the 3s column.",
+    },
+  },
+  {
+    question: "What is 4 x 25?",
+    answer: "100",
+    choices: ["50", "75", "100", "125"],
+    feedback: {
+      correct: "Perfect! 4 x 25 equals 100.",
+      incorrect: "Think of quarters: 4 quarters make a dollar (100).",
+    },
+  },
+  {
+    question: "What number completes: 8 ÷ ? = 4?",
+    answer: "2",
+    choices: ["1", "2", "3", "4"],
+    feedback: {
+      correct: "That's right! 8 ÷ 2 equals 4.",
+      incorrect: "Think of dividing 8 into groups of 4.",
+    },
+  },
+  {
+    question: "What is 36 divided by 4?",
+    answer: "9",
+    choices: ["6", "8", "9", "10"],
+    feedback: {
+      correct: "Great work! 36 ÷ 4 = 9.",
+      incorrect: "Divide: 36 divided by 4 equals 9.",
+    },
+  },
+  {
+    question: "Solve: 45 ÷ 9?",
+    answer: "5",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Good job! 45 ÷ 9 equals 5.",
+      incorrect: "Think of how many times 9 fits into 45.",
+    },
+  },
+];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const percentage = (score / questionsDatabase.length) * 100;
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        // Ensure any previous buttons are removed first to avoid duplication
+        const existingContinueButton = document.querySelector(
+          "#feedback-modal .choice-button"
+        );
+        if (existingContinueButton) {
+          existingContinueButton.remove();
+        }
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+        Your score: ${score}/${questionsDatabase.length} (${percentage.toFixed(
+          1
+        )}%)<br><br>
+        ${
+          percentage >= 80
+            ? "Outstanding work! 🌟"
+            : percentage >= 60
+            ? "Good job! 💪"
+            : "Keep practicing! 🌱"
+        }<br><br>
+      `;
+
+        const continueButton = document.createElement("button");
+        continueButton.classList.add("choice-button");
+        continueButton.innerText = "Continue";
+        continueButton.onclick = returnToUnits;
+        feedbackMessage.appendChild(continueButton);
+
+        feedbackModal.style.display = "block";
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G3_units.cam.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 5 - Data Analysis
+    </title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    const questionsDatabase= [
+  {
+    question: "What type of graph is used to display data in categories?",
+    answer: "Bar graph",
+    choices: ["Bar graph", "Line graph", "Pie chart", "Histogram"],
+    feedback: {
+      correct: "Correct! A bar graph is used to display data in categories.",
+      incorrect: "Not quite. A bar graph is used for categorical data."
+    }
+  },
+  {
+    question: "Which graph is best for showing how a part of a whole is represented?",
+    answer: "Pie chart",
+    choices: ["Bar graph", "Pie chart", "Line graph", "Dot plot"],
+    feedback: {
+      correct: "Correct! A pie chart is used to show how a part of a whole is represented.",
+      incorrect: "Not quite. A pie chart is ideal for showing parts of a whole."
+    }
+  },
+  {
+    question: "Which of the following is used to display data points over time?",
+    answer: "Line graph",
+    choices: ["Bar graph", "Pie chart", "Line graph", "Dot plot"],
+    feedback: {
+      correct: "Correct! A line graph is used to show data points over time.",
+      incorrect: "Not quite. A line graph is used for data points over time."
+    }
+  },
+  {
+    question: "If a data set shows the number of apples sold each month, which type of graph is most suitable?",
+    answer: "Bar graph",
+    choices: ["Bar graph", "Pie chart", "Line graph", "Histogram"],
+    feedback: {
+      correct: "Correct! A bar graph is ideal for showing discrete data like the number of apples sold each month.",
+      incorrect: "Not quite. A bar graph is best for categorical or discrete data."
+    }
+  },
+  {
+    question: "Which graph shows the frequency of data in intervals?",
+    answer: "Histogram",
+    choices: ["Bar graph", "Pie chart", "Line graph", "Histogram"],
+    feedback: {
+      correct: "Correct! A histogram shows the frequency of data in intervals.",
+      incorrect: "Not quite. A histogram is used for showing frequency distributions."
+    }
+  },
+  {
+    question: "What is the median of the following set of numbers: 3, 7, 5, 9, 6?",
+    answer: "6",
+    choices: ["5", "6", "7", "8"],
+    feedback: {
+      correct: "Correct! When the numbers are ordered (3, 5, 6, 7, 9), the median is 6.",
+      incorrect: "Not quite. Remember, the median is the middle value when numbers are in order."
+    }
+  },
+  {
+    question: "What is the mode of the following data set: 3, 6, 9, 3, 12?",
+    answer: "3",
+    choices: ["3", "6", "9", "12"],
+    feedback: {
+      correct: "Correct! The mode is the most frequent number in the data set, which is 3.",
+      incorrect: "Not quite. The mode is the most frequent value in a set of numbers."
+    }
+  },
+  {
+    question: "What is the mean of the following data set: 2, 4, 6, 8, 10?",
+    answer: "6",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! The mean is the sum of the numbers divided by the number of values: (2 + 4 + 6 + 8 + 10) ÷ 5 = 6.",
+      incorrect: "Not quite. Add the numbers and divide by the total count to find the mean."
+    }
+  },
+  {
+    question: "What is the range of the following data set: 2, 5, 7, 8, 10?",
+    answer: "8",
+    choices: ["5", "6", "8", "10"],
+    feedback: {
+      correct: "Correct! The range is the difference between the highest and lowest values: 10 − 2 = 8.",
+      incorrect: "Not quite. The range is the highest number minus the lowest number."
+    }
+  },
+  {
+    question: "What does a line graph typically show?",
+    answer: "Trends over time",
+    choices: ["Relationships between categories", "Trends over time", "Parts of a whole", "Frequencies in intervals"],
+    feedback: {
+      correct: "Correct! A line graph shows trends or changes over time.",
+      incorrect: "Not quite. Line graphs are used to show trends or changes in data over time."
+    }
+  },
+  {
+    question: "What is the first step in creating a graph?",
+    answer: "Collect the data",
+    choices: ["Choose the graph type", "Collect the data", "Label the axes", "Draw the graph"],
+    feedback: {
+      correct: "Correct! The first step is to collect the data that you want to graph.",
+      incorrect: "Not quite. The first step is to collect and organize the data before graphing."
+    }
+  },
+  {
+    question: "What is the term for the most common value in a data set?",
+    answer: "Mode",
+    choices: ["Mean", "Median", "Mode", "Range"],
+    feedback: {
+      correct: "Correct! The mode is the value that appears most frequently in a data set.",
+      incorrect: "Not quite. The mode is the most common value in a set of numbers."
+    }
+  },
+  {
+    question: "What does the mean represent in a data set?",
+    answer: "The average value",
+    choices: ["The middle value", "The most frequent value", "The average value", "The difference between values"],
+    feedback: {
+      correct: "Correct! The mean is the average value, found by dividing the sum by the number of values.",
+      incorrect: "Not quite. The mean is the average value of a set of numbers."
+    }
+  },
+  {
+    question: "In a bar graph, what do the heights of the bars represent?",
+    answer: "The frequency of each category",
+    choices: ["The frequency of each category", "The total value", "The average value", "The time period"],
+    feedback: {
+      correct: "Correct! The height of each bar represents the frequency or value for each category.",
+      incorrect: "Not quite. The height of the bars corresponds to the frequency of each category."
+    }
+  },
+  {
+    question: "In a pie chart, what does each slice represent?",
+    answer: "A portion of the whole",
+    choices: ["A portion of the whole", "A specific category", "The average value", "The frequency of the category"],
+    feedback: {
+      correct: "Correct! Each slice of a pie chart represents a part of the whole data set.",
+      incorrect: "Not quite. Each slice shows how much each part contributes to the total."
+    }
+  },
+  {
+    question: "What is the sum of the numbers 3, 6, 8, and 9?",
+    answer: "26",
+    choices: ["24", "25", "26", "27"],
+    feedback: {
+      correct: "Correct! 3 + 6 + 8 + 9 = 26.",
+      incorrect: "Not quite. Add the numbers carefully to get the sum."
+    }
+  },
+  {
+    question: "What is the median of the following data set: 4, 7, 2, 9, 6?",
+    answer: "6",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! The median is the middle value in an ordered list (2, 4, 6, 7, 9), which is 6.",
+      incorrect: "Not quite. The median is the middle number when the data set is ordered."
+    }
+  },
+  {
+    question: "Which of the following is true about a histogram?",
+    answer: "It shows frequency distributions in intervals.",
+    choices: ["It shows data over time", "It shows frequency distributions in intervals", "It shows parts of a whole", "It shows trends"],
+    feedback: {
+      correct: "Correct! A histogram displays frequency distributions by grouping data into intervals.",
+      incorrect: "Not quite. A histogram groups data into intervals and shows frequency."
+    }
+  },
+  {
+    question: "Which of the following graphs is best for showing the percentage of a total?",
+    answer: "Pie chart",
+    choices: ["Bar graph", "Line graph", "Pie chart", "Histogram"],
+    feedback: {
+      correct: "Correct! A pie chart is ideal for showing percentages of a total.",
+      incorrect: "Not quite. A pie chart is used for showing parts of a whole."
+    }
+  }
+];
+
+    
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G6_units.edm.html?unit5score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

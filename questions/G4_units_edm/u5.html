@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1 - Number Sense and Operations</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    
+    const questionsDatabase = [
+  {
+    question: "What type of graph would best show the favorite colors of students in a class?",
+    answer: "Bar graph",
+    choices: ["Line graph", "Pie chart", "Bar graph", "Pictograph"],
+    feedback: {
+      correct: "Correct! A bar graph is ideal for comparing categories like favorite colors.",
+      incorrect: "Not quite. A bar graph works best for categorical data."
+    }
+  },
+  {
+    question: "What type of graph shows parts of a whole as percentages?",
+    answer: "Pie chart",
+    choices: ["Bar graph", "Line graph", "Pie chart", "Pictograph"],
+    feedback: {
+      correct: "Correct! A pie chart shows parts of a whole as percentages.",
+      incorrect: "Not quite. Pie charts display data as portions of a circle."
+    }
+  },
+  {
+    question: "What type of graph is best for showing changes over time?",
+    answer: "Line graph",
+    choices: ["Bar graph", "Line graph", "Pie chart", "Histogram"],
+    feedback: {
+      correct: "Correct! A line graph is ideal for showing trends over time.",
+      incorrect: "Not quite. Line graphs are great for tracking changes."
+    }
+  },
+  {
+    question: "If 1 star in a pictograph represents 5 votes, how many votes do 4 stars represent?",
+    answer: "20 votes",
+    choices: ["5 votes", "10 votes", "20 votes", "25 votes"],
+    feedback: {
+      correct: "Correct! Each star represents 5 votes, so 4 stars = 4 × 5 = 20 votes.",
+      incorrect: "Not quite. Multiply the number of stars by the value of one star."
+    }
+  },
+  {
+    question: "What is the purpose of a title on a graph?",
+    answer: "To describe what the graph is about",
+    choices: [
+      "To describe what the graph is about",
+      "To list the data",
+      "To decorate the graph",
+      "To provide labels for the axes"
+    ],
+    feedback: {
+      correct: "Correct! The title tells us what the graph is about.",
+      incorrect: "Not quite. The title provides the topic of the graph."
+    }
+  },
+  {
+    question: "What does the horizontal axis (x-axis) typically represent in a bar graph?",
+    answer: "Categories",
+    choices: ["Values", "Categories", "Percentages", "Units"],
+    feedback: {
+      correct: "Correct! The x-axis typically represents categories in a bar graph.",
+      incorrect: "Not quite. Categories are displayed on the x-axis."
+    }
+  },
+  {
+    question: "In a line graph, what does each point on the line represent?",
+    answer: "A data value",
+    choices: ["A data value", "A category", "A label", "A percentage"],
+    feedback: {
+      correct: "Correct! Each point represents a data value.",
+      incorrect: "Not quite. Points in a line graph represent specific data values."
+    }
+  },
+  {
+    question: "What type of data is best represented using a pictograph?",
+    answer: "Categorical data",
+    choices: ["Numerical data", "Categorical data", "Time data", "Proportional data"],
+    feedback: {
+      correct: "Correct! Pictographs are best for comparing categories.",
+      incorrect: "Not quite. Categorical data works well for pictographs."
+    }
+  },
+  {
+    question: "A bar graph shows the number of books read by students. What does the height of each bar represent?",
+    answer: "The number of books",
+    choices: ["The number of books", "The type of books", "The student names", "The length of books"],
+    feedback: {
+      correct: "Correct! The height of each bar represents the number of books.",
+      incorrect: "Not quite. The height shows the data value being measured."
+    }
+  },
+  {
+    question: "Which graph would you use to compare the average monthly rainfall over a year?",
+    answer: "Bar graph",
+    choices: ["Pie chart", "Line graph", "Bar graph", "Pictograph"],
+    feedback: {
+      correct: "Correct! A bar graph is great for comparing data over months.",
+      incorrect: "Not quite. Bar graphs work best for comparisons."
+    }
+  },
+  {
+    question: "What does the vertical axis (y-axis) typically represent in a bar graph?",
+    answer: "Values or counts",
+    choices: ["Categories", "Values or counts", "Percentages", "Units"],
+    feedback: {
+      correct: "Correct! The y-axis represents values or counts in a bar graph.",
+      incorrect: "Not quite. The y-axis shows the numerical values."
+    }
+  },
+  {
+    question: "What is the best graph to show the percentage of students who prefer different lunch options?",
+    answer: "Pie chart",
+    choices: ["Line graph", "Bar graph", "Pie chart", "Pictograph"],
+    feedback: {
+      correct: "Correct! A pie chart is perfect for showing percentages.",
+      incorrect: "Not quite. Pie charts represent data as parts of a whole."
+    }
+  },
+  {
+    question: "If the key in a pictograph shows 1 smiley face = 10 students, how many students are represented by 3 smiley faces?",
+    answer: "30 students",
+    choices: ["10 students", "20 students", "30 students", "40 students"],
+    feedback: {
+      correct: "Correct! 3 smiley faces represent 3 × 10 = 30 students.",
+      incorrect: "Not quite. Multiply the number of icons by the value of each icon."
+    }
+  },
+  {
+    question: "Which graph would best show the daily temperature over a week?",
+    answer: "Line graph",
+    choices: ["Bar graph", "Pie chart", "Line graph", "Pictograph"],
+    feedback: {
+      correct: "Correct! A line graph is ideal for showing changes in temperature over time.",
+      incorrect: "Not quite. Line graphs are used to show trends over time."
+    }
+  },
+  {
+    question: "What is the key used for in a pictograph?",
+    answer: "To explain what each picture represents",
+    choices: [
+      "To explain what each picture represents",
+      "To describe the title",
+      "To decorate the graph",
+      "To organize the categories"
+    ],
+    feedback: {
+      correct: "Correct! The key explains the value of each picture.",
+      incorrect: "Not quite. The key shows the meaning of the icons."
+    }
+  },
+  {
+    question: "Which type of graph would best show the number of students in different grade levels?",
+    answer: "Bar graph",
+    choices: ["Pie chart", "Bar graph", "Line graph", "Histogram"],
+    feedback: {
+      correct: "Correct! A bar graph is great for comparing categories like grade levels.",
+      incorrect: "Not quite. Bar graphs are used for categorical comparisons."
+    }
+  },
+  {
+    question: "What is the purpose of a legend in a graph?",
+    answer: "To explain the colors or symbols used in the graph",
+    choices: [
+      "To explain the colors or symbols used in the graph",
+      "To describe the title",
+      "To calculate data values",
+      "To label the axes"
+    ],
+    feedback: {
+      correct: "Correct! A legend explains the colors or symbols used.",
+      incorrect: "Not quite. The legend provides details about symbols and colors."
+    }
+  },
+  {
+    question: "Which type of graph would best show how a student’s grades changed over the school year?",
+    answer: "Line graph",
+    choices: ["Bar graph", "Pie chart", "Line graph", "Histogram"],
+    feedback: {
+      correct: "Correct! A line graph is best for showing changes over time.",
+      incorrect: "Not quite. Line graphs show trends or changes over time."
+    }
+  },
+  {
+    question: "If a bar graph shows the favorite sports of students, what does each bar represent?",
+    answer: "The number of students",
+    choices: ["The sport type", "The number of students", "The average score", "The school name"],
+    feedback: {
+      correct: "Correct! Each bar represents the number of students who chose a particular sport.",
+      incorrect: "Not quite. The bar height shows the quantity being measured."
+    }
+  },
+  {
+    question: "If a pie chart shows 25% of students like soccer, what fraction of students like soccer?",
+    answer: "1/4",
+    choices: ["1/2", "1/3", "1/4", "1/5"],
+    feedback: {
+      correct: "Correct! 25% is equal to 1/4.",
+      incorrect: "Not quite. Convert the percentage to a fraction: 25% = 25/100 = 1/4."
+    }
+  }
+];
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_units.edm.html?unit5score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

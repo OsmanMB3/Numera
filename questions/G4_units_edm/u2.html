@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Multiplication and Division    </title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    const questionsDatabase = [
+  {
+    question: "What is 345 × 2?",
+    answer: "690",
+    choices: ["680", "690", "700", "710"],
+    feedback: {
+      correct: "Correct! 345 × 2 = 690.",
+      incorrect: "Not quite. Multiply 345 by 2 carefully."
+    }
+  },
+  {
+    question: "What is 567 ÷ 3?",
+    answer: "189",
+    choices: ["189", "179", "199", "209"],
+    feedback: {
+      correct: "Correct! 567 ÷ 3 = 189.",
+      incorrect: "Not quite. Divide 567 by 3 step by step."
+    }
+  },
+  {
+    question: "What is 432 × 4?",
+    answer: "1,728",
+    choices: ["1,728", "1,828", "1,628", "1,528"],
+    feedback: {
+      correct: "Correct! 432 × 4 = 1,728.",
+      incorrect: "Not quite. Multiply carefully."
+    }
+  },
+  {
+    question: "What is 804 ÷ 4?",
+    answer: "201",
+    choices: ["201", "211", "221", "231"],
+    feedback: {
+      correct: "Correct! 804 ÷ 4 = 201.",
+      incorrect: "Not quite. Divide 804 by 4 step by step."
+    }
+  },
+  {
+    question: "What is 123 × 5?",
+    answer: "615",
+    choices: ["605", "615", "625", "635"],
+    feedback: {
+      correct: "Correct! 123 × 5 = 615.",
+      incorrect: "Not quite. Multiply 123 by 5 carefully."
+    }
+  },
+  {
+    question: "What is 936 ÷ 6?",
+    answer: "156",
+    choices: ["146", "156", "166", "176"],
+    feedback: {
+      correct: "Correct! 936 ÷ 6 = 156.",
+      incorrect: "Not quite. Divide 936 by 6 carefully."
+    }
+  },
+  {
+    question: "What is 205 × 3?",
+    answer: "615",
+    choices: ["605", "615", "625", "635"],
+    feedback: {
+      correct: "Correct! 205 × 3 = 615.",
+      incorrect: "Not quite. Multiply carefully."
+    }
+  },
+  {
+    question: "What is 741 ÷ 7?",
+    answer: "106",
+    choices: ["106", "116", "126", "136"],
+    feedback: {
+      correct: "Correct! 741 ÷ 7 = 106.",
+      incorrect: "Not quite. Divide step by step."
+    }
+  },
+  {
+    question: "What is 654 × 6?",
+    answer: "3,924",
+    choices: ["3,824", "3,924", "4,024", "4,124"],
+    feedback: {
+      correct: "Correct! 654 × 6 = 3,924.",
+      incorrect: "Not quite. Multiply carefully."
+    }
+  },
+  {
+    question: "What is 456 ÷ 8?",
+    answer: "57",
+    choices: ["47", "57", "67", "77"],
+    feedback: {
+      correct: "Correct! 456 ÷ 8 = 57.",
+      incorrect: "Not quite. Divide 456 by 8 step by step."
+    }
+  },
+  {
+    question: "What is 318 × 7?",
+    answer: "2,226",
+    choices: ["2,226", "2,316", "2,126", "2,426"],
+    feedback: {
+      correct: "Correct! 318 × 7 = 2,226.",
+      incorrect: "Not quite. Multiply step by step."
+    }
+  },
+  {
+    question: "What is 987 ÷ 9?",
+    answer: "109",
+    choices: ["99", "109", "119", "129"],
+    feedback: {
+      correct: "Correct! 987 ÷ 9 = 109.",
+      incorrect: "Not quite. Divide 987 by 9 carefully."
+    }
+  },
+  {
+    question: "What is 672 × 5?",
+    answer: "3,360",
+    choices: ["3,260", "3,360", "3,460", "3,560"],
+    feedback: {
+      correct: "Correct! 672 × 5 = 3,360.",
+      incorrect: "Not quite. Multiply step by step."
+    }
+  },
+  {
+    question: "What is 1,215 ÷ 5?",
+    answer: "243",
+    choices: ["233", "243", "253", "263"],
+    feedback: {
+      correct: "Correct! 1,215 ÷ 5 = 243.",
+      incorrect: "Not quite. Divide 1,215 by 5 step by step."
+    }
+  },
+  {
+    question: "What is 742 × 8?",
+    answer: "5,936",
+    choices: ["5,826", "5,936", "6,046", "6,156"],
+    feedback: {
+      correct: "Correct! 742 × 8 = 5,936.",
+      incorrect: "Not quite. Multiply carefully."
+    }
+  },
+  {
+    question: "What is 980 ÷ 7?",
+    answer: "140",
+    choices: ["120", "130", "140", "150"],
+    feedback: {
+      correct: "Correct! 980 ÷ 7 = 140.",
+      incorrect: "Not quite. Divide step by step."
+    }
+  },
+  {
+    question: "What is 492 × 9?",
+    answer: "4,428",
+    choices: ["4,328", "4,428", "4,528", "4,628"],
+    feedback: {
+      correct: "Correct! 492 × 9 = 4,428.",
+      incorrect: "Not quite. Multiply step by step."
+    }
+  },
+  {
+    question: "What is 864 ÷ 8?",
+    answer: "108",
+    choices: ["98", "108", "118", "128"],
+    feedback: {
+      correct: "Correct! 864 ÷ 8 = 108.",
+      incorrect: "Not quite. Divide carefully."
+    }
+  },
+  {
+    question: "What is 385 × 7?",
+    answer: "2,695",
+    choices: ["2,595", "2,695", "2,795", "2,895"],
+    feedback: {
+      correct: "Correct! 385 × 7 = 2,695.",
+      incorrect: "Not quite. Multiply step by step."
+    }
+  },
+  {
+    question: "What is 1,008 ÷ 6?",
+    answer: "168",
+    choices: ["158", "168", "178", "188"],
+    feedback: {
+      correct: "Correct! 1,008 ÷ 6 = 168.",
+      incorrect: "Not quite. Divide 1,008 by 6 carefully."
+    }
+  }
+];
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_units.edm.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Ratios, Percents, and Proportional Reasoning
+    </title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    
+    const questionsDatabase= [
+  {
+    question: "What is the ratio of 3 apples to 5 oranges?",
+    answer: "3:5",
+    choices: ["3:5", "5:3", "1:2", "2:1"],
+    feedback: {
+      correct: "Correct! The ratio of 3 apples to 5 oranges is written as 3:5.",
+      incorrect: "Not quite. Ratios are written as 'quantity of one item : quantity of the other.'"
+    }
+  },
+  {
+    question: "Simplify the ratio 15:20.",
+    answer: "3:4",
+    choices: ["3:4", "4:5", "5:4", "3:5"],
+    feedback: {
+      correct: "Correct! Dividing both numbers by 5 simplifies the ratio to 3:4.",
+      incorrect: "Not quite. Divide both terms by their greatest common factor."
+    }
+  },
+  {
+    question: "If a recipe calls for 2 cups of flour and 3 cups of sugar, what is the ratio of flour to sugar?",
+    answer: "2:3",
+    choices: ["3:2", "1:3", "2:3", "3:1"],
+    feedback: {
+      correct: "Correct! The ratio of flour to sugar is 2:3.",
+      incorrect: "Not quite. The ratio is written as 'flour : sugar.'"
+    }
+  },
+  {
+    question: "What percent is equivalent to 0.75?",
+    answer: "75%",
+    choices: ["7.5%", "75%", "0.75%", "750%"],
+    feedback: {
+      correct: "Correct! 0.75 as a percent is 75%.",
+      incorrect: "Not quite. Multiply the decimal by 100 to convert to percent."
+    }
+  },
+  {
+    question: "Convert 3/5 to a percentage.",
+    answer: "60%",
+    choices: ["40%", "50%", "60%", "70%"],
+    feedback: {
+      correct: "Correct! 3/5 is equivalent to 60%.",
+      incorrect: "Not quite. Divide the numerator by the denominator and multiply by 100."
+    }
+  },
+  {
+    question: "Which fraction is equivalent to 25%?",
+    answer: "1/4",
+    choices: ["1/2", "1/4", "1/5", "1/10"],
+    feedback: {
+      correct: "Correct! 25% is equivalent to 1/4.",
+      incorrect: "Not quite. Convert the percentage to a fraction and simplify."
+    }
+  },
+  {
+    question: "What is 20% of 150?",
+    answer: "30",
+    choices: ["15", "30", "35", "40"],
+    feedback: {
+      correct: "Correct! 20% of 150 is 30.",
+      incorrect: "Not quite. Multiply 150 by 0.20 to find 20%."
+    }
+  },
+  {
+    question: "If a sale offers 30% off a $60 jacket, how much is the discount?",
+    answer: "$18",
+    choices: ["$20", "$15", "$18", "$12"],
+    feedback: {
+      correct: "Correct! 30% of $60 is $18.",
+      incorrect: "Not quite. Multiply $60 by 0.30 to find the discount."
+    }
+  },
+  {
+    question: "If the sale price of a $100 item is $80, what is the discount percentage?",
+    answer: "20%",
+    choices: ["20%", "30%", "25%", "15%"],
+    feedback: {
+      correct: "Correct! The discount is $20, which is 20% of $100.",
+      incorrect: "Not quite. Divide the discount by the original price and multiply by 100."
+    }
+  },
+  {
+    question: "What is 40% of 250?",
+    answer: "100",
+    choices: ["90", "100", "110", "120"],
+    feedback: {
+      correct: "Correct! 40% of 250 is 100.",
+      incorrect: "Not quite. Multiply 250 by 0.40."
+    }
+  },
+  {
+    question: "A car travels 300 km using 15 liters of fuel. What is the ratio of kilometers to liters?",
+    answer: "20:1",
+    choices: ["20:1", "15:1", "10:1", "25:1"],
+    feedback: {
+      correct: "Correct! The car travels 20 km per liter of fuel, so the ratio is 20:1.",
+      incorrect: "Not quite. Divide the kilometers by the liters to find the ratio."
+    }
+  },
+  {
+    question: "If 3 pencils cost $2, what is the cost of 9 pencils?",
+    answer: "$6",
+    choices: ["$5", "$6", "$7", "$8"],
+    feedback: {
+      correct: "Correct! The cost is proportional, so 9 pencils cost $6.",
+      incorrect: "Not quite. Use the unit rate: $2 for 3 pencils means $6 for 9 pencils."
+    }
+  },
+  {
+    question: "Convert 45% to a decimal.",
+    answer: "0.45",
+    choices: ["4.5", "0.045", "0.45", "45.0"],
+    feedback: {
+      correct: "Correct! 45% is equivalent to 0.45.",
+      incorrect: "Not quite. Divide the percentage by 100 to convert to a decimal."
+    }
+  },
+  {
+    question: "Which of the following percentages is equivalent to 4/5?",
+    answer: "80%",
+    choices: ["40%", "50%", "75%", "80%"],
+    feedback: {
+      correct: "Correct! 4/5 is equivalent to 80%.",
+      incorrect: "Not quite. Divide 4 by 5 and multiply by 100 to convert to a percentage."
+    }
+  },
+  {
+    question: "A store offers a 10% discount on all items. If an item costs $120, what is the sale price?",
+    answer: "$108",
+    choices: ["$110", "$108", "$115", "$112"],
+    feedback: {
+      correct: "Correct! The discount is $12, so the sale price is $120 - $12 = $108.",
+      incorrect: "Not quite. Subtract the discount from the original price."
+    }
+  },
+  {
+    question: "A bag contains 4 red, 3 blue, and 5 green marbles. What is the ratio of blue to total marbles?",
+    answer: "3:12",
+    choices: ["3:12", "4:12", "3:5", "4:3"],
+    feedback: {
+      correct: "Correct! There are 3 blue marbles out of 12 total, so the ratio is 3:12.",
+      incorrect: "Not quite. Add all the marbles to get the total, then compare."
+    }
+  },
+  {
+    question: "What percent of 200 is 50?",
+    answer: "25%",
+    choices: ["20%", "25%", "30%", "40%"],
+    feedback: {
+      correct: "Correct! 50 is 25% of 200.",
+      incorrect: "Not quite. Divide 50 by 200 and multiply by 100 to find the percentage."
+    }
+  },
+  {
+    question: "A school has 120 boys and 80 girls. What is the ratio of boys to girls?",
+    answer: "3:2",
+    choices: ["2:3", "3:2", "4:3", "5:4"],
+    feedback: {
+      correct: "Correct! The ratio of boys to girls is 120:80, which simplifies to 3:2.",
+      incorrect: "Not quite. Simplify the ratio of boys to girls."
+    }
+  },
+  {
+    question: "Convert 6:8 to its simplest form.",
+    answer: "3:4",
+    choices: ["3:4", "6:8", "4:5", "5:6"],
+    feedback: {
+      correct: "Correct! Divide both numbers by 2 to simplify to 3:4.",
+      incorrect: "Not quite. Simplify the ratio by dividing by the greatest common factor."
+    }
+  },
+  {
+    question: "A pie is divided into 8 slices. If 6 slices are eaten, what percent of the pie is left?",
+    answer: "25%",
+    choices: ["50%", "25%", "75%", "20%"],
+    feedback: {
+      correct: "Correct! 2 slices are left, which is 25% of the pie.",
+      incorrect: "Not quite. Divide the remaining slices by the total and multiply by 100."
+    }
+  }
+];
+
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G6_Units.Van.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

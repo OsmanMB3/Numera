@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 5 - Data Management and Probability</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+      const questionsDatabase = [
+  {
+    question: "If you flip a coin, what is the probability of getting heads?",
+    answer: "50%",
+    choices: ["25%", "50%", "75%", "100%"],
+    feedback: {
+      correct: "Correct! A coin has two sides, so the probability is 50%.",
+      incorrect: "Not quite. There is an equal chance of heads or tails."
+    }
+  },
+  {
+    question: "You roll a die. What is the probability of rolling a 3?",
+    answer: "1/6",
+    choices: ["1/6", "1/4", "1/3", "1/2"],
+    feedback: {
+      correct: "Correct! A die has six faces, so the probability is 1/6.",
+      incorrect: "Not quite. A die has six sides, so each outcome has an equal chance."
+    }
+  },
+  {
+    question: "In a bag of marbles, there are 5 red, 3 blue, and 2 green marbles. What is the probability of picking a blue marble?",
+    answer: "3/10",
+    choices: ["3/10", "1/2", "1/3", "2/5"],
+    feedback: {
+      correct: "Correct! There are 10 marbles total, and 3 are blue.",
+      incorrect: "Not quite. Divide the number of blue marbles by the total number of marbles."
+    }
+  },
+  {
+    question: "Which event is most likely to happen?",
+    answer: "The sun will rise tomorrow.",
+    choices: [
+      "The sun will rise tomorrow.",
+      "It will snow in July.",
+      "A dog will fly.",
+      "Fish will grow legs."
+    ],
+    feedback: {
+      correct: "Correct! The sun rising is an everyday event.",
+      incorrect: "Not quite. Think about what is guaranteed to happen daily."
+    }
+  },
+  {
+    question: "What is the probability of drawing an ace from a standard deck of cards?",
+    answer: "1/13",
+    choices: ["1/52", "1/26", "1/13", "1/4"],
+    feedback: {
+      correct: "Correct! There are 4 aces in a deck of 52 cards, so 4/52 = 1/13.",
+      incorrect: "Not quite. Divide the number of aces by the total number of cards."
+    }
+  },
+  {
+    question: "A spinner has equal sections numbered 1 to 5. What is the probability of spinning an odd number?",
+    answer: "3/5",
+    choices: ["1/5", "2/5", "3/5", "4/5"],
+    feedback: {
+      correct: "Correct! There are 3 odd numbers (1, 3, 5) out of 5 sections.",
+      incorrect: "Not quite. Count the odd numbers and divide by the total sections."
+    }
+  },
+  {
+    question: "You roll two dice. What is the total number of possible outcomes?",
+    answer: "36",
+    choices: ["6", "12", "24", "36"],
+    feedback: {
+      correct: "Correct! Each die has 6 outcomes, so 6 × 6 = 36.",
+      incorrect: "Not quite. Multiply the number of outcomes for each die."
+    }
+  },
+  {
+    question: "If a graph shows 🍎🍎🍎🍏🍏, what is the probability of picking a green apple (🍏)?",
+    answer: "2/5",
+    choices: ["1/5", "2/5", "3/5", "4/5"],
+    feedback: {
+      correct: "Correct! There are 5 apples in total, and 2 are green.",
+      incorrect: "Not quite. Divide the number of green apples by the total number of apples."
+    }
+  },
+  {
+    question: "A bag contains 6 yellow balls and 4 red balls. What is the probability of picking a yellow ball?",
+    answer: "3/5",
+    choices: ["1/2", "2/5", "3/5", "4/5"],
+    feedback: {
+      correct: "Correct! There are 10 balls total, and 6 are yellow. Simplify 6/10 to 3/5.",
+      incorrect: "Not quite. Divide the number of yellow balls by the total number of balls."
+    }
+  },
+  {
+    question: "If you roll a die, what is the probability of rolling a number greater than 4?",
+    answer: "1/3",
+    choices: ["1/6", "1/3", "1/2", "2/3"],
+    feedback: {
+      correct: "Correct! Numbers greater than 4 are 5 and 6, so 2/6 = 1/3.",
+      incorrect: "Not quite. Count the numbers greater than 4 and divide by the total outcomes."
+    }
+  },
+  {
+    question: "If a survey shows 60% of students prefer pizza 🍕 and 40% prefer burgers 🍔, which is more popular?",
+    answer: "Pizza 🍕",
+    choices: ["Pizza 🍕", "Burgers 🍔", "They are equal", "Cannot be determined"],
+    feedback: {
+      correct: "Correct! 60% prefer pizza, which is greater than 40%.",
+      incorrect: "Not quite. Compare the percentages to see which is larger."
+    }
+  },
+  {
+    question: "A probability experiment involves flipping a coin twice. What is the probability of getting two heads?",
+    answer: "1/4",
+    choices: ["1/2", "1/3", "1/4", "1"],
+    feedback: {
+      correct: "Correct! The probability of heads is 1/2 for each flip, so 1/2 × 1/2 = 1/4.",
+      incorrect: "Not quite. Multiply the probabilities for each flip."
+    }
+  },
+  {
+    question: "Which of these events is impossible?",
+    answer: "A dog will fly.",
+    choices: [
+      "It will rain tomorrow.",
+      "A dog will fly.",
+      "The sun will rise tomorrow.",
+      "You will wake up."
+    ],
+    feedback: {
+      correct: "Correct! A dog cannot fly, so this event is impossible.",
+      incorrect: "Not quite. Think about events that could never happen."
+    }
+  },
+  {
+    question: "A jar contains 8 candies: 3 red, 2 blue, and 3 green. What is the probability of picking a blue candy?",
+    answer: "2/8",
+    choices: ["1/8", "2/8", "3/8", "4/8"],
+    feedback: {
+      correct: "Correct! There are 2 blue candies out of 8 total.",
+      incorrect: "Not quite. Divide the number of blue candies by the total."
+    }
+  },
+  {
+    question: "What is the probability of rolling a number less than 3 on a die?",
+    answer: "1/3",
+    choices: ["1/6", "1/3", "1/2", "2/3"],
+    feedback: {
+      correct: "Correct! Numbers less than 3 are 1 and 2, so 2/6 = 1/3.",
+      incorrect: "Not quite. Count the numbers less than 3 and divide by 6."
+    }
+  },
+  {
+    question: "A spinner is divided into 4 equal sections: red, blue, green, and yellow. What is the probability of landing on green?",
+    answer: "1/4",
+    choices: ["1/2", "1/4", "1/3", "1/5"],
+    feedback: {
+      correct: "Correct! There are 4 equal sections, so the probability is 1/4.",
+      incorrect: "Not quite. Each section has an equal chance of being spun."
+    }
+  },
+  {
+    question: "What is the probability of drawing a heart from a standard deck of cards?",
+    answer: "1/4",
+    choices: ["1/13", "1/4", "1/3", "1/2"],
+    feedback: {
+      correct: "Correct! There are 13 hearts in a deck of 52 cards, so 13/52 = 1/4.",
+      incorrect: "Not quite. Divide the number of hearts by the total number of cards."
+    }
+  },
+  {
+    question: "Which event is least likely?",
+    answer: "It will snow in the summer.",
+    choices: [
+      "You will eat today.",
+      "It will snow in the summer.",
+      "The sun will set tonight.",
+      "You will see a cloud in the sky."
+    ],
+    feedback: {
+      correct: "Correct! Snow in the summer is very unlikely.",
+      incorrect: "Not quite. Think about what rarely or never happens."
+    }
+  },
+  {
+    question: "A coin is flipped 100 times and lands on heads 45 times. What is the experimental probability of heads?",
+    answer: "45%",
+    choices: ["50%", "45%", "55%", "40%"],
+    feedback: {
+      correct: "Correct! The experimental probability is 45/100 = 45%.",
+      incorrect: "Not quite. Divide the number of heads by the total flips."
+    }
+  },
+  {
+    question: "A die is rolled. What is the probability of rolling a number greater than 2?",
+    answer: "2/3",
+    choices: ["1/2", "2/3", "1/3", "5/6"],
+    feedback: {
+      correct: "Correct! Numbers greater than 2 are 3, 4, 5, and 6, so 4/6 = 2/3.",
+      incorrect: "Not quite. Count the numbers greater than 2 and divide by 6."
+    }
+  }
+];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G5_Units.Tor.html?unit5score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

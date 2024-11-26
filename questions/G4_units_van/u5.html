@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 5 - Data and Probability</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    
+    const questionsDatabase = [
+  {
+    question: "What is the mode in the dataset: 3, 7, 3, 5, 7, 3, 4?",
+    answer: "3",
+    choices: ["3", "5", "7", "4"],
+    feedback: {
+      correct: "Correct! The mode is the number that appears most frequently, which is 3.",
+      incorrect: "Not quite. Look for the number that appears the most times."
+    }
+  },
+  {
+    question: "If you flip a coin, what is the probability it lands on heads?",
+    answer: "1/2",
+    choices: ["1/4", "1/3", "1/2", "1"],
+    feedback: {
+      correct: "Correct! A coin has two sides, so the probability is 1/2.",
+      incorrect: "Not quite. A coin gives equal chances for heads and tails."
+    }
+  },
+  {
+    question: "In a class of 20 students, 12 like pizza and 8 like burgers. What fraction of the class likes burgers?",
+    answer: "2/5",
+    choices: ["1/4", "2/5", "3/5", "4/5"],
+    feedback: {
+      correct: "Correct! 8 out of 20 is simplified to 2/5.",
+      incorrect: "Not quite. Divide the number of students who like burgers by the total number."
+    }
+  },
+  {
+    question: "A bag contains 5 red marbles, 3 blue marbles, and 2 green marbles. What is the probability of picking a red marble?",
+    answer: "1/2",
+    choices: ["1/2", "1/3", "1/5", "1/10"],
+    feedback: {
+      correct: "Correct! There are 5 red marbles out of 10 total marbles, so the probability is 1/2.",
+      incorrect: "Not quite. Divide the number of red marbles by the total number of marbles."
+    }
+  },
+  {
+    question: "What type of graph is best for showing how a whole is divided into parts?",
+    answer: "Pie chart",
+    choices: ["Bar graph", "Line graph", "Pie chart", "Pictograph"],
+    feedback: {
+      correct: "Correct! A pie chart is ideal for representing parts of a whole.",
+      incorrect: "Not quite. Pie charts are best for showing proportions."
+    }
+  },
+  {
+    question: "In a bar graph, what does the height of each bar represent?",
+    answer: "The value or frequency of the data",
+    choices: ["The title of the graph", "The value or frequency of the data", "The category of the data", "The scale of the graph"],
+    feedback: {
+      correct: "Correct! The height of a bar represents the value or frequency.",
+      incorrect: "Not quite. The height shows how much or how often something occurs."
+    }
+  },
+  {
+    question: "A dice is rolled once. What is the probability of rolling an even number?",
+    answer: "1/2",
+    choices: ["1/3", "1/4", "1/2", "2/3"],
+    feedback: {
+      correct: "Correct! There are three even numbers (2, 4, 6) out of six sides.",
+      incorrect: "Not quite. Count the even numbers on the dice and divide by the total number of sides."
+    }
+  },
+  {
+    question: "What is the range of this dataset: 15, 22, 30, 18, 25?",
+    answer: "15",
+    choices: ["10", "12", "15", "18"],
+    feedback: {
+      correct: "Correct! The range is the difference between the largest (30) and smallest (15) values: 30 - 15 = 15.",
+      incorrect: "Not quite. Subtract the smallest value from the largest."
+    }
+  },
+  {
+    question: "Which of the following is NOT a way to display data?",
+    answer: "Number line",
+    choices: ["Bar graph", "Pictograph", "Pie chart", "Number line"],
+    feedback: {
+      correct: "Correct! A number line is not used to display data.",
+      incorrect: "Not quite. Think of tools used to visualize data."
+    }
+  },
+  {
+    question: "What is the median of the dataset: 8, 12, 10, 14, 6?",
+    answer: "10",
+    choices: ["8", "10", "12", "14"],
+    feedback: {
+      correct: "Correct! When arranged in order (6, 8, 10, 12, 14), the middle value is 10.",
+      incorrect: "Not quite. Arrange the data in order and find the middle value."
+    }
+  },
+  {
+    question: "What is the probability of rolling a 3 on a six-sided dice?",
+    answer: "1/6",
+    choices: ["1/6", "1/5", "1/4", "1/3"],
+    feedback: {
+      correct: "Correct! Each side of the dice has an equal probability of 1/6.",
+      incorrect: "Not quite. A dice has six sides, and each side has an equal chance."
+    }
+  },
+  {
+    question: "Which graph is most suitable for showing changes over time?",
+    answer: "Line graph",
+    choices: ["Bar graph", "Line graph", "Pictograph", "Pie chart"],
+    feedback: {
+      correct: "Correct! Line graphs are used to show changes over time.",
+      incorrect: "Not quite. Line graphs are best for displaying trends over time."
+    }
+  },
+  {
+    question: "If you pick one card from a deck of 52 cards, what is the probability it is a red card?",
+    answer: "1/2",
+    choices: ["1/4", "1/2", "1/3", "1/52"],
+    feedback: {
+      correct: "Correct! Half of the cards in a deck are red, so the probability is 1/2.",
+      incorrect: "Not quite. Half of the deck consists of red cards."
+    }
+  },
+  {
+    question: "What does the term 'outlier' mean in a dataset?",
+    answer: "A value much higher or lower than the others",
+    choices: [
+      "The smallest value in the dataset",
+      "The largest value in the dataset",
+      "A value much higher or lower than the others",
+      "The average of the dataset"
+    ],
+    feedback: {
+      correct: "Correct! An outlier is significantly different from other values.",
+      incorrect: "Not quite. An outlier is an unusually high or low value."
+    }
+  },
+  {
+    question: "A spinner has 4 equal sections: red, blue, green, and yellow. What is the probability of landing on green?",
+    answer: "1/4",
+    choices: ["1/2", "1/3", "1/4", "1"],
+    feedback: {
+      correct: "Correct! Each section has an equal chance, so the probability is 1/4.",
+      incorrect: "Not quite. Divide the number of green sections by the total sections."
+    }
+  },
+  {
+    question: "In a pictograph, what does each symbol represent?",
+    answer: "A certain quantity",
+    choices: ["A type of data", "A certain quantity", "A fraction", "A percentage"],
+    feedback: {
+      correct: "Correct! Each symbol represents a specific quantity in a pictograph.",
+      incorrect: "Not quite. Each symbol in a pictograph stands for a quantity."
+    }
+  },
+  {
+    question: "What is the mean of the dataset: 5, 10, 15, 20?",
+    answer: "12.5",
+    choices: ["10", "12", "12.5", "15"],
+    feedback: {
+      correct: "Correct! The mean is (5 + 10 + 15 + 20) ÷ 4 = 12.5.",
+      incorrect: "Not quite. Add all the numbers and divide by the total count."
+    }
+  },
+  {
+    question: "What is the probability of drawing an ace from a deck of 52 cards?",
+    answer: "1/13",
+    choices: ["1/13", "1/26", "1/52", "1/4"],
+    feedback: {
+      correct: "Correct! There are 4 aces in the deck, so the probability is 4/52 = 1/13.",
+      incorrect: "Not quite. Count the aces and divide by the total number of cards."
+    }
+  },
+  {
+    question: "If you roll two dice, what is the highest possible sum?",
+    answer: "12",
+    choices: ["10", "11", "12", "13"],
+    feedback: {
+      correct: "Correct! The highest sum is 6 + 6 = 12.",
+      incorrect: "Not quite. Add the highest numbers on both dice."
+    }
+  },
+  {
+    question: "What does a bar graph use to represent data?",
+    answer: "Bars",
+    choices: ["Bars", "Lines", "Dots", "Pie slices"],
+    feedback: {
+      correct: "Correct! Bar graphs use bars to represent data.",
+      incorrect: "Not quite. Look at the main feature of bar graphs."
+    }
+  }
+];
+
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_Units.Van.html?unit5score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

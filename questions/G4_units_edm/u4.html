@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1 - Number Sense and Operations</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+  
+  const questionsDatabase = [
+  {
+    question: "What is the formula to calculate the area of a rectangle?",
+    answer: "Length × Width",
+    choices: ["Length + Width", "Length × Width", "2 × (Length + Width)", "Length ÷ Width"],
+    feedback: {
+      correct: "Correct! The area of a rectangle is calculated by multiplying length by width.",
+      incorrect: "Not quite. Multiply the length by the width to find the area."
+    }
+  },
+  {
+    question: "A rectangle has a length of 5 cm and a width of 3 cm. What is its area?",
+    answer: "15 cm²",
+    choices: ["15 cm²", "8 cm²", "16 cm²", "12 cm²"],
+    feedback: {
+      correct: "Correct! 5 × 3 = 15, so the area is 15 cm².",
+      incorrect: "Not quite. Multiply length (5) by width (3)."
+    }
+  },
+  {
+    question: "A rectangle has a length of 10 m and a width of 4 m. What is its area?",
+    answer: "40 m²",
+    choices: ["40 m²", "14 m²", "20 m²", "50 m²"],
+    feedback: {
+      correct: "Correct! 10 × 4 = 40, so the area is 40 m².",
+      incorrect: "Not quite. Multiply length (10) by width (4)."
+    }
+  },
+  {
+    question: "What unit is used to measure the area of a rectangle?",
+    answer: "Square units",
+    choices: ["Cubic units", "Linear units", "Square units", "Meters only"],
+    feedback: {
+      correct: "Correct! Area is measured in square units.",
+      incorrect: "Not quite. Area uses square units like cm² or m²."
+    }
+  },
+  {
+    question: "What is the perimeter of a rectangle with a length of 6 cm and a width of 2 cm?",
+    answer: "16 cm",
+    choices: ["12 cm", "14 cm", "16 cm", "18 cm"],
+    feedback: {
+      correct: "Correct! Perimeter = 2 × (Length + Width), so 2 × (6 + 2) = 16 cm.",
+      incorrect: "Not quite. Use the formula 2 × (Length + Width)."
+    }
+  },
+  {
+    question: "A square has a side length of 5 m. What is its area?",
+    answer: "25 m²",
+    choices: ["20 m²", "25 m²", "30 m²", "15 m²"],
+    feedback: {
+      correct: "Correct! Area of a square = Side × Side, so 5 × 5 = 25 m².",
+      incorrect: "Not quite. Multiply the side by itself."
+    }
+  },
+  {
+    question: "A rectangle has a perimeter of 20 cm and its length is 6 cm. What is its width?",
+    answer: "4 cm",
+    choices: ["3 cm", "4 cm", "5 cm", "6 cm"],
+    feedback: {
+      correct: "Correct! Perimeter = 2 × (Length + Width). Solve for Width: 20 = 2 × (6 + Width).",
+      incorrect: "Not quite. Use the formula and solve for width."
+    }
+  },
+  {
+    question: "What is the perimeter of a square with a side length of 7 m?",
+    answer: "28 m",
+    choices: ["21 m", "28 m", "35 m", "14 m"],
+    feedback: {
+      correct: "Correct! Perimeter of a square = 4 × Side, so 4 × 7 = 28 m.",
+      incorrect: "Not quite. Multiply the side length by 4."
+    }
+  },
+  {
+    question: "What is the area of a rectangle with a length of 8 cm and a width of 5 cm?",
+    answer: "40 cm²",
+    choices: ["30 cm²", "35 cm²", "40 cm²", "45 cm²"],
+    feedback: {
+      correct: "Correct! 8 × 5 = 40, so the area is 40 cm².",
+      incorrect: "Not quite. Multiply the length by the width."
+    }
+  },
+  {
+    question: "A rectangle has a length of 9 m and a width of 3 m. What is its perimeter?",
+    answer: "24 m",
+    choices: ["22 m", "24 m", "26 m", "28 m"],
+    feedback: {
+      correct: "Correct! Perimeter = 2 × (Length + Width), so 2 × (9 + 3) = 24 m.",
+      incorrect: "Not quite. Use the formula 2 × (Length + Width)."
+    }
+  },
+  {
+    question: "What is the area of a square with a side length of 10 cm?",
+    answer: "100 cm²",
+    choices: ["80 cm²", "90 cm²", "100 cm²", "110 cm²"],
+    feedback: {
+      correct: "Correct! Area = Side × Side, so 10 × 10 = 100 cm².",
+      incorrect: "Not quite. Multiply the side length by itself."
+    }
+  },
+  {
+    question: "If the perimeter of a rectangle is 30 cm and its width is 7 cm, what is its length?",
+    answer: "8 cm",
+    choices: ["7 cm", "8 cm", "9 cm", "10 cm"],
+    feedback: {
+      correct: "Correct! Perimeter = 2 × (Length + Width). Solve for Length.",
+      incorrect: "Not quite. Solve the equation step by step."
+    }
+  },
+  {
+    question: "What is the perimeter of a square with a side length of 12 m?",
+    answer: "48 m",
+    choices: ["36 m", "48 m", "60 m", "72 m"],
+    feedback: {
+      correct: "Correct! Perimeter = 4 × Side, so 4 × 12 = 48 m.",
+      incorrect: "Not quite. Multiply the side length by 4."
+    }
+  },
+  {
+    question: "A rectangle has a length of 15 cm and a width of 10 cm. What is its area?",
+    answer: "150 cm²",
+    choices: ["130 cm²", "140 cm²", "150 cm²", "160 cm²"],
+    feedback: {
+      correct: "Correct! 15 × 10 = 150, so the area is 150 cm².",
+      incorrect: "Not quite. Multiply the length by the width."
+    }
+  },
+  {
+    question: "A square has a perimeter of 36 m. What is the length of one side?",
+    answer: "9 m",
+    choices: ["6 m", "7 m", "8 m", "9 m"],
+    feedback: {
+      correct: "Correct! Perimeter = 4 × Side. Solve for Side: 36 ÷ 4 = 9 m.",
+      incorrect: "Not quite. Divide the perimeter by 4."
+    }
+  },
+  {
+    question: "A rectangle has an area of 48 cm² and a length of 8 cm. What is its width?",
+    answer: "6 cm",
+    choices: ["4 cm", "5 cm", "6 cm", "7 cm"],
+    feedback: {
+      correct: "Correct! Area = Length × Width. Solve for Width: 48 ÷ 8 = 6 cm.",
+      incorrect: "Not quite. Divide the area by the length."
+    }
+  },
+  {
+    question: "What is the perimeter of a rectangle with a length of 14 cm and a width of 5 cm?",
+    answer: "38 cm",
+    choices: ["34 cm", "36 cm", "38 cm", "40 cm"],
+    feedback: {
+      correct: "Correct! Perimeter = 2 × (Length + Width), so 2 × (14 + 5) = 38 cm.",
+      incorrect: "Not quite. Use the formula for perimeter."
+    }
+  },
+  {
+    question: "What is the area of a square with a side length of 20 cm?",
+    answer: "400 cm²",
+    choices: ["200 cm²", "300 cm²", "400 cm²", "500 cm²"],
+    feedback: {
+      correct: "Correct! Area = Side × Side, so 20 × 20 = 400 cm².",
+      incorrect: "Not quite. Multiply the side length by itself."
+    }
+  },
+  {
+    question: "A rectangle has a perimeter of 50 cm. If its width is 10 cm, what is its length?",
+    answer: "15 cm",
+    choices: ["10 cm", "12 cm", "15 cm", "18 cm"],
+    feedback: {
+      correct: "Correct! Perimeter = 2 × (Length + Width). Solve for Length.",
+      incorrect: "Not quite. Solve step by step for the missing length."
+    }
+  },
+  {
+    question: "What is the area of a rectangle with a length of 25 m and a width of 10 m?",
+    answer: "250 m²",
+    choices: ["200 m²", "250 m²", "300 m²", "350 m²"],
+    feedback: {
+      correct: "Correct! Area = Length × Width, so 25 × 10 = 250 m².",
+      incorrect: "Not quite. Multiply the length by the width."
+    }
+  }
+];
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_units.edm.html?unit4score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

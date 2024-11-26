@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1 - Number Sense and Operations</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    const questionsDatabase = [
+  {
+    question: "What is 23 + 15?",
+    answer: "38",
+    choices: ["37", "38", "39", "40"],
+    feedback: {
+      correct: "Correct! 23 + 15 = 38.",
+      incorrect: "Not quite. Add the tens and then the ones."
+    }
+  },
+  {
+    question: "What is 42 - 17?",
+    answer: "25",
+    choices: ["24", "25", "26", "27"],
+    feedback: {
+      correct: "Correct! 42 - 17 = 25.",
+      incorrect: "Not quite. Subtract the ones and then the tens."
+    }
+  },
+  {
+    question: "What is the sum of 30 + 20?",
+    answer: "50",
+    choices: ["40", "50", "60", "70"],
+    feedback: {
+      correct: "Correct! Adding 30 and 20 gives 50.",
+      incorrect: "Not quite. Add the tens together."
+    }
+  },
+  {
+    question: "Which number is even?",
+    answer: "36",
+    choices: ["35", "36", "37", "39"],
+    feedback: {
+      correct: "Correct! 36 is an even number.",
+      incorrect: "Not quite. Even numbers are divisible by 2."
+    }
+  },
+  {
+    question: "What is the next odd number after 47?",
+    answer: "49",
+    choices: ["48", "49", "50", "51"],
+    feedback: {
+      correct: "Correct! 49 is the next odd number.",
+      incorrect: "Not quite. Odd numbers are not divisible by 2."
+    }
+  },
+  {
+    question: "What is 10 + 10 + 10?",
+    answer: "30",
+    choices: ["20", "30", "40", "50"],
+    feedback: {
+      correct: "Correct! Adding three 10s gives 30.",
+      incorrect: "Not quite. Add the tens together."
+    }
+  },
+  {
+    question: "Which is the largest number: 45, 67, or 32?",
+    answer: "67",
+    choices: ["45", "67", "32", "They are all the same"],
+    feedback: {
+      correct: "Correct! 67 is the largest number.",
+      incorrect: "Not quite. Compare the numbers."
+    }
+  },
+  {
+    question: "What is 24 + 12?",
+    answer: "36",
+    choices: ["34", "36", "38", "40"],
+    feedback: {
+      correct: "Correct! 24 + 12 = 36.",
+      incorrect: "Not quite. Add the tens and then the ones."
+    }
+  },
+  {
+    question: "Which number comes before 80 on the number line?",
+    answer: "79",
+    choices: ["78", "79", "81", "82"],
+    feedback: {
+      correct: "Correct! 79 comes before 80.",
+      incorrect: "Not quite. Count backward from 80."
+    }
+  },
+  {
+    question: "What is the difference between 100 and 70?",
+    answer: "30",
+    choices: ["20", "30", "40", "50"],
+    feedback: {
+      correct: "Correct! 100 - 70 = 30.",
+      incorrect: "Not quite. Subtract 70 from 100."
+    }
+  },
+  {
+    question: "What is the place value of the 4 in 42?",
+    answer: "40",
+    choices: ["4", "40", "2", "20"],
+    feedback: {
+      correct: "Correct! The 4 is in the tens place, so it represents 40.",
+      incorrect: "Not quite. Look at the position of the 4."
+    }
+  },
+  {
+    question: "What is 29 rounded to the nearest ten?",
+    answer: "30",
+    choices: ["20", "25", "30", "35"],
+    feedback: {
+      correct: "Correct! 29 rounded to the nearest ten is 30.",
+      incorrect: "Not quite. Think about which ten 29 is closer to."
+    }
+  },
+  {
+    question: "What is 18 - 9?",
+    answer: "9",
+    choices: ["8", "9", "10", "11"],
+    feedback: {
+      correct: "Correct! 18 - 9 = 9.",
+      incorrect: "Not quite. Subtract 9 from 18."
+    }
+  },
+  {
+    question: "What is double 12?",
+    answer: "24",
+    choices: ["22", "24", "26", "28"],
+    feedback: {
+      correct: "Correct! Doubling 12 gives 24.",
+      incorrect: "Not quite. Multiply 12 by 2."
+    }
+  },
+  {
+    question: "What is the next number in the sequence: 10, 20, 30, ...?",
+    answer: "40",
+    choices: ["35", "40", "45", "50"],
+    feedback: {
+      correct: "Correct! The sequence increases by 10 each time.",
+      incorrect: "Not quite. Add 10 to the last number."
+    }
+  },
+  {
+    question: "What is 5 tens and 3 ones?",
+    answer: "53",
+    choices: ["35", "53", "73", "93"],
+    feedback: {
+      correct: "Correct! 5 tens and 3 ones make 53.",
+      incorrect: "Not quite. Combine the tens and ones."
+    }
+  },
+  {
+    question: "What is 15 + 25?",
+    answer: "40",
+    choices: ["30", "35", "40", "45"],
+    feedback: {
+      correct: "Correct! 15 + 25 = 40.",
+      incorrect: "Not quite. Add the numbers carefully."
+    }
+  },
+  {
+    question: "What is 60 - 40?",
+    answer: "20",
+    choices: ["15", "20", "25", "30"],
+    feedback: {
+      correct: "Correct! 60 - 40 = 20.",
+      incorrect: "Not quite. Subtract the smaller number from the larger number."
+    }
+  },
+  {
+    question: "Which is an odd number: 22, 33, or 44?",
+    answer: "33",
+    choices: ["22", "33", "44", "All are even"],
+    feedback: {
+      correct: "Correct! 33 is an odd number.",
+      incorrect: "Not quite. Odd numbers are not divisible by 2."
+    }
+  },
+  {
+    question: "What is 3 tens and 7 ones?",
+    answer: "37",
+    choices: ["27", "37", "47", "57"],
+    feedback: {
+      correct: "Correct! 3 tens and 7 ones make 37.",
+      incorrect: "Not quite. Combine the tens and ones."
+    }
+  }
+];
+
+
+
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G2_Units.Van.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

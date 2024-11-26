@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 5 - Financial Literacy and Reasoning</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    
+    
+    const questionsDatabase= [
+  {
+    question: "What is the value of a nickel?",
+    answer: "5 cents",
+    choices: ["1 cent", "5 cents", "10 cents", "25 cents"],
+    feedback: {
+      correct: "Correct! A nickel is worth 5 cents.",
+      incorrect: "Not quite. A nickel is worth 5 cents."
+    }
+  },
+  {
+    question: "What is the value of a dime?",
+    answer: "10 cents",
+    choices: ["1 cent", "5 cents", "10 cents", "25 cents"],
+    feedback: {
+      correct: "Correct! A dime is worth 10 cents.",
+      incorrect: "Not quite. A dime is worth 10 cents."
+    }
+  },
+  {
+    question: "Which coin is worth the most?",
+    answer: "Dime",
+    choices: ["Penny", "Nickel", "Dime", "They all have the same value"],
+    feedback: {
+      correct: "Correct! A dime is worth the most at 10 cents.",
+      incorrect: "Not quite. A dime has the highest value."
+    }
+  },
+  {
+    question: "You have 2 nickels. How many cents do you have?",
+    answer: "10 cents",
+    choices: ["5 cents", "10 cents", "15 cents", "20 cents"],
+    feedback: {
+      correct: "Correct! 2 nickels are worth 10 cents.",
+      incorrect: "Not quite. Multiply the number of nickels by their value (5 cents each)."
+    }
+  },
+  {
+    question: "Which is a good way to save money?",
+    answer: "Put coins in a piggy bank",
+    choices: [
+      "Spend all your money",
+      "Put coins in a piggy bank",
+      "Throw coins away",
+      "Give it all to someone"
+    ],
+    feedback: {
+      correct: "Correct! Saving money in a piggy bank is a good idea.",
+      incorrect: "Not quite. Think about how to save money for later."
+    }
+  },
+  {
+    question: "If you have 10 cents and spend 5 cents, how much is left?",
+    answer: "5 cents",
+    choices: ["3 cents", "5 cents", "8 cents", "10 cents"],
+    feedback: {
+      correct: "Correct! 10 - 5 = 5 cents.",
+      incorrect: "Not quite. Subtract the amount spent from your total."
+    }
+  },
+  {
+    question: "Which coin is worth the least?",
+    answer: "Penny",
+    choices: ["Penny", "Nickel", "Dime", "They all have the same value"],
+    feedback: {
+      correct: "Correct! A penny is worth only 1 cent, the least value.",
+      incorrect: "Not quite. A penny is the coin with the smallest value."
+    }
+  },
+  {
+    question: "If a toy costs 7 cents and you have 10 cents, how much money will you have left after buying the toy?",
+    answer: "3 cents",
+    choices: ["2 cents", "3 cents", "4 cents", "5 cents"],
+    feedback: {
+      correct: "Correct! 10 - 7 = 3 cents.",
+      incorrect: "Not quite. Subtract the cost of the toy from the money you have."
+    }
+  },
+  {
+    question: "You save 1 coin every day. How many coins will you have after 7 days?",
+    answer: "7",
+    choices: ["5", "6", "7", "8"],
+    feedback: {
+      correct: "Correct! 1 coin per day for 7 days equals 7 coins.",
+      incorrect: "Not quite. Add 1 coin for each day."
+    }
+  },
+  {
+    question: "If you have 2 dimes, how much money do you have?",
+    answer: "20 cents",
+    choices: ["10 cents", "15 cents", "20 cents", "25 cents"],
+    feedback: {
+      correct: "Correct! 2 dimes are worth 20 cents.",
+      incorrect: "Not quite. Multiply the value of a dime (10 cents) by the number of dimes."
+    }
+  },
+  {
+    question: "Which is a smart way to spend money?",
+    answer: "Buy something you need",
+    choices: [
+      "Buy something you need",
+      "Spend it all on candy",
+      "Throw it away",
+      "Lose it"
+    ],
+    feedback: {
+      correct: "Correct! Spending money on something you need is a good choice.",
+      incorrect: "Not quite. Think about making smart decisions with money."
+    }
+  },
+  {
+    question: "What coin is worth 1 cent?",
+    answer: "Penny",
+    choices: ["Penny", "Nickel", "Dime", "Quarter"],
+    feedback: {
+      correct: "Correct! A penny is worth 1 cent.",
+      incorrect: "Not quite. A penny is the coin with the smallest value."
+    }
+  },
+  {
+    question: "If a candy costs 5 cents and you have 15 cents, how many candies can you buy?",
+    answer: "3 candies",
+    choices: ["2 candies", "3 candies", "4 candies", "5 candies"],
+    feedback: {
+      correct: "Correct! 15 ÷ 5 = 3 candies.",
+      incorrect: "Not quite. Divide the money you have by the cost of one candy."
+    }
+  },
+  {
+    question: "You want to save 10 coins. If you save 2 coins every day, how many days will it take?",
+    answer: "5 days",
+    choices: ["4 days", "5 days", "6 days", "7 days"],
+    feedback: {
+      correct: "Correct! 10 ÷ 2 = 5 days.",
+      incorrect: "Not quite. Divide the total coins you want to save by the number saved each day."
+    }
+  },
+  {
+    question: "If you buy a toy for 8 cents and have 20 cents, how much is left?",
+    answer: "12 cents",
+    choices: ["10 cents", "12 cents", "15 cents", "18 cents"],
+    feedback: {
+      correct: "Correct! 20 - 8 = 12 cents.",
+      incorrect: "Not quite. Subtract the cost of the toy from the money you have."
+    }
+  },
+  {
+    question: "If you save 2 coins every day for 10 days, how many coins will you save?",
+    answer: "20",
+    choices: ["18", "19", "20", "21"],
+    feedback: {
+      correct: "Correct! 2 coins per day for 10 days equals 20 coins.",
+      incorrect: "Not quite. Multiply the number of coins saved per day by the number of days."
+    }
+  },
+  {
+    question: "Which is a good way to save money?",
+    answer: "Put it in a piggy bank",
+    choices: [
+      "Spend it all",
+      "Put it in a piggy bank",
+      "Throw it away",
+      "Lose it"
+    ],
+    feedback: {
+      correct: "Correct! Saving money in a piggy bank is a good idea.",
+      incorrect: "Not quite. Think about how to save money for later."
+    }
+  },
+  {
+    question: "What is the total value of 1 dime and 2 nickels?",
+    answer: "20 cents",
+    choices: ["15 cents", "20 cents", "25 cents", "30 cents"],
+    feedback: {
+      correct: "Correct! 1 dime (10 cents) + 2 nickels (10 cents) = 20 cents.",
+      incorrect: "Not quite. Add the value of the coins together."
+    }
+  },
+  {
+    question: "If you have 3 nickels, how many pennies is that worth?",
+    answer: "15 pennies",
+    choices: ["5 pennies", "10 pennies", "15 pennies", "20 pennies"],
+    feedback: {
+      correct: "Correct! 1 nickel is worth 5 pennies, so 3 nickels = 15 pennies.",
+      incorrect: "Not quite. Multiply the number of nickels by their value in pennies."
+    }
+  }
+];
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G1_Units.Van.html?unit5score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

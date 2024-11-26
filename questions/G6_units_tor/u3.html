@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Geometry and Spatial Sense</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+     const questionsDatabase = [
+  {
+    question: "What type of transformation moves a shape without changing its size or orientation?",
+    answer: "Translation",
+    choices: ["Translation", "Reflection", "Rotation", "Dilation"],
+    feedback: {
+      correct: "Correct! A translation moves the shape without altering its size or orientation.",
+      incorrect: "Not quite. Translation slides the shape to a new location."
+    }
+  },
+  {
+    question: "What happens to a shape during a reflection?",
+    answer: "It flips over a line.",
+    choices: [
+      "It flips over a line.",
+      "It slides to a new position.",
+      "It turns around a point.",
+      "It changes size."
+    ],
+    feedback: {
+      correct: "Correct! A reflection flips the shape over a line.",
+      incorrect: "Not quite. Reflection creates a mirror image of the shape."
+    }
+  },
+  {
+    question: "Which of the following is a property of congruent shapes?",
+    answer: "They are the same size and shape.",
+    choices: [
+      "They are the same size and shape.",
+      "They have the same area but different shapes.",
+      "They are the same shape but different sizes.",
+      "They are always rectangles."
+    ],
+    feedback: {
+      correct: "Correct! Congruent shapes are identical in size and shape.",
+      incorrect: "Not quite. Congruent shapes are identical in every aspect except position."
+    }
+  },
+  {
+    question: "What type of transformation rotates a shape around a fixed point?",
+    answer: "Rotation",
+    choices: ["Translation", "Reflection", "Rotation", "Dilation"],
+    feedback: {
+      correct: "Correct! A rotation turns a shape around a fixed point.",
+      incorrect: "Not quite. Rotation involves spinning the shape around a point."
+    }
+  },
+  {
+    question: "If a triangle is rotated 90° clockwise around the origin, what happens to its orientation?",
+    answer: "It turns 90° to the right.",
+    choices: [
+      "It turns 90° to the left.",
+      "It turns 90° to the right.",
+      "It flips over a line.",
+      "It becomes smaller."
+    ],
+    feedback: {
+      correct: "Correct! A 90° clockwise rotation turns the triangle 90° to the right.",
+      incorrect: "Not quite. Clockwise means turning to the right."
+    }
+  },
+  {
+    question: "What is the result of a dilation with a scale factor of 2?",
+    answer: "The shape doubles in size.",
+    choices: [
+      "The shape doubles in size.",
+      "The shape shrinks by half.",
+      "The shape rotates.",
+      "The shape flips over a line."
+    ],
+    feedback: {
+      correct: "Correct! A dilation with a scale factor of 2 makes the shape twice as large.",
+      incorrect: "Not quite. Dilation changes the size of the shape based on the scale factor."
+    }
+  },
+  {
+    question: "What type of symmetry does a square have?",
+    answer: "Rotational and reflectional",
+    choices: [
+      "Rotational only",
+      "Reflectional only",
+      "Rotational and reflectional",
+      "No symmetry"
+    ],
+    feedback: {
+      correct: "Correct! A square has both rotational and reflectional symmetry.",
+      incorrect: "Not quite. Think about how a square can rotate or reflect onto itself."
+    }
+  },
+  {
+    question: "What is the name of a line that divides a shape into two identical halves?",
+    answer: "Line of symmetry",
+    choices: ["Line of symmetry", "Diagonal", "Radius", "Axis"],
+    feedback: {
+      correct: "Correct! A line of symmetry divides a shape into two identical halves.",
+      incorrect: "Not quite. The correct term is line of symmetry."
+    }
+  },
+  {
+    question: "How many lines of symmetry does a regular hexagon have?",
+    answer: "6",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! A regular hexagon has 6 lines of symmetry.",
+      incorrect: "Not quite. A regular hexagon has as many lines of symmetry as it has sides."
+    }
+  },
+  {
+    question: "If a shape has rotational symmetry of order 4, how many degrees does it rotate to look the same?",
+    answer: "90°",
+    choices: ["45°", "90°", "120°", "180°"],
+    feedback: {
+      correct: "Correct! 360° ÷ 4 = 90°, so it rotates 90° to look the same.",
+      incorrect: "Not quite. Divide 360° by the order of rotational symmetry."
+    }
+  },
+  {
+    question: "Which transformation involves sliding a shape to a new position?",
+    answer: "Translation",
+    choices: ["Translation", "Reflection", "Rotation", "Dilation"],
+    feedback: {
+      correct: "Correct! Translation slides a shape without changing its orientation.",
+      incorrect: "Not quite. Translation involves sliding the shape."
+    }
+  },
+  {
+    question: "What happens to a rectangle after a reflection across the x-axis?",
+    answer: "It flips upside down.",
+    choices: [
+      "It flips upside down.",
+      "It moves to a new position.",
+      "It rotates 90°.",
+      "It changes size."
+    ],
+    feedback: {
+      correct: "Correct! Reflection across the x-axis flips the rectangle upside down.",
+      incorrect: "Not quite. Reflection across the x-axis flips the shape vertically."
+    }
+  },
+  {
+    question: "A triangle is reflected across a vertical line of symmetry. What happens to its orientation?",
+    answer: "It becomes a mirror image.",
+    choices: [
+      "It stays the same.",
+      "It rotates 90°.",
+      "It becomes a mirror image.",
+      "It shrinks."
+    ],
+    feedback: {
+      correct: "Correct! Reflection creates a mirror image of the shape.",
+      incorrect: "Not quite. Reflection flips the shape over the line of symmetry."
+    }
+  },
+  {
+    question: "If a pentagon rotates 72°, how many rotations are needed to complete a full turn?",
+    answer: "5",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! 360° ÷ 72° = 5 rotations to complete a full turn.",
+      incorrect: "Not quite. Divide 360° by the angle of rotation."
+    }
+  },
+  {
+    question: "What type of symmetry does an equilateral triangle have?",
+    answer: "Rotational and reflectional",
+    choices: [
+      "Rotational only",
+      "Reflectional only",
+      "Rotational and reflectional",
+      "No symmetry"
+    ],
+    feedback: {
+      correct: "Correct! An equilateral triangle has both rotational and reflectional symmetry.",
+      incorrect: "Not quite. Think about how the triangle can rotate or reflect onto itself."
+    }
+  },
+  {
+    question: "If a square is dilated by a scale factor of 0.5, what happens to its area?",
+    answer: "It becomes 1/4 of the original area.",
+    choices: [
+      "It becomes 1/2 of the original area.",
+      "It becomes 1/4 of the original area.",
+      "It doubles in size.",
+      "It stays the same."
+    ],
+    feedback: {
+      correct: "Correct! The area is proportional to the square of the scale factor, so 0.5² = 1/4.",
+      incorrect: "Not quite. The area changes by the square of the scale factor."
+    }
+  },
+  {
+    question: "How many degrees of rotational symmetry does a regular pentagon have?",
+    answer: "72°",
+    choices: ["45°", "72°", "90°", "120°"],
+    feedback: {
+      correct: "Correct! A regular pentagon rotates 72° to align with itself.",
+      incorrect: "Not quite. Divide 360° by the number of sides (5)."
+    }
+  },
+  {
+    question: "What is true about the image of a shape after a dilation?",
+    answer: "It is similar to the original shape.",
+    choices: [
+      "It is congruent to the original shape.",
+      "It is larger than the original shape.",
+      "It is similar to the original shape.",
+      "It is flipped."
+    ],
+    feedback: {
+      correct: "Correct! A dilation produces a similar shape, maintaining proportions.",
+      incorrect: "Not quite. Dilation changes size but preserves shape and proportions."
+    }
+  },
+  {
+    question: "A parallelogram is rotated 180°. What happens to its orientation?",
+    answer: "It looks the same.",
+    choices: [
+      "It looks the same.",
+      "It flips upside down.",
+      "It rotates to the left.",
+      "It rotates to the right."
+    ],
+    feedback: {
+      correct: "Correct! A 180° rotation leaves the parallelogram looking the same.",
+      incorrect: "Not quite. A 180° rotation turns the shape completely around."
+    }
+  },
+  {
+    question: "What happens to the angles of a shape after a translation?",
+    answer: "They stay the same.",
+    choices: [
+      "They increase.",
+      "They decrease.",
+      "They stay the same.",
+      "They become right angles."
+    ],
+    feedback: {
+      correct: "Correct! A translation does not change the angles of a shape.",
+      incorrect: "Not quite. Translation preserves the size, shape, and angles."
+    }
+  }
+];
+
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G6_Units.Tor.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 5 - Data Management and Probability</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+     const questionsDatabase = [
+  {
+    question: "Emma has 5 apples, Jake has 7 apples, and Mia has 3 apples. Who has the most apples?",
+    answer: "Jake",
+    choices: ["Emma", "Jake", "Mia", "They all have the same"],
+    feedback: {
+      correct: "Correct! Jake has the most apples with 7.",
+      incorrect: "Not quite. Count the apples: Jake has the most with 7.",
+    },
+  },
+  {
+    question: "Which of these events is most likely to happen?",
+    answer: "The sun will rise tomorrow.",
+    choices: [
+      "It will snow in the summer.",
+      "The sun will rise tomorrow.",
+      "Fish will start flying.",
+      "Cats will bark.",
+    ],
+    feedback: {
+      correct: "Correct! The sun rising tomorrow is the most likely event.",
+      incorrect: "Not quite. Think about what happens every day, like the sun rising.",
+    },
+  },
+  {
+    question: "You have a bag with 3 red balls, 2 blue balls, and 1 green ball. Which color are you most likely to pick?",
+    answer: "Red",
+    choices: ["Red", "Blue", "Green", "Yellow"],
+    feedback: {
+      correct: "Correct! There are more red balls, so you're most likely to pick red.",
+      incorrect: "Not quite. The color with the most balls is red.",
+    },
+  },
+  {
+    question: "There are 10 students in a class. 6 like pizza, and 4 like burgers. Which is more popular?",
+    answer: "Pizza",
+    choices: ["Pizza", "Burgers", "They are the same", "None of these"],
+    feedback: {
+      correct: "Correct! Pizza is more popular with 6 students.",
+      incorrect: "Not quite. More students like pizza than burgers.",
+    },
+  },
+  {
+    question: "Look at this graph: 🍎🍎🍎🍎🍏🍏🍏. How many apples are green?",
+    answer: "3",
+    choices: ["3", "4", "7", "5"],
+    feedback: {
+      correct: "Correct! There are 3 green apples (🍏).",
+      incorrect: "Not quite. Count the green apples (🍏): there are 3.",
+    },
+  },
+  {
+    question: "If you flip a coin, what are the chances it lands on heads?",
+    answer: "50%",
+    choices: ["0%", "25%", "50%", "100%"],
+    feedback: {
+      correct: "Correct! A coin has a 50% chance to land on heads.",
+      incorrect: "Not quite. A coin flip gives equal chances for heads or tails.",
+    },
+  },
+  {
+    question: "There are 3 dogs, 5 cats, and 2 rabbits at the park. Which animal is least common?",
+    answer: "Rabbits",
+    choices: ["Dogs", "Cats", "Rabbits", "They are all the same"],
+    feedback: {
+      correct: "Correct! There are only 2 rabbits, making them the least common.",
+      incorrect: "Not quite. Rabbits are the least common with only 2.",
+    },
+  },
+  {
+    question: "Which of these events is impossible?",
+    answer: "Cows will fly.",
+    choices: [
+      "It will rain tomorrow.",
+      "A cow will fly.",
+      "The moon will shine at night.",
+      "A bird will chirp.",
+    ],
+    feedback: {
+      correct: "Correct! Cows cannot fly, so this event is impossible.",
+      incorrect: "Not quite. Think about what could never happen, like cows flying.",
+    },
+  },
+  {
+    question: "How many students prefer blue if a chart shows: 🟦🟦🟦🟩🟩?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! There are 3 blue squares (🟦) representing 3 students.",
+      incorrect: "Not quite. Count the blue squares (🟦): there are 3.",
+    },
+  },
+  {
+    question: "Which object is heavier: a feather or a rock?",
+    answer: "Rock",
+    choices: ["Feather", "Rock", "They weigh the same", "None of these"],
+    feedback: {
+      correct: "Correct! A rock is heavier than a feather.",
+      incorrect: "Not quite. Rocks are much heavier than feathers.",
+    },
+  },
+  {
+    question: "What is more likely to happen: seeing a rainbow or finding a unicorn?",
+    answer: "Seeing a rainbow",
+    choices: ["Seeing a rainbow", "Finding a unicorn", "Both are equal", "None of these"],
+    feedback: {
+      correct: "Correct! Seeing a rainbow is much more likely.",
+      incorrect: "Not quite. Rainbows are real, while unicorns are imaginary.",
+    },
+  },
+  {
+    question: "In a bag with 5 yellow candies and 5 red candies, what are the chances of picking a yellow candy?",
+    answer: "50%",
+    choices: ["25%", "50%", "75%", "100%"],
+    feedback: {
+      correct: "Correct! There’s an equal chance (50%) of picking yellow or red.",
+      incorrect: "Not quite. There are equal amounts of yellow and red candies.",
+    },
+  },
+  {
+    question: "How many more bananas 🍌🍌🍌 are needed to have the same amount as apples 🍎🍎🍎🍎?",
+    answer: "1",
+    choices: ["1", "2", "3", "4"],
+    feedback: {
+      correct: "Correct! Adding 1 more banana makes 4 bananas, equal to the apples.",
+      incorrect: "Not quite. Adding 1 banana makes the amounts equal.",
+    },
+  },
+  {
+    question: "Which color of jellybean is most common in this jar: 🔴🔴🔵🔵🔵🟢?",
+    answer: "🔵",
+    choices: ["🔴", "🔵", "🟢", "They are the same"],
+    feedback: {
+      correct: "Correct! Blue (🔵) appears 3 times, more than the others.",
+      incorrect: "Not quite. Blue jellybeans are the most common.",
+    },
+  },
+  {
+    question: "You roll a die. What is the chance it lands on a 6?",
+    answer: "1 in 6",
+    choices: ["1 in 2", "1 in 4", "1 in 6", "1 in 10"],
+    feedback: {
+      correct: "Correct! A die has six sides, so there’s a 1 in 6 chance.",
+      incorrect: "Not quite. A die has six sides, making the chance 1 in 6.",
+    },
+  },
+  {
+    question: "If a survey shows 4 kids like ice cream 🍦 and 6 kids like cake 🍰, what is the most popular dessert?",
+    answer: "Cake",
+    choices: ["Ice cream", "Cake", "They are equal", "None of these"],
+    feedback: {
+      correct: "Correct! Cake is more popular with 6 kids.",
+      incorrect: "Not quite. Count the votes: cake has more.",
+    },
+  },
+  {
+    question: "Which is more likely: seeing a bird 🐦 in the sky or a fish 🐟 in the sky?",
+    answer: "Bird",
+    choices: ["Bird", "Fish", "Both are equally likely", "Neither"],
+    feedback: {
+      correct: "Correct! Birds are more likely to be seen in the sky.",
+      incorrect: "Not quite. Birds, not fish, are found in the sky.",
+    },
+  },
+  {
+    question: "Which event has a 0% chance of happening?",
+    answer: "The sun turning into a square.",
+    choices: [
+      "The sun rising tomorrow.",
+      "The sun turning into a square.",
+      "It raining tomorrow.",
+      "A cloud in the sky.",
+    ],
+    feedback: {
+      correct: "Correct! The sun cannot turn into a square.",
+      incorrect: "Not quite. Think about what is completely impossible.",
+    },
+  },
+  {
+    question: "If a class survey shows 🟦🟦🟩🟩🟩, how many students prefer green?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! There are 3 green squares (🟩).",
+      incorrect: "Not quite. Count the green squares (🟩): there are 3.",
+    },
+  },
+  {
+    question: "Which shape is least likely to appear in a pattern: 🔵🔵🔴🔵🔵🔴🟡?",
+    answer: "🟡",
+    choices: ["🔵", "🔴", "🟡", "All are the same"],
+    feedback: {
+      correct: "Correct! Yellow appears only once in the pattern.",
+      incorrect: "Not quite. Yellow is the least common shape in the pattern.",
+    },
+  },
+];
+ 
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G1_Units.Tor.html?unit5score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

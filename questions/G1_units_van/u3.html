@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Measurement and Geometry</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    const questionsDatabase = [
+  {
+    question: "Which is taller: a tree 🌳 or a flower 🌼?",
+    answer: "Tree 🌳",
+    choices: ["Tree 🌳", "Flower 🌼", "They are the same height", "Cannot be determined"],
+    feedback: {
+      correct: "Correct! A tree is taller than a flower.",
+      incorrect: "Not quite. Think about how tall trees and flowers usually are."
+    }
+  },
+  {
+    question: "Which is longer: a pencil ✏️ or a crayon 🖍️?",
+    answer: "Pencil ✏️",
+    choices: ["Pencil ✏️", "Crayon 🖍️", "They are the same length", "Cannot be determined"],
+    feedback: {
+      correct: "Correct! A pencil is usually longer than a crayon.",
+      incorrect: "Not quite. Compare the lengths of a pencil and a crayon."
+    }
+  },
+  {
+    question: "How many sides does a square have?",
+    answer: "4",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! A square has 4 sides.",
+      incorrect: "Not quite. Count the sides of the square."
+    }
+  },
+  {
+    question: "How many corners does a triangle have?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! A triangle has 3 corners.",
+      incorrect: "Not quite. Count the corners of the triangle."
+    }
+  },
+  {
+    question: "Which is heavier: a rock 🪨 or a feather 🪶?",
+    answer: "Rock 🪨",
+    choices: ["Rock 🪨", "Feather 🪶", "They weigh the same", "Cannot be determined"],
+    feedback: {
+      correct: "Correct! A rock is heavier than a feather.",
+      incorrect: "Not quite. Think about how heavy rocks and feathers are."
+    }
+  },
+  {
+    question: "Which is shorter: a straw or a skipping rope?",
+    answer: "Straw",
+    choices: ["Straw", "Skipping rope", "They are the same length", "Cannot be determined"],
+    feedback: {
+      correct: "Correct! A straw is shorter than a skipping rope.",
+      incorrect: "Not quite. Compare the lengths of a straw and a skipping rope."
+    }
+  },
+  {
+    question: "Which object is shaped like a rectangle?",
+    answer: "Book 📖",
+    choices: ["Ball ⚽", "Book 📖", "Clock ⏰", "Plate 🍽️"],
+    feedback: {
+      correct: "Correct! A book is often shaped like a rectangle.",
+      incorrect: "Not quite. Think about the shape of a book."
+    }
+  },
+  {
+    question: "Which shape has 4 sides and 4 corners?",
+    answer: "Square",
+    choices: ["Circle", "Triangle", "Square", "Pentagon"],
+    feedback: {
+      correct: "Correct! A square has 4 sides and 4 corners.",
+      incorrect: "Not quite. Think about the properties of a square."
+    }
+  },
+  {
+    question: "What shape is a soccer ball ⚽?",
+    answer: "Sphere",
+    choices: ["Cube", "Sphere", "Cone", "Cylinder"],
+    feedback: {
+      correct: "Correct! A soccer ball is shaped like a sphere.",
+      incorrect: "Not quite. Look at the round shape of a soccer ball."
+    }
+  },
+  {
+    question: "Which is taller: a chair 🪑 or a table?",
+    answer: "Table",
+    choices: ["Chair 🪑", "Table", "They are the same height", "Cannot be determined"],
+    feedback: {
+      correct: "Correct! A table is usually taller than a chair.",
+      incorrect: "Not quite. Think about the heights of a chair and a table."
+    }
+  },
+  {
+    question: "Which has no corners: a circle or a square?",
+    answer: "Circle",
+    choices: ["Circle", "Square", "They both have corners", "Cannot be determined"],
+    feedback: {
+      correct: "Correct! A circle has no corners.",
+      incorrect: "Not quite. A circle is round and has no corners."
+    }
+  },
+  {
+    question: "How many sides does a rectangle have?",
+    answer: "4",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! A rectangle has 4 sides.",
+      incorrect: "Not quite. Count the sides of a rectangle."
+    }
+  },
+  {
+    question: "What shape is a dice 🎲?",
+    answer: "Cube",
+    choices: ["Sphere", "Cube", "Cone", "Cylinder"],
+    feedback: {
+      correct: "Correct! A dice is shaped like a cube.",
+      incorrect: "Not quite. Look at the shape of the dice."
+    }
+  },
+  {
+    question: "Which is lighter: a loaf of bread 🍞 or a bag of sugar 🧂?",
+    answer: "Loaf of bread 🍞",
+    choices: ["Loaf of bread 🍞", "Bag of sugar 🧂", "They weigh the same", "Cannot be determined"],
+    feedback: {
+      correct: "Correct! A loaf of bread is lighter than a bag of sugar.",
+      incorrect: "Not quite. Compare their weights."
+    }
+  },
+  {
+    question: "What is the shape of a pizza slice 🍕?",
+    answer: "Triangle",
+    choices: ["Circle", "Square", "Triangle", "Rectangle"],
+    feedback: {
+      correct: "Correct! A pizza slice is shaped like a triangle.",
+      incorrect: "Not quite. Look at the shape of a pizza slice."
+    }
+  },
+  {
+    question: "Which is wider: a laptop 💻 or a smartphone 📱?",
+    answer: "Laptop 💻",
+    choices: ["Laptop 💻", "Smartphone 📱", "They are the same width", "Cannot be determined"],
+    feedback: {
+      correct: "Correct! A laptop is usually wider than a smartphone.",
+      incorrect: "Not quite. Compare their widths."
+    }
+  },
+  {
+    question: "How many corners does a rectangle have?",
+    answer: "4",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! A rectangle has 4 corners.",
+      incorrect: "Not quite. Count the corners of a rectangle."
+    }
+  },
+  {
+    question: "What shape is a can of soda 🥤?",
+    answer: "Cylinder",
+    choices: ["Sphere", "Cube", "Cone", "Cylinder"],
+    feedback: {
+      correct: "Correct! A can of soda is shaped like a cylinder.",
+      incorrect: "Not quite. Look at the cylindrical shape of a soda can."
+    }
+  },
+  {
+    question: "Which is heavier: a basketball 🏀 or a tennis ball 🎾?",
+    answer: "Basketball 🏀",
+    choices: ["Basketball 🏀", "Tennis ball 🎾", "They weigh the same", "Cannot be determined"],
+    feedback: {
+      correct: "Correct! A basketball is heavier than a tennis ball.",
+      incorrect: "Not quite. Compare the weights of the two balls."
+    }
+  }
+];
+
+    
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G1_Units.Van.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

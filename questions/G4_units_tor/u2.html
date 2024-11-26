@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Measurement</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+     
+     const questionsDatabase = [
+  {
+    question: "How many minutes are in 3 hours?",
+    answer: "180 minutes",
+    choices: ["120 minutes", "180 minutes", "200 minutes", "240 minutes"],
+    feedback: {
+      correct: "Correct! 3 hours equals 180 minutes because 3 x 60 = 180.",
+      incorrect: "Not quite. Multiply the number of hours by 60 to get the total minutes."
+    }
+  },
+  {
+    question: "What is the perimeter of a rectangle with a length of 8 cm and a width of 5 cm?",
+    answer: "26 cm",
+    choices: ["26 cm", "30 cm", "24 cm", "28 cm"],
+    feedback: {
+      correct: "Correct! The perimeter is 2 x (8 + 5) = 26 cm.",
+      incorrect: "Not quite. Add the length and width, then multiply by 2."
+    }
+  },
+  {
+    question: "Convert 3,500 grams to kilograms.",
+    answer: "3.5 kilograms",
+    choices: ["3 kilograms", "3.5 kilograms", "35 kilograms", "350 kilograms"],
+    feedback: {
+      correct: "Correct! 3,500 grams is 3.5 kilograms since 1,000 grams = 1 kilogram.",
+      incorrect: "Not quite. Divide the grams by 1,000 to convert to kilograms."
+    }
+  },
+  {
+    question: "What tool is used to measure angles?",
+    answer: "Protractor",
+    choices: ["Ruler", "Compass", "Protractor", "Thermometer"],
+    feedback: {
+      correct: "Correct! A protractor is used to measure angles.",
+      incorrect: "Not quite. A protractor measures angles."
+    }
+  },
+  {
+    question: "What is the area of a square with side length 6 cm?",
+    answer: "36 square cm",
+    choices: ["12 square cm", "24 square cm", "36 square cm", "48 square cm"],
+    feedback: {
+      correct: "Correct! The area is side × side, so 6 × 6 = 36 square cm.",
+      incorrect: "Not quite. Multiply the side length by itself to find the area."
+    }
+  },
+  {
+    question: "Convert 5 meters to centimeters.",
+    answer: "500 centimeters",
+    choices: ["50 centimeters", "500 centimeters", "5,000 centimeters", "5 centimeters"],
+    feedback: {
+      correct: "Correct! 5 meters is 500 centimeters because 1 meter = 100 centimeters.",
+      incorrect: "Not quite. Multiply the number of meters by 100."
+    }
+  },
+  {
+    question: "How many hours are there in 2 days?",
+    answer: "48 hours",
+    choices: ["24 hours", "36 hours", "48 hours", "72 hours"],
+    feedback: {
+      correct: "Correct! There are 24 hours in a day, so 2 × 24 = 48 hours.",
+      incorrect: "Not quite. Multiply the number of days by 24."
+    }
+  },
+  {
+    question: "A triangle has angles measuring 40° and 50°. What is the measure of the third angle?",
+    answer: "90°",
+    choices: ["70°", "80°", "90°", "100°"],
+    feedback: {
+      correct: "Correct! The sum of the angles in a triangle is 180°, so 180 - (40 + 50) = 90°.",
+      incorrect: "Not quite. Subtract the sum of the two given angles from 180°."
+    }
+  },
+  {
+    question: "If a classroom clock shows 10:45 AM, what time will it be in 2 hours and 15 minutes?",
+    answer: "1:00 PM",
+    choices: ["12:00 PM", "12:45 PM", "1:00 PM", "1:15 PM"],
+    feedback: {
+      correct: "Correct! Adding 2 hours and 15 minutes to 10:45 AM gives 1:00 PM.",
+      incorrect: "Not quite. Add the hours first, then the minutes."
+    }
+  },
+  {
+    question: "Convert 4 kilometers to meters.",
+    answer: "4,000 meters",
+    choices: ["400 meters", "4,000 meters", "40,000 meters", "400,000 meters"],
+    feedback: {
+      correct: "Correct! 4 kilometers equals 4,000 meters since 1 kilometer = 1,000 meters.",
+      incorrect: "Not quite. Multiply the kilometers by 1,000."
+    }
+  },
+  {
+    question: "What is the volume of a rectangular prism with length 5 cm, width 3 cm, and height 2 cm?",
+    answer: "30 cubic cm",
+    choices: ["15 cubic cm", "25 cubic cm", "30 cubic cm", "35 cubic cm"],
+    feedback: {
+      correct: "Correct! The volume is length × width × height, so 5 × 3 × 2 = 30 cubic cm.",
+      incorrect: "Not quite. Multiply the dimensions together to find the volume."
+    }
+  },
+  {
+    question: "If a clock shows 3:00 PM, what time will it be in 4 hours?",
+    answer: "7:00 PM",
+    choices: ["6:00 PM", "7:00 PM", "8:00 PM", "9:00 PM"],
+    feedback: {
+      correct: "Correct! Adding 4 hours to 3:00 PM gives 7:00 PM.",
+      incorrect: "Not quite. Add 4 to the hour and adjust for AM/PM if necessary."
+    }
+  },
+  {
+    question: "How many milliliters are in 3 liters?",
+    answer: "3,000 milliliters",
+    choices: ["300 milliliters", "3,000 milliliters", "30,000 milliliters", "300,000 milliliters"],
+    feedback: {
+      correct: "Correct! 3 liters equals 3,000 milliliters since 1 liter = 1,000 milliliters.",
+      incorrect: "Not quite. Multiply the liters by 1,000."
+    }
+  },
+  {
+    question: "A book is 24 cm long. What is its length in meters?",
+    answer: "0.24 meters",
+    choices: ["0.24 meters", "2.4 meters", "24 meters", "240 meters"],
+    feedback: {
+      correct: "Correct! 24 cm is 0.24 meters because 100 cm = 1 meter.",
+      incorrect: "Not quite. Divide the centimeters by 100 to convert to meters."
+    }
+  },
+  {
+    question: "What is the measure of a right angle?",
+    answer: "90°",
+    choices: ["45°", "90°", "180°", "360°"],
+    feedback: {
+      correct: "Correct! A right angle measures 90°.",
+      incorrect: "Not quite. A right angle is always 90°."
+    }
+  },
+  {
+    question: "What is the perimeter of a square with side length 9 cm?",
+    answer: "36 cm",
+    choices: ["18 cm", "36 cm", "45 cm", "54 cm"],
+    feedback: {
+      correct: "Correct! The perimeter of a square is 4 × side length, so 4 × 9 = 36 cm.",
+      incorrect: "Not quite. Multiply the side length by 4 to find the perimeter."
+    }
+  },
+  {
+    question: "What is the area of a rectangle with length 7 m and width 4 m?",
+    answer: "28 square meters",
+    choices: ["24 square meters", "28 square meters", "30 square meters", "35 square meters"],
+    feedback: {
+      correct: "Correct! The area is length × width, so 7 × 4 = 28 square meters.",
+      incorrect: "Not quite. Multiply the length by the width to find the area."
+    }
+  },
+  {
+    question: "What is the unit commonly used to measure temperature?",
+    answer: "Degrees Celsius",
+    choices: ["Meters", "Degrees Celsius", "Kilograms", "Liters"],
+    feedback: {
+      correct: "Correct! Temperature is commonly measured in degrees Celsius.",
+      incorrect: "Not quite. Temperature is measured in degrees Celsius."
+    }
+  },
+  {
+    question: "Convert 2 hours and 30 minutes to minutes.",
+    answer: "150 minutes",
+    choices: ["130 minutes", "140 minutes", "150 minutes", "160 minutes"],
+    feedback: {
+      correct: "Correct! 2 hours is 120 minutes, and adding 30 minutes gives 150 minutes.",
+      incorrect: "Not quite. Multiply the hours by 60 and add the extra minutes."
+    }
+  },
+  {
+    question: "What is 5 feet in inches?",
+    answer: "60 inches",
+    choices: ["50 inches", "60 inches", "70 inches", "80 inches"],
+    feedback: {
+      correct: "Correct! 5 feet equals 60 inches because 1 foot = 12 inches.",
+      incorrect: "Not quite. Multiply the feet by 12 to convert to inches."
+    }
+  }
+];
+
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_Units.Tor.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

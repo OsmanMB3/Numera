@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1 - Addition and Subtraction    </title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    
+    const questionsDatabase= [
+  {
+    question: "What is 345,678 + 123,456?",
+    answer: "469,134",
+    choices: ["469,124", "469,134", "479,134", "479,124"],
+    feedback: {
+      correct: "Correct! 345,678 + 123,456 = 469,134.",
+      incorrect: "Not quite. Add the numbers carefully using the standard algorithm."
+    }
+  },
+  {
+    question: "What is 876,543 − 123,456?",
+    answer: "753,087",
+    choices: ["743,087", "753,087", "763,087", "743,177"],
+    feedback: {
+      correct: "Correct! 876,543 − 123,456 = 753,087.",
+      incorrect: "Not quite. Subtract the numbers carefully using the standard algorithm."
+    }
+  },
+  {
+    question: "What is 987,654 + 234,567?",
+    answer: "1,222,221",
+    choices: ["1,222,221", "1,212,221", "1,232,121", "1,222,312"],
+    feedback: {
+      correct: "Correct! 987,654 + 234,567 = 1,222,221.",
+      incorrect: "Not quite. Add the numbers step by step."
+    }
+  },
+  {
+    question: "What is 1,000,000 − 234,567?",
+    answer: "765,433",
+    choices: ["755,433", "765,433", "775,433", "785,433"],
+    feedback: {
+      correct: "Correct! 1,000,000 − 234,567 = 765,433.",
+      incorrect: "Not quite. Subtract the numbers carefully."
+    }
+  },
+  {
+    question: "What is 456.78 + 234.56?",
+    answer: "691.34",
+    choices: ["681.34", "691.34", "701.34", "711.34"],
+    feedback: {
+      correct: "Correct! 456.78 + 234.56 = 691.34.",
+      incorrect: "Not quite. Add the decimal numbers carefully."
+    }
+  },
+  {
+    question: "What is 987.65 − 456.78?",
+    answer: "530.87",
+    choices: ["520.87", "530.87", "540.87", "550.87"],
+    feedback: {
+      correct: "Correct! 987.65 − 456.78 = 530.87.",
+      incorrect: "Not quite. Subtract the decimal numbers step by step."
+    }
+  },
+  {
+    question: "What is 1,234,567 + 345,678?",
+    answer: "1,580,245",
+    choices: ["1,580,245", "1,590,245", "1,570,245", "1,600,245"],
+    feedback: {
+      correct: "Correct! 1,234,567 + 345,678 = 1,580,245.",
+      incorrect: "Not quite. Add the numbers carefully."
+    }
+  },
+  {
+    question: "What is 1,500,000 − 875,432?",
+    answer: "624,568",
+    choices: ["624,568", "614,568", "634,568", "644,568"],
+    feedback: {
+      correct: "Correct! 1,500,000 − 875,432 = 624,568.",
+      incorrect: "Not quite. Subtract the numbers carefully."
+    }
+  },
+  {
+    question: "What is 456.98 + 123.67?",
+    answer: "580.65",
+    choices: ["580.55", "580.65", "590.65", "590.75"],
+    feedback: {
+      correct: "Correct! 456.98 + 123.67 = 580.65.",
+      incorrect: "Not quite. Add the decimal numbers carefully."
+    }
+  },
+  {
+    question: "What is 987.12 − 432.56?",
+    answer: "554.56",
+    choices: ["544.56", "554.56", "564.56", "574.56"],
+    feedback: {
+      correct: "Correct! 987.12 − 432.56 = 554.56.",
+      incorrect: "Not quite. Subtract the decimal numbers carefully."
+    }
+  },
+  {
+    question: "What is 1,234,567 − 890,123?",
+    answer: "344,444",
+    choices: ["344,434", "344,444", "344,454", "344,414"],
+    feedback: {
+      correct: "Correct! 1,234,567 − 890,123 = 344,444.",
+      incorrect: "Not quite. Subtract the numbers carefully."
+    }
+  },
+  {
+    question: "What is 12.34 + 56.78?",
+    answer: "69.12",
+    choices: ["69.02", "69.12", "69.22", "69.32"],
+    feedback: {
+      correct: "Correct! 12.34 + 56.78 = 69.12.",
+      incorrect: "Not quite. Add the decimal numbers carefully."
+    }
+  },
+  {
+    question: "What is 876,543 − 123,456?",
+    answer: "753,087",
+    choices: ["753,087", "763,087", "743,087", "733,087"],
+    feedback: {
+      correct: "Correct! 876,543 − 123,456 = 753,087.",
+      incorrect: "Not quite. Subtract carefully using the standard algorithm."
+    }
+  },
+  {
+    question: "What is 900,000 + 125,678?",
+    answer: "1,025,678",
+    choices: ["1,015,678", "1,025,678", "1,035,678", "1,045,678"],
+    feedback: {
+      correct: "Correct! 900,000 + 125,678 = 1,025,678.",
+      incorrect: "Not quite. Add the numbers step by step."
+    }
+  },
+  {
+    question: "What is 765.43 − 321.21?",
+    answer: "444.22",
+    choices: ["434.22", "444.22", "454.22", "464.22"],
+    feedback: {
+      correct: "Correct! 765.43 − 321.21 = 444.22.",
+      incorrect: "Not quite. Subtract the decimal numbers carefully."
+    }
+  },
+  {
+    question: "What is 654,321 + 987,654?",
+    answer: "1,641,975",
+    choices: ["1,641,865", "1,641,975", "1,651,975", "1,631,975"],
+    feedback: {
+      correct: "Correct! 654,321 + 987,654 = 1,641,975.",
+      incorrect: "Not quite. Add the numbers carefully."
+    }
+  },
+  {
+    question: "What is 456.78 − 123.45?",
+    answer: "333.33",
+    choices: ["323.33", "333.33", "343.33", "353.33"],
+    feedback: {
+      correct: "Correct! 456.78 − 123.45 = 333.33.",
+      incorrect: "Not quite. Subtract the decimal numbers carefully."
+    }
+  },
+  {
+    question: "What is 1,200,000 − 999,999?",
+    answer: "200,001",
+    choices: ["200,001", "100,001", "300,001", "400,001"],
+    feedback: {
+      correct: "Correct! 1,200,000 − 999,999 = 200,001.",
+      incorrect: "Not quite. Subtract the numbers carefully."
+    }
+  }
+];
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G5_units.edm.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

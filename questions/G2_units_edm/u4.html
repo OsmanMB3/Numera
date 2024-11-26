@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 4 - Data Analysis
+    </title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    
+    const dataAnalysisQuestions = [
+  {
+    question: "You collected data on favorite ice cream flavors. If 5 people like chocolate and 3 people like vanilla, which flavor is more popular?",
+    answer: "Chocolate",
+    choices: ["Chocolate", "Vanilla", "Both are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! Chocolate is more popular because 5 people like it.",
+      incorrect: "Not quite. Compare the numbers for each flavor."
+    }
+  },
+  {
+    question: "If you count 4 blue cars, 6 red cars, and 2 green cars, which color has the most cars?",
+    answer: "Red",
+    choices: ["Blue", "Red", "Green", "All are the same"],
+    feedback: {
+      correct: "Correct! Red has the most cars with 6.",
+      incorrect: "Not quite. Check the number for each color."
+    }
+  },
+  {
+    question: "You asked your friends about their favorite pets. If 7 like dogs and 3 like cats, how many people did you ask in total?",
+    answer: "10",
+    choices: ["7", "8", "9", "10"],
+    feedback: {
+      correct: "Correct! 7 + 3 = 10 people in total.",
+      incorrect: "Not quite. Add 7 and 3 to find the total."
+    }
+  },
+  {
+    question: "Which graph would you use to show the number of apples, bananas, and oranges sold?",
+    answer: "Bar graph",
+    choices: ["Line graph", "Bar graph", "Pie chart", "Scatter plot"],
+    feedback: {
+      correct: "Correct! A bar graph is used to compare categories.",
+      incorrect: "Not quite. Bar graphs are best for comparing categories."
+    }
+  },
+  {
+    question: "What does the tallest bar in a bar graph represent?",
+    answer: "The most popular choice",
+    choices: [
+      "The most popular choice",
+      "The least popular choice",
+      "The average choice",
+      "I don't know"
+    ],
+    feedback: {
+      correct: "Correct! The tallest bar shows the most popular choice.",
+      incorrect: "Not quite. The tallest bar represents the largest value."
+    }
+  },
+  {
+    question: "How many categories can you compare on a bar graph?",
+    answer: "As many as you want",
+    choices: ["Only 3", "Only 5", "As many as you want", "I don't know"],
+    feedback: {
+      correct: "Correct! You can compare as many categories as needed.",
+      incorrect: "Not quite. Bar graphs can have many categories."
+    }
+  },
+  {
+    question: "What should you always include at the bottom of your graph?",
+    answer: "Labels for the categories",
+    choices: ["Labels for the categories", "Your name", "The color of the bars", "I don't know"],
+    feedback: {
+      correct: "Correct! Always include labels for the categories.",
+      incorrect: "Not quite. Labels are important for understanding the graph."
+    }
+  },
+  {
+    question: "If a bar graph shows 8 students like pizza and 4 like burgers, what is the difference?",
+    answer: "4 students",
+    choices: ["2 students", "3 students", "4 students", "5 students"],
+    feedback: {
+      correct: "Correct! 8 − 4 = 4 students.",
+      incorrect: "Not quite. Subtract 4 from 8."
+    }
+  },
+  {
+    question: "You collected data on favorite colors. If 5 people like red, 3 like blue, and 2 like green, how many people in total did you ask?",
+    answer: "10",
+    choices: ["8", "9", "10", "11"],
+    feedback: {
+      correct: "Correct! 5 + 3 + 2 = 10 people in total.",
+      incorrect: "Not quite. Add all the numbers together."
+    }
+  },
+  {
+    question: "If a bar graph shows 7 students like soccer and 5 like basketball, which sport is less popular?",
+    answer: "Basketball",
+    choices: ["Soccer", "Basketball", "Both are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! Basketball is less popular with only 5 students.",
+      incorrect: "Not quite. Check the numbers for each sport."
+    }
+  },
+  {
+    question: "What is the purpose of a graph title?",
+    answer: "To explain what the graph is about",
+    choices: [
+      "To explain what the graph is about",
+      "To make the graph look nice",
+      "To add numbers to the graph",
+      "I don't know"
+    ],
+    feedback: {
+      correct: "Correct! A title explains what the graph shows.",
+      incorrect: "Not quite. The title tells people what the graph represents."
+    }
+  },
+  {
+    question: "If you asked 6 friends their favorite fruit and 3 said apples, how many said something else?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! 6 − 3 = 3 friends said something else.",
+      incorrect: "Not quite. Subtract 3 from 6."
+    }
+  },
+  {
+    question: "What type of graph is best to show how something changes over time?",
+    answer: "Line graph",
+    choices: ["Bar graph", "Line graph", "Pie chart", "Scatter plot"],
+    feedback: {
+      correct: "Correct! A line graph shows changes over time.",
+      incorrect: "Not quite. Line graphs are used to show trends over time."
+    }
+  },
+  {
+    question: "If a bar graph shows 10 students like red and 6 like blue, how many more like red?",
+    answer: "4 students",
+    choices: ["3 students", "4 students", "5 students", "6 students"],
+    feedback: {
+      correct: "Correct! 10 − 6 = 4 students.",
+      incorrect: "Not quite. Subtract 6 from 10."
+    }
+  },
+  {
+    question: "How can you show data about students’ favorite pets?",
+    answer: "Use a bar graph",
+    choices: ["Use a bar graph", "Write it in a paragraph", "Use a pie chart", "I don't know"],
+    feedback: {
+      correct: "Correct! A bar graph is great for comparing favorite pets.",
+      incorrect: "Not quite. Bar graphs work best for categories."
+    }
+  },
+  {
+    question: "How many categories can you compare in a pie chart?",
+    answer: "A few categories",
+    choices: ["A few categories", "As many as you want", "None", "I don't know"],
+    feedback: {
+      correct: "Correct! Pie charts are best for a few categories.",
+      incorrect: "Not quite. Pie charts are not ideal for too many categories."
+    }
+  },
+  {
+    question: "What does each slice in a pie chart represent?",
+    answer: "A portion of the total",
+    choices: [
+      "A portion of the total",
+      "A bar of data",
+      "A category name",
+      "I don't know"
+    ],
+    feedback: {
+      correct: "Correct! Each slice represents part of the total data.",
+      incorrect: "Not quite. Think about how a pie chart shows data."
+    }
+  },
+  {
+    question: "What should be on the side of a bar graph?",
+    answer: "The numbers for each bar",
+    choices: [
+      "The numbers for each bar",
+      "The title",
+      "The colors of the bars",
+      "I don't know"
+    ],
+    feedback: {
+      correct: "Correct! The numbers show the values for each bar.",
+      incorrect: "Not quite. The side shows the scale of the data."
+    }
+  },
+  {
+    question: "If you ask your friends their favorite ice cream flavors, what type of graph could you use?",
+    answer: "Bar graph",
+    choices: ["Bar graph", "Line graph", "Pie chart", "I don't know"],
+    feedback: {
+      correct: "Correct! A bar graph works well for comparing categories.",
+      incorrect: "Not quite. Bar graphs are great for favorite flavors."
+    }
+  }
+];
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G2_units.edm.html?unit4score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

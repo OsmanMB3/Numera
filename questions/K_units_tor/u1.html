@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1 - Number Sense and Numeration</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+      const questionsDatabase = [
+    {
+        question: "What number comes after 6?",
+        answer: "7",
+        choices: ["5", "6", "7", "8"],
+        feedback: {
+            correct: "Correct! 7 comes after 6 when counting. 🌟",
+            incorrect: "Oops! Count forward: 6, 7, ... Try again! 🤔",
+        },
+    },
+    {
+        question: "How many apples are there? 🍎🍎🍎🍎🍎",
+        answer: "5",
+        choices: ["4", "5", "6", "7"],
+        feedback: {
+            correct: "That's right! 🍎🍎🍎🍎🍎 means 5 apples. 🥳",
+            incorrect: "Not quite! Count the apples carefully: 🍎, 🍎, 🍎, 🍎, 🍎.",
+        },
+    },
+    {
+        question: "Which number is larger: 8️⃣ or 3️⃣?",
+        answer: "8",
+        choices: ["3", "8", "They're the same"],
+        feedback: {
+            correct: "Correct! 8️⃣ is larger than 3️⃣. 🌟",
+            incorrect: "Not quite. Think about which number is further along when counting. 🤔",
+        },
+    },
+    {
+        question: "What number is one less than 9️⃣?",
+        answer: "8",
+        choices: ["7", "8", "9", "10"],
+        feedback: {
+            correct: "Correct! One less than 9️⃣ is 8️⃣. 🎉",
+            incorrect: "Oops! Subtract 1 from 9 to find the answer. Try again. 🤔",
+        },
+    },
+    {
+        question: "If you have 3 bananas 🍌 and get 2 more 🍌, how many bananas do you have now?",
+        answer: "5",
+        choices: ["3", "4", "5", "6"],
+        feedback: {
+            correct: "Great job! 🍌🍌🍌 + 🍌🍌 = 5 bananas. 🥳",
+            incorrect: "Not quite. Add the bananas together: 3 + 2 = ? 🍌🍌🍌➕🍌🍌",
+        },
+    },
+    {
+        question: "Which number is smaller: 6 or 2?",
+        answer: "2",
+        choices: ["6", "2", "They're the same"],
+        feedback: {
+            correct: "Correct! 2 is smaller than 6. 🌟",
+            incorrect: "Oops! Think about which number comes earlier when counting. 🤔",
+        },
+    },
+    {
+        question: "How many stars are there: ⭐️⭐️⭐️⭐️⭐️⭐️?",
+        answer: "6",
+        choices: ["5", "6", "7", "8"],
+        feedback: {
+            correct: "That's right! There are 6️⃣ stars. ⭐️⭐️⭐️⭐️⭐️⭐️",
+            incorrect: "Count carefully: ⭐️, ⭐️, ⭐️, ⭐️, ⭐️, ⭐️. The total is 6!",
+        },
+    },
+    {
+        question: "Which number is greater: 4 or 5?",
+        answer: "5",
+        choices: ["4", "5", "They're the same"],
+        feedback: {
+            correct: "Correct! 5 is greater than 4. 🌟",
+            incorrect: "Not quite! Count forward to see which is larger: 4, 5...",
+        },
+    },
+    {
+        question: "What number comes before 8️⃣?",
+        answer: "7",
+        choices: ["6", "7", "8", "9"],
+        feedback: {
+            correct: "Correct! 7️⃣ comes right before 8️⃣. 🎉",
+            incorrect: "Oops! Count backward: 8, 7, ... Try again! 🤔",
+        },
+    },
+    {
+        question: "If you have 7 pencils ✏️ and give away 3, how many do you have left?",
+        answer: "4",
+        choices: ["3", "4", "5", "7"],
+        feedback: {
+            correct: "Great work! 7 - 3 = 4 pencils. ✏️✏️✏️✏️",
+            incorrect: "Not quite. Subtract 3 from 7 to find the answer. ✏️✏️✏️✏️",
+        },
+    },
+    {
+        question: "Count the flowers: 🌸🌸🌸🌸🌸🌸🌸.",
+        answer: "7",
+        choices: ["6", "7", "8", "9"],
+        feedback: {
+            correct: "Correct! There are 7 flowers. 🌸🌸🌸🌸🌸🌸🌸",
+            incorrect: "Not quite. Count the flowers again carefully. 🌸",
+        },
+    },
+    {
+        question: "How many fingers do you have on one hand? 🖐️",
+        answer: "5",
+        choices: ["3", "4", "5", "6"],
+        feedback: {
+            correct: "Correct! You have 5 fingers on one hand. 🖐️",
+            incorrect: "Count your fingers again: 🖐️.",
+        },
+    },
+    {
+        question: "What is 2 + 2?",
+        answer: "4",
+        choices: ["3", "4", "5", "6"],
+        feedback: {
+            correct: "That's right! 2 + 2 = 4. 🎉",
+            incorrect: "Not quite. Add them together: 2 + 2.",
+        },
+    },
+    {
+        question: "What number comes between 4 and 6?",
+        answer: "5",
+        choices: ["4", "5", "6", "7"],
+        feedback: {
+            correct: "Correct! 5 comes between 4 and 6. 🌟",
+            incorrect: "Not quite. Count forward: 4, 5, 6...",
+        },
+    },
+    {
+        question: "Which is larger: 2️⃣ or 9️⃣?",
+        answer: "9",
+        choices: ["2", "9", "They're the same"],
+        feedback: {
+            correct: "Correct! 9️⃣ is larger than 2️⃣. 🎉",
+            incorrect: "Oops! Count forward to see which is bigger. 🤔",
+        },
+    },
+    {
+        question: "How many cubes are there: 🟪🟪🟪🟪?",
+        answer: "4",
+        choices: ["3", "4", "5", "6"],
+        feedback: {
+            correct: "Correct! There are 4 cubes. 🟪🟪🟪🟪",
+            incorrect: "Not quite. Count carefully: 🟪, 🟪, 🟪, 🟪.",
+        },
+    },
+    {
+        question: "If you have 10 candies 🍬 and eat 5, how many are left?",
+        answer: "5",
+        choices: ["4", "5", "6", "7"],
+        feedback: {
+            correct: "Great job! 10 - 5 = 5 candies left. 🍬🍬🍬🍬🍬",
+            incorrect: "Not quite. Subtract 5 from 10 to find the answer. 🍬",
+        },
+    },
+    {
+        question: "What is 5 + 1?",
+        answer: "6",
+        choices: ["5", "6", "7", "8"],
+        feedback: {
+            correct: "Correct! 5 + 1 = 6. 🌟",
+            incorrect: "Not quite. Add them together: 5 + 1.",
+        },
+    },
+    {
+        question: "Which number is smaller: 8 or 4?",
+        answer: "4",
+        choices: ["8", "4", "They're the same"],
+        feedback: {
+            correct: "Correct! 4 is smaller than 8. 🌟",
+            incorrect: "Think about which number comes earlier when counting.",
+        },
+    },
+    {
+        question: "What is 3 + 3?",
+        answer: "6",
+        choices: ["5", "6", "7", "8"],
+        feedback: {
+            correct: "That's right! 3 + 3 = 6. 🎉",
+            incorrect: "Not quite. Add them together: 3 + 3.",
+        },
+    },
+];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../K_Units_Tor.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

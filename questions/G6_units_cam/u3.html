@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Expressions and Equations</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="question-container">
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+      <div class="score-display">Score: <span id="score">0</span>/20</div>
+      <div class="question-box">
+        <h3>Question <span id="question-number">1</span>/20:</h3>
+        <p id="question-text">Loading question...</p>
+        <div id="answer-options-container"></div>
+      </div>
+    </div>
+
+    <div id="feedback-modal" class="feedback-modal">
+      <h2 id="feedback-title"></h2>
+      <p id="feedback-message"></p>
+      <button
+        class="choice-button"
+        id="continue-button"
+        onclick="closeFeedback()"
+      >
+        Continue
+      </button>
+    </div>
+    <script>
+      const questionsDatabaseconst = [
+        {
+          question: "What is the value of 3²?",
+          answer: "9",
+          choices: ["9", "6", "12", "27"],
+          feedback: {
+            correct: "Correct! 3² means 3 × 3, which equals 9.",
+            incorrect:
+              "Remember, an exponent means multiplying the base by itself the given number of times.",
+          },
+        },
+        {
+          question: "Simplify: 4(3 + 2).",
+          answer: "20",
+          choices: ["20", "14", "18", "24"],
+          feedback: {
+            correct:
+              "Great! First solve inside the parentheses: 3 + 2 = 5, then multiply: 4 × 5 = 20.",
+            incorrect:
+              "Follow the order of operations: parentheses first, then multiplication.",
+          },
+        },
+        {
+          question: "Which expression represents '5 less than x'?",
+          answer: "x - 5",
+          choices: ["x - 5", "5 - x", "x + 5", "x ÷ 5"],
+          feedback: {
+            correct: "Correct! '5 less than x' is written as x - 5.",
+            incorrect:
+              "Subtract 5 from the variable x to represent '5 less than x.'",
+          },
+        },
+        {
+          question: "What is the value of 2x when x = 3?",
+          answer: "6",
+          choices: ["6", "5", "3", "9"],
+          feedback: {
+            correct: "Correct! Substitute x = 3 into 2x: 2 × 3 = 6.",
+            incorrect: "Substitute the value of x and multiply.",
+          },
+        },
+        {
+          question: "Combine like terms: 3x + 2x.",
+          answer: "5x",
+          choices: ["5x", "6x", "x", "2x"],
+          feedback: {
+            correct: "Great! Add the coefficients: 3 + 2 = 5, so 3x + 2x = 5x.",
+            incorrect:
+              "Only add the coefficients of the terms with the same variable.",
+          },
+        },
+        {
+          question: "What is the coefficient in the expression 7x + 4?",
+          answer: "7",
+          choices: ["7", "x", "4", "11"],
+          feedback: {
+            correct:
+              "Correct! The coefficient is the number multiplied by the variable, which is 7.",
+            incorrect:
+              "The coefficient is the number directly in front of the variable.",
+          },
+        },
+        {
+          question: "Simplify: 2(3x + 4).",
+          answer: "6x + 8",
+          choices: ["6x + 8", "6x + 4", "3x + 8", "5x + 8"],
+          feedback: {
+            correct: "Well done! Distribute: 2 × 3x = 6x and 2 × 4 = 8.",
+            incorrect:
+              "Apply the distributive property by multiplying each term inside the parentheses by 2.",
+          },
+        },
+        {
+          question: "What does the term 'product' mean in mathematics?",
+          answer: "The result of multiplication",
+          choices: [
+            "The result of multiplication",
+            "The result of addition",
+            "The result of division",
+            "The result of subtraction",
+          ],
+          feedback: {
+            correct:
+              "Correct! The product is the result of multiplying numbers.",
+            incorrect:
+              "Remember, 'product' refers to the result of multiplication.",
+          },
+        },
+        {
+          question: "Evaluate: 2³.",
+          answer: "8",
+          choices: ["8", "6", "9", "12"],
+          feedback: {
+            correct: "Correct! 2³ = 2 × 2 × 2 = 8.",
+            incorrect:
+              "An exponent indicates repeated multiplication of the base.",
+          },
+        },
+        {
+          question: "What is the solution to x + 7 = 10?",
+          answer: "3",
+          choices: ["3", "17", "7", "0"],
+          feedback: {
+            correct: "Correct! Subtract 7 from both sides: x = 10 - 7 = 3.",
+            incorrect: "Isolate x by subtracting 7 from both sides.",
+          },
+        },
+        {
+          question:
+            "Write 'three times a number, decreased by 5' as an expression.",
+          answer: "3x - 5",
+          choices: ["3x - 5", "x - 5", "3x + 5", "3 - 5x"],
+          feedback: {
+            correct:
+              "Correct! 'Three times a number' is 3x, and 'decreased by 5' means subtract 5.",
+            incorrect: "Translate the words into mathematical terms carefully.",
+          },
+        },
+        {
+          question: "Which property justifies: 5 + (3 + 2) = (5 + 3) + 2?",
+          answer: "Associative Property",
+          choices: [
+            "Associative Property",
+            "Commutative Property",
+            "Distributive Property",
+            "Identity Property",
+          ],
+          feedback: {
+            correct:
+              "Correct! The Associative Property deals with grouping of numbers.",
+            incorrect:
+              "Review the properties of addition. This one deals with grouping.",
+          },
+        },
+        {
+          question: "Solve: 4x = 16.",
+          answer: "4",
+          choices: ["4", "8", "2", "16"],
+          feedback: {
+            correct: "Correct! Divide both sides by 4: x = 16 ÷ 4 = 4.",
+            incorrect: "To solve, divide both sides by the coefficient of x.",
+          },
+        },
+        {
+          question: "What is the value of 6y when y = 5?",
+          answer: "30",
+          choices: ["30", "11", "35", "25"],
+          feedback: {
+            correct: "Great! Substitute y = 5 into 6y: 6 × 5 = 30.",
+            incorrect: "Replace y with its value and multiply.",
+          },
+        },
+        {
+          question: "Combine: 2x + 3 + 4x - 1.",
+          answer: "6x + 2",
+          choices: ["6x + 2", "6x + 4", "2x + 2", "8x - 1"],
+          feedback: {
+            correct:
+              "Well done! Combine like terms: 2x + 4x = 6x and 3 - 1 = 2.",
+            incorrect:
+              "Group and add terms with the same variable or constant.",
+          },
+        },
+        {
+          question: "What does it mean if two expressions are equivalent?",
+          answer: "They have the same value for all values of the variable.",
+          choices: [
+            "They have the same value for all values of the variable.",
+            "They use the same numbers.",
+            "They have different meanings.",
+            "They are different equations.",
+          ],
+          feedback: {
+            correct:
+              "Correct! Equivalent expressions have the same value regardless of the variable's value.",
+            incorrect:
+              "Equivalent means they are equal for any value of the variable.",
+          },
+        },
+        {
+          question: "Simplify: 5x - 3 + 2x + 7.",
+          answer: "7x + 4",
+          choices: ["7x + 4", "5x + 4", "7x + 10", "5x + 10"],
+          feedback: {
+            correct: "Well done! Combine like terms: 5x + 2x = 7x, -3 + 7 = 4.",
+            incorrect: "Combine all terms with the same variable or constants.",
+          },
+        },
+        {
+          question:
+            "Write an equation for: 'A number increased by 4 equals 10.'",
+          answer: "x + 4 = 10",
+          choices: ["x + 4 = 10", "x - 4 = 10", "x × 4 = 10", "4x = 10"],
+          feedback: {
+            correct:
+              "Correct! 'Increased by 4' means add 4, and 'equals 10' becomes = 10.",
+            incorrect: "Translate the words into an algebraic equation.",
+          },
+        },
+        {
+          question: "Solve: x - 5 = 8.",
+          answer: "13",
+          choices: ["13", "3", "-3", "5"],
+          feedback: {
+            correct: "Correct! Add 5 to both sides: x = 8 + 5 = 13.",
+            incorrect: "To solve, add 5 to both sides of the equation.",
+          },
+        },
+        {
+          question: "Simplify: 3(x + 2) - 4.",
+          answer: "3x + 2",
+          choices: ["3x + 2", "3x + 6", "3x - 2", "x + 8"],
+          feedback: {
+            correct:
+              "Correct! Distribute: 3(x) + 3(2) = 3x + 6, then subtract 4: 3x + 2.",
+            incorrect: "First distribute, then subtract the constant.",
+          },
+        },
+      ];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G6_Units.cam.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

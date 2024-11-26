@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1 - Number Sense and Operations</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    
+
+    const questionsDatabase= [
+  {
+    question: "What is 342,876 rounded to the nearest thousand?",
+    answer: "343,000",
+    choices: ["343,000", "342,000", "340,000", "350,000"],
+    feedback: {
+      correct: "Correct! The digit in the hundreds place (8) means rounding up.",
+      incorrect: "Not quite. Focus on the hundreds digit for rounding."
+    }
+  },
+  {
+    question: "What is the value of the digit 5 in the number 456,123?",
+    answer: "50,000",
+    choices: ["50", "500", "5,000", "50,000"],
+    feedback: {
+      correct: "Correct! The digit 5 is in the ten-thousands place, so its value is 50,000.",
+      incorrect: "Not quite. Identify the place value of the digit."
+    }
+  },
+  {
+    question: "Solve: 24 × 15.",
+    answer: "360",
+    choices: ["240", "350", "360", "370"],
+    feedback: {
+      correct: "Correct! 24 × 15 = 360.",
+      incorrect: "Not quite. Use multiplication to solve step by step."
+    }
+  },
+  {
+    question: "Divide 1,248 ÷ 6.",
+    answer: "208",
+    choices: ["208", "204", "212", "200"],
+    feedback: {
+      correct: "Correct! Dividing 1,248 by 6 gives 208.",
+      incorrect: "Not quite. Perform long division carefully."
+    }
+  },
+  {
+    question: "What is 0.56 written as a fraction?",
+    answer: "56/100",
+    choices: ["56/100", "5/6", "50/60", "6/56"],
+    feedback: {
+      correct: "Correct! 0.56 is equal to 56/100.",
+      incorrect: "Not quite. Convert the decimal to a fraction using its place value."
+    }
+  },
+  {
+    question: "What is 4.56 + 3.78?",
+    answer: "8.34",
+    choices: ["7.34", "8.34", "8.44", "8.54"],
+    feedback: {
+      correct: "Correct! Add the decimals carefully: 4.56 + 3.78 = 8.34.",
+      incorrect: "Not quite. Align the decimal points and add carefully."
+    }
+  },
+  {
+    question: "Round 0.879 to the nearest tenth.",
+    answer: "0.9",
+    choices: ["0.8", "0.9", "0.87", "0.88"],
+    feedback: {
+      correct: "Correct! The digit in the hundredths place is 7, so round up.",
+      incorrect: "Not quite. Check the hundredths place for rounding."
+    }
+  },
+  {
+    question: "What is 345,678 - 123,456?",
+    answer: "222,222",
+    choices: ["222,222", "223,222", "212,212", "223,212"],
+    feedback: {
+      correct: "Correct! Subtracting gives 222,222.",
+      incorrect: "Not quite. Subtract each place value carefully."
+    }
+  },
+  {
+    question: "What is the product of 123 and 456?",
+    answer: "56,088",
+    choices: ["56,088", "50,608", "58,068", "54,688"],
+    feedback: {
+      correct: "Correct! Multiplying 123 × 456 = 56,088.",
+      incorrect: "Not quite. Multiply carefully and check your work."
+    }
+  },
+  {
+    question: "What is the greatest common factor of 36 and 48?",
+    answer: "12",
+    choices: ["6", "12", "18", "24"],
+    feedback: {
+      correct: "Correct! The greatest common factor of 36 and 48 is 12.",
+      incorrect: "Not quite. List the factors of both numbers and find the largest common one."
+    }
+  },
+  {
+    question: "What is the least common multiple of 4 and 6?",
+    answer: "12",
+    choices: ["8", "10", "12", "24"],
+    feedback: {
+      correct: "Correct! The least common multiple of 4 and 6 is 12.",
+      incorrect: "Not quite. List the multiples of both numbers and find the smallest common one."
+    }
+  },
+  {
+    question: "What is 1/2 + 3/8?",
+    answer: "7/8",
+    choices: ["1/4", "3/4", "7/8", "1"],
+    feedback: {
+      correct: "Correct! 1/2 is equivalent to 4/8, so 4/8 + 3/8 = 7/8.",
+      incorrect: "Not quite. Convert to a common denominator first."
+    }
+  },
+  {
+    question: "What is 4/5 - 2/3?",
+    answer: "2/15",
+    choices: ["1/5", "2/15", "8/15", "3/15"],
+    feedback: {
+      correct: "Correct! Convert to a common denominator: 4/5 - 2/3 = 2/15.",
+      incorrect: "Not quite. Find a common denominator and subtract."
+    }
+  },
+  {
+    question: "What is 25% of 240?",
+    answer: "60",
+    choices: ["60", "80", "50", "70"],
+    feedback: {
+      correct: "Correct! 25% of 240 is 60.",
+      incorrect: "Not quite. Multiply 240 by 0.25."
+    }
+  },
+  {
+    question: "Which fraction is equivalent to 0.75?",
+    answer: "3/4",
+    choices: ["3/4", "7/10", "1/2", "2/3"],
+    feedback: {
+      correct: "Correct! 0.75 is equivalent to 3/4.",
+      incorrect: "Not quite. Convert the decimal to a fraction and simplify."
+    }
+  },
+  {
+    question: "What is the value of 6²?",
+    answer: "36",
+    choices: ["12", "36", "64", "18"],
+    feedback: {
+      correct: "Correct! 6 squared is 36.",
+      incorrect: "Not quite. Square means multiplying the number by itself."
+    }
+  },
+  {
+    question: "What is the value of the digit 7 in 0.478?",
+    answer: "0.07",
+    choices: ["7", "0.7", "0.07", "0.007"],
+    feedback: {
+      correct: "Correct! The digit 7 is in the hundredths place, so its value is 0.07.",
+      incorrect: "Not quite. Determine the place value of the digit."
+    }
+  },
+  {
+    question: "Which number is closest to 50% of 99?",
+    answer: "50",
+    choices: ["49", "50", "51", "48"],
+    feedback: {
+      correct: "Correct! 50% of 99 is approximately 50.",
+      incorrect: "Not quite. Multiply 99 by 0.5."
+    }
+  },
+  {
+    question: "Which of these numbers is divisible by 3?",
+    answer: "51",
+    choices: ["51", "52", "53", "54"],
+    feedback: {
+      correct: "Correct! 51 is divisible by 3 because the sum of its digits (5 + 1) is 6, which is divisible by 3.",
+      incorrect: "Not quite. Add the digits and check if the sum is divisible by 3."
+    }
+  },
+  {
+    question: "How many prime numbers are between 1 and 20?",
+    answer: "8",
+    choices: ["5", "6", "7", "8"],
+    feedback: {
+      correct: "Correct! The prime numbers between 1 and 20 are 2, 3, 5, 7, 11, 13, 17, and 19.",
+      incorrect: "Not quite. List the prime numbers in the range."
+    }
+  }
+];
+
+
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G5_Units.Van.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

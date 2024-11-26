@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Measurement
+    </title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    const questionsDatabase = [
+  {
+    question: "What is the area of a rectangle with a length of 10 meters and a width of 5 meters?",
+    answer: "50 square meters",
+    choices: ["45 square meters", "50 square meters", "55 square meters", "60 square meters"],
+    feedback: {
+      correct: "Correct! Area = Length × Width, so 10 × 5 = 50 square meters.",
+      incorrect: "Not quite. Multiply the length by the width to find the area."
+    }
+  },
+  {
+    question: "What is the volume of a cube with side length of 4 centimeters?",
+    answer: "64 cubic centimeters",
+    choices: ["48 cubic centimeters", "60 cubic centimeters", "64 cubic centimeters", "72 cubic centimeters"],
+    feedback: {
+      correct: "Correct! Volume = Side × Side × Side, so 4 × 4 × 4 = 64 cubic centimeters.",
+      incorrect: "Not quite. Multiply the side length by itself three times to find the volume."
+    }
+  },
+  {
+    question: "A swimming pool is 20 meters long, 10 meters wide, and 3 meters deep. What is the volume of the pool?",
+    answer: "600 cubic meters",
+    choices: ["500 cubic meters", "600 cubic meters", "700 cubic meters", "800 cubic meters"],
+    feedback: {
+      correct: "Correct! Volume = Length × Width × Depth, so 20 × 10 × 3 = 600 cubic meters.",
+      incorrect: "Not quite. Multiply the length, width, and depth to find the volume."
+    }
+  },
+  {
+    question: "What is the area of a triangle with a base of 6 meters and a height of 8 meters?",
+    answer: "24 square meters",
+    choices: ["20 square meters", "22 square meters", "24 square meters", "26 square meters"],
+    feedback: {
+      correct: "Correct! Area = 1/2 × Base × Height, so 1/2 × 6 × 8 = 24 square meters.",
+      incorrect: "Not quite. Use the formula for the area of a triangle."
+    }
+  },
+  {
+    question: "What is the perimeter of a rectangle with a length of 7 meters and a width of 3 meters?",
+    answer: "20 meters",
+    choices: ["18 meters", "20 meters", "22 meters", "24 meters"],
+    feedback: {
+      correct: "Correct! Perimeter = 2 × (Length + Width), so 2 × (7 + 3) = 20 meters.",
+      incorrect: "Not quite. Add the length and width, then multiply by 2."
+    }
+  },
+  {
+    question: "A box has a length of 12 cm, a width of 5 cm, and a height of 3 cm. What is the volume?",
+    answer: "180 cubic centimeters",
+    choices: ["170 cubic centimeters", "180 cubic centimeters", "190 cubic centimeters", "200 cubic centimeters"],
+    feedback: {
+      correct: "Correct! Volume = Length × Width × Height, so 12 × 5 × 3 = 180 cubic centimeters.",
+      incorrect: "Not quite. Multiply the length, width, and height to find the volume."
+    }
+  },
+  {
+    question: "What is the area of a rectangle with a length of 14 meters and a width of 6 meters?",
+    answer: "84 square meters",
+    choices: ["80 square meters", "84 square meters", "88 square meters", "90 square meters"],
+    feedback: {
+      correct: "Correct! Area = Length × Width, so 14 × 6 = 84 square meters.",
+      incorrect: "Not quite. Multiply the length by the width to find the area."
+    }
+  },
+  {
+    question: "What is the volume of a cylinder with a radius of 3 cm and a height of 10 cm? (Use π ≈ 3.14)",
+    answer: "282.6 cubic centimeters",
+    choices: ["260.6 cubic centimeters", "270.6 cubic centimeters", "282.6 cubic centimeters", "292.6 cubic centimeters"],
+    feedback: {
+      correct: "Correct! Volume = π × r² × h, so 3.14 × 3² × 10 = 282.6 cubic centimeters.",
+      incorrect: "Not quite. Use the formula for the volume of a cylinder."
+    }
+  },
+  {
+    question: "What is the perimeter of a square with side length of 9 centimeters?",
+    answer: "36 centimeters",
+    choices: ["34 centimeters", "35 centimeters", "36 centimeters", "37 centimeters"],
+    feedback: {
+      correct: "Correct! Perimeter = 4 × Side, so 4 × 9 = 36 centimeters.",
+      incorrect: "Not quite. Multiply the side length by 4 to find the perimeter."
+    }
+  },
+  {
+    question: "A swimming pool is 12 meters long, 4 meters wide, and 2 meters deep. What is the volume?",
+    answer: "96 cubic meters",
+    choices: ["86 cubic meters", "96 cubic meters", "106 cubic meters", "116 cubic meters"],
+    feedback: {
+      correct: "Correct! Volume = Length × Width × Depth, so 12 × 4 × 2 = 96 cubic meters.",
+      incorrect: "Not quite. Multiply the length, width, and depth to find the volume."
+    }
+  },
+  {
+    question: "What is the area of a circle with a radius of 7 meters? (Use π ≈ 3.14)",
+    answer: "153.94 square meters",
+    choices: ["140.94 square meters", "153.94 square meters", "160.94 square meters", "170.94 square meters"],
+    feedback: {
+      correct: "Correct! Area = π × r², so 3.14 × 7² = 153.94 square meters.",
+      incorrect: "Not quite. Use the formula for the area of a circle."
+    }
+  },
+  {
+    question: "What is the perimeter of a triangle with sides of 5 cm, 6 cm, and 7 cm?",
+    answer: "18 cm",
+    choices: ["16 cm", "17 cm", "18 cm", "19 cm"],
+    feedback: {
+      correct: "Correct! Perimeter = Side1 + Side2 + Side3, so 5 + 6 + 7 = 18 cm.",
+      incorrect: "Not quite. Add the lengths of all three sides to find the perimeter."
+    }
+  },
+  {
+    question: "What is the volume of a box with dimensions 8 cm × 4 cm × 3 cm?",
+    answer: "96 cubic centimeters",
+    choices: ["90 cubic centimeters", "96 cubic centimeters", "100 cubic centimeters", "110 cubic centimeters"],
+    feedback: {
+      correct: "Correct! Volume = Length × Width × Height, so 8 × 4 × 3 = 96 cubic centimeters.",
+      incorrect: "Not quite. Multiply the length, width, and height to find the volume."
+    }
+  },
+  {
+    question: "What is the area of a square with side length of 11 meters?",
+    answer: "121 square meters",
+    choices: ["111 square meters", "121 square meters", "131 square meters", "141 square meters"],
+    feedback: {
+      correct: "Correct! Area = Side × Side, so 11 × 11 = 121 square meters.",
+      incorrect: "Not quite. Multiply the side length by itself to find the area."
+    }
+  },
+  {
+    question: "What is the volume of a cube with side length 5 cm?",
+    answer: "125 cubic centimeters",
+    choices: ["115 cubic centimeters", "125 cubic centimeters", "135 cubic centimeters", "145 cubic centimeters"],
+    feedback: {
+      correct: "Correct! Volume = Side × Side × Side, so 5 × 5 × 5 = 125 cubic centimeters.",
+      incorrect: "Not quite. Multiply the side length by itself three times to find the volume."
+    }
+  },
+  {
+    question: "What is the perimeter of a rectangle with a length of 12 cm and a width of 8 cm?",
+    answer: "40 cm",
+    choices: ["38 cm", "39 cm", "40 cm", "41 cm"],
+    feedback: {
+      correct: "Correct! Perimeter = 2 × (Length + Width), so 2 × (12 + 8) = 40 cm.",
+      incorrect: "Not quite. Add the length and width, then multiply by 2 to get the perimeter."
+    }
+  },
+  {
+    question: "What is the area of a triangle with a base of 10 meters and a height of 6 meters?",
+    answer: "30 square meters",
+    choices: ["25 square meters", "30 square meters", "35 square meters", "40 square meters"],
+    feedback: {
+      correct: "Correct! Area = 1/2 × Base × Height, so 1/2 × 10 × 6 = 30 square meters.",
+      incorrect: "Not quite. Use the formula for the area of a triangle."
+    }
+  }
+];
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G6_units.edm.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

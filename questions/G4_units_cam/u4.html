@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 4 - Measurement and Data</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="question-container">
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+      <div class="score-display">Score: <span id="score">0</span>/20</div>
+      <div class="question-box">
+        <h3>Question <span id="question-number">1</span>/20:</h3>
+        <p id="question-text">Loading question...</p>
+        <div id="answer-options-container"></div>
+      </div>
+    </div>
+
+    <div id="feedback-modal" class="feedback-modal">
+      <h2 id="feedback-title"></h2>
+      <p id="feedback-message"></p>
+      <button
+        class="choice-button"
+        id="continue-button"
+        onclick="closeFeedback()"
+      >
+        Continue
+      </button>
+    </div>
+
+    <script>
+      const questionsDatabase = [
+  {
+    question: "Convert 3 meters to centimeters.",
+    answer: "300 cm",
+    choices: ["300 cm", "30 cm", "3000 cm", "3 cm"],
+    feedback: {
+      correct: "Correct! 1 meter equals 100 centimeters, so 3 meters = 300 cm.",
+      incorrect: "Remember, 1 meter equals 100 centimeters.",
+    },
+  },
+  {
+    question: "What is the area of a rectangle with length 8 cm and width 3 cm?",
+    answer: "24 square cm",
+    choices: ["24 square cm", "11 square cm", "16 square cm", "26 square cm"],
+    feedback: {
+      correct: "Well done! Area = length × width, so 8 × 3 = 24 square cm.",
+      incorrect: "Use the formula Area = length × width.",
+    },
+  },
+  {
+    question: "Which is larger: 2 liters or 2500 milliliters?",
+    answer: "2500 milliliters",
+    choices: ["2 liters", "2500 milliliters", "They are equal", "Cannot determine"],
+    feedback: {
+      correct: "Correct! 2500 milliliters is larger than 2 liters.",
+      incorrect: "1 liter equals 1000 milliliters, so compare carefully.",
+    },
+  },
+  {
+    question: "What is the perimeter of a square with side length 7 cm?",
+    answer: "28 cm",
+    choices: ["28 cm", "49 cm", "14 cm", "21 cm"],
+    feedback: {
+      correct: "Good job! Perimeter = 4 × side length, so 4 × 7 = 28 cm.",
+      incorrect: "Remember the perimeter of a square is 4 × side length.",
+    },
+  },
+  {
+    question: "A rectangle has an area of 35 square cm and width of 5 cm. What is its length?",
+    answer: "7 cm",
+    choices: ["7 cm", "5 cm", "8 cm", "10 cm"],
+    feedback: {
+      correct: "Correct! Length = Area ÷ Width, so 35 ÷ 5 = 7 cm.",
+      incorrect: "Use the formula Length = Area ÷ Width.",
+    },
+  },
+  {
+    question: "Convert 90 minutes to hours.",
+    answer: "1.5 hours",
+    choices: ["1.5 hours", "1 hour", "1 hour 30 minutes", "2 hours"],
+    feedback: {
+      correct: "Well done! 90 minutes = 1.5 hours.",
+      incorrect: "There are 60 minutes in an hour. Divide to convert.",
+    },
+  },
+  {
+    question: "What is the measure of a right angle?",
+    answer: "90°",
+    choices: ["90°", "180°", "45°", "360°"],
+    feedback: {
+      correct: "Correct! A right angle measures 90 degrees.",
+      incorrect: "Right angles are always 90 degrees.",
+    },
+  },
+  {
+    question: "How many grams are in 3 kilograms?",
+    answer: "3000 grams",
+    choices: ["300 grams", "3000 grams", "30 grams", "30000 grams"],
+    feedback: {
+      correct: "Correct! 1 kilogram equals 1000 grams, so 3 kilograms = 3000 grams.",
+      incorrect: "Multiply the number of kilograms by 1000 to convert.",
+    },
+  },
+  {
+    question: "What is the sum of angles in a triangle?",
+    answer: "180°",
+    choices: ["180°", "360°", "90°", "270°"],
+    feedback: {
+      correct: "Well done! The sum of angles in any triangle is 180 degrees.",
+      incorrect: "Remember, all triangles have a total of 180 degrees.",
+    },
+  },
+  {
+    question: "Which unit is best to measure the width of a book?",
+    answer: "centimeters",
+    choices: ["centimeters", "meters", "kilometers", "millimeters"],
+    feedback: {
+      correct: "Good job! Centimeters are best for measuring small objects like a book.",
+      incorrect: "Think about the size of the object being measured.",
+    },
+  },
+  {
+    question: "Convert 2.5 kilometers to meters.",
+    answer: "2500 meters",
+    choices: ["250 meters", "2500 meters", "25 meters", "25000 meters"],
+    feedback: {
+      correct: "Correct! 1 kilometer equals 1000 meters, so 2.5 kilometers = 2500 meters.",
+      incorrect: "Multiply the number of kilometers by 1000.",
+    },
+  },
+  {
+    question: "If a classroom has a perimeter of 40 meters and one side is 12 meters, what is the length of the other side?",
+    answer: "8 meters",
+    choices: ["8 meters", "10 meters", "12 meters", "14 meters"],
+    feedback: {
+      correct: "Correct! The perimeter is 2 × (length + width).",
+      incorrect: "Use the formula for perimeter and solve for the unknown side.",
+    },
+  },
+  {
+    question: "What is the volume of a box with dimensions 3 cm x 4 cm x 5 cm?",
+    answer: "60 cubic cm",
+    choices: ["60 cubic cm", "12 cubic cm", "20 cubic cm", "45 cubic cm"],
+    feedback: {
+      correct: "Good! Volume = length × width × height.",
+      incorrect: "Multiply all three dimensions to find the volume.",
+    },
+  },
+  {
+    question: "How many milliliters are in 3.2 liters?",
+    answer: "3200 milliliters",
+    choices: ["3200 milliliters", "320 milliliters", "3.2 milliliters", "32000 milliliters"],
+    feedback: {
+      correct: "Correct! 1 liter = 1000 milliliters, so 3.2 liters = 3200 milliliters.",
+      incorrect: "Multiply the number of liters by 1000 to convert.",
+    },
+  },
+  {
+    question: "What is the area of a rectangle with dimensions 9 cm by 4 cm?",
+    answer: "36 square cm",
+    choices: ["36 square cm", "13 square cm", "20 square cm", "28 square cm"],
+    feedback: {
+      correct: "Well done! Area = length × width, so 9 × 4 = 36.",
+      incorrect: "Use the formula Area = length × width.",
+    },
+  },
+  {
+    question: "How many seconds are in 2.5 minutes?",
+    answer: "150 seconds",
+    choices: ["150 seconds", "120 seconds", "250 seconds", "100 seconds"],
+    feedback: {
+      correct: "Good! 1 minute = 60 seconds, so 2.5 × 60 = 150 seconds.",
+      incorrect: "Multiply the number of minutes by 60 to convert to seconds.",
+    },
+  },
+  {
+    question: "What is the perimeter of a triangle with sides 3 cm, 4 cm, and 5 cm?",
+    answer: "12 cm",
+    choices: ["12 cm", "15 cm", "9 cm", "10 cm"],
+    feedback: {
+      correct: "Correct! Add all sides: 3 + 4 + 5 = 12 cm.",
+      incorrect: "Add all three side lengths to find the perimeter.",
+    },
+  },
+  {
+    question: "What is the area of a square with side length 6 cm?",
+    answer: "36 square cm",
+    choices: ["36 square cm", "18 square cm", "24 square cm", "48 square cm"],
+    feedback: {
+      correct: "Well done! Area = side × side, so 6 × 6 = 36.",
+      incorrect: "Remember to square the side length to find the area.",
+    },
+  },
+  {
+    question: "How many degrees are in half of a right angle?",
+    answer: "45°",
+    choices: ["45°", "90°", "22.5°", "180°"],
+    feedback: {
+      correct: "Good! A right angle is 90 degrees, so half is 45 degrees.",
+      incorrect: "Divide 90 by 2 to find half of a right angle.",
+    },
+  },
+  {
+    question: "What is the formula for the perimeter of a rectangle?",
+    answer: "2 × (length + width)",
+    choices: [
+      "2 × (length + width)",
+      "length × width",
+      "length + width",
+      "length × width × height",
+    ],
+    feedback: {
+      correct: "Correct! The formula is 2 × (length + width).",
+      incorrect: "Review the perimeter formula: sum of all sides.",
+    },
+  },
+];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_Units.cam.html?unit4score=${score}`;
+    }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Measurement</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+      
+      const questionsDatabase = [
+  {
+    question: "What is the volume of a box that is 4 cm long, 3 cm wide, and 2 cm high?",
+    answer: "24 cm³",
+    choices: ["12 cm³", "24 cm³", "30 cm³", "36 cm³"],
+    feedback: {
+      correct: "Correct! Volume = length × width × height = 4 × 3 × 2 = 24 cm³.",
+      incorrect: "Not quite. Multiply length, width, and height to find the volume."
+    }
+  },
+  {
+    question: "Convert 2.5 m to centimeters.",
+    answer: "250 cm",
+    choices: ["25 cm", "250 cm", "2500 cm", "0.25 cm"],
+    feedback: {
+      correct: "Correct! There are 100 cm in 1 m, so 2.5 m = 250 cm.",
+      incorrect: "Not quite. Multiply meters by 100 to get centimeters."
+    }
+  },
+  {
+    question: "A cube has edges of 5 cm. What is its volume?",
+    answer: "125 cm³",
+    choices: ["25 cm³", "75 cm³", "125 cm³", "150 cm³"],
+    feedback: {
+      correct: "Correct! Volume of a cube = side³ = 5³ = 125 cm³.",
+      incorrect: "Not quite. Cube the length of one edge (5 × 5 × 5)."
+    }
+  },
+  {
+    question: "Convert 1.5 kg to grams.",
+    answer: "1500 g",
+    choices: ["150 g", "1500 g", "15,000 g", "1.5 g"],
+    feedback: {
+      correct: "Correct! 1 kg = 1000 g, so 1.5 kg = 1500 g.",
+      incorrect: "Not quite. Multiply kilograms by 1000 to get grams."
+    }
+  },
+  {
+    question: "A swimming pool is 10 m long, 4 m wide, and 2 m deep. What is its volume?",
+    answer: "80 m³",
+    choices: ["40 m³", "60 m³", "80 m³", "100 m³"],
+    feedback: {
+      correct: "Correct! Volume = length × width × depth = 10 × 4 × 2 = 80 m³.",
+      incorrect: "Not quite. Multiply the three dimensions to find the volume."
+    }
+  },
+  {
+    question: "How many milliliters are in 3 liters?",
+    answer: "3000 mL",
+    choices: ["30 mL", "300 mL", "3000 mL", "30,000 mL"],
+    feedback: {
+      correct: "Correct! 1 liter = 1000 mL, so 3 liters = 3000 mL.",
+      incorrect: "Not quite. Multiply liters by 1000 to get milliliters."
+    }
+  },
+  {
+    question: "A rectangle has a length of 8 cm and a width of 3 cm. What is its area?",
+    answer: "24 cm²",
+    choices: ["11 cm²", "24 cm²", "30 cm²", "36 cm²"],
+    feedback: {
+      correct: "Correct! Area = length × width = 8 × 3 = 24 cm².",
+      incorrect: "Not quite. Multiply length by width to find the area."
+    }
+  },
+  {
+    question: "How many meters are there in 4500 cm?",
+    answer: "45 m",
+    choices: ["4.5 m", "45 m", "450 m", "4500 m"],
+    feedback: {
+      correct: "Correct! 100 cm = 1 m, so 4500 cm = 45 m.",
+      incorrect: "Not quite. Divide the number of centimeters by 100."
+    }
+  },
+  {
+    question: "What is the perimeter of a square with sides of 7 m?",
+    answer: "28 m",
+    choices: ["21 m", "25 m", "28 m", "35 m"],
+    feedback: {
+      correct: "Correct! Perimeter of a square = 4 × side = 4 × 7 = 28 m.",
+      incorrect: "Not quite. Multiply the side length by 4 to get the perimeter."
+    }
+  },
+  {
+    question: "A container holds 2.5 L of water. How many milliliters does it hold?",
+    answer: "2500 mL",
+    choices: ["250 mL", "2500 mL", "25,000 mL", "2.5 mL"],
+    feedback: {
+      correct: "Correct! 1 liter = 1000 mL, so 2.5 L = 2500 mL.",
+      incorrect: "Not quite. Multiply liters by 1000 to get milliliters."
+    }
+  },
+  {
+    question: "A rectangle has an area of 36 cm² and a width of 4 cm. What is its length?",
+    answer: "9 cm",
+    choices: ["8 cm", "9 cm", "10 cm", "11 cm"],
+    feedback: {
+      correct: "Correct! Area = length × width, so 36 ÷ 4 = 9 cm.",
+      incorrect: "Not quite. Divide the area by the width to find the length."
+    }
+  },
+  {
+    question: "Convert 5 km to meters.",
+    answer: "5000 m",
+    choices: ["50 m", "500 m", "5000 m", "50,000 m"],
+    feedback: {
+      correct: "Correct! 1 km = 1000 m, so 5 km = 5000 m.",
+      incorrect: "Not quite. Multiply kilometers by 1000 to get meters."
+    }
+  },
+  {
+    question: "A cylindrical tank has a radius of 3 m and a height of 5 m. What is the volume? (Use π ≈ 3.14)",
+    answer: "141.3 m³",
+    choices: ["141.3 m³", "150 m³", "130 m³", "160 m³"],
+    feedback: {
+      correct: "Correct! Volume = π × radius² × height = 3.14 × 3² × 5 = 141.3 m³.",
+      incorrect: "Not quite. Use the formula π × r² × h."
+    }
+  },
+  {
+    question: "What is 150 minutes in hours and minutes?",
+    answer: "2 hours and 30 minutes",
+    choices: ["2 hours and 30 minutes", "3 hours", "1 hour and 50 minutes", "2 hours"],
+    feedback: {
+      correct: "Correct! 150 minutes = 2 hours and 30 minutes.",
+      incorrect: "Not quite. Divide the minutes by 60 to find the hours."
+    }
+  },
+  {
+    question: "How many millimeters are in 2.3 meters?",
+    answer: "2300 mm",
+    choices: ["230 mm", "2300 mm", "23,000 mm", "2.3 mm"],
+    feedback: {
+      correct: "Correct! 1 meter = 1000 mm, so 2.3 m = 2300 mm.",
+      incorrect: "Not quite. Multiply meters by 1000 to convert to millimeters."
+    }
+  },
+  {
+    question: "What is the area of a triangle with a base of 6 cm and a height of 4 cm?",
+    answer: "12 cm²",
+    choices: ["10 cm²", "12 cm²", "14 cm²", "16 cm²"],
+    feedback: {
+      correct: "Correct! Area = 1/2 × base × height = 1/2 × 6 × 4 = 12 cm².",
+      incorrect: "Not quite. Use the formula for the area of a triangle."
+    }
+  },
+  {
+    question: "What is 3.5 hours in minutes?",
+    answer: "210 minutes",
+    choices: ["205 minutes", "210 minutes", "215 minutes", "220 minutes"],
+    feedback: {
+      correct: "Correct! 3.5 hours = 3.5 × 60 = 210 minutes.",
+      incorrect: "Not quite. Multiply the number of hours by 60."
+    }
+  },
+  {
+    question: "A rectangular prism has a length of 8 m, a width of 3 m, and a height of 2 m. What is its volume?",
+    answer: "48 m³",
+    choices: ["48 m³", "50 m³", "52 m³", "60 m³"],
+    feedback: {
+      correct: "Correct! Volume = length × width × height = 8 × 3 × 2 = 48 m³.",
+      incorrect: "Not quite. Multiply the three dimensions to find the volume."
+    }
+  },
+  {
+    question: "Convert 4.25 kg to grams.",
+    answer: "4250 g",
+    choices: ["425 g", "4250 g", "42,500 g", "4.25 g"],
+    feedback: {
+      correct: "Correct! 1 kg = 1000 g, so 4.25 kg = 4250 g.",
+      incorrect: "Not quite. Multiply kilograms by 1000 to convert to grams."
+    }
+  },
+  {
+    question: "What is the surface area of a cube with sides of 3 cm?",
+    answer: "54 cm²",
+    choices: ["36 cm²", "45 cm²", "54 cm²", "63 cm²"],
+    feedback: {
+      correct: "Correct! Surface area = 6 × side² = 6 × 3² = 54 cm².",
+      incorrect: "Not quite. Use the formula 6 × side² for the surface area of a cube."
+    }
+  }
+];
+
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G5_Units.Tor.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

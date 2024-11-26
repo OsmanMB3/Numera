@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 5 - Financial Literacy and Reasoning</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    
+
+
+const questionsDatabase = [
+  {
+    question: "What is the value of a quarter?",
+    answer: "25 cents",
+    choices: ["10 cents", "25 cents", "50 cents", "100 cents"],
+    feedback: {
+      correct: "Correct! A quarter is worth 25 cents.",
+      incorrect: "Not quite. A quarter equals 25 cents."
+    }
+  },
+  {
+    question: "How many nickels make a dollar?",
+    answer: "20",
+    choices: ["5", "10", "20", "25"],
+    feedback: {
+      correct: "Correct! There are 20 nickels in a dollar.",
+      incorrect: "Not quite. A nickel is worth 5 cents, and a dollar is 100 cents."
+    }
+  },
+  {
+    question: "If you have 3 dimes and 2 nickels, how much money do you have?",
+    answer: "40 cents",
+    choices: ["35 cents", "40 cents", "45 cents", "50 cents"],
+    feedback: {
+      correct: "Correct! 3 dimes (30 cents) + 2 nickels (10 cents) = 40 cents.",
+      incorrect: "Not quite. Add the value of the dimes and nickels."
+    }
+  },
+  {
+    question: "What coin is worth the least?",
+    answer: "Penny",
+    choices: ["Penny", "Nickel", "Dime", "Quarter"],
+    feedback: {
+      correct: "Correct! A penny is worth 1 cent, the smallest value.",
+      incorrect: "Not quite. A penny is worth the least amount."
+    }
+  },
+  {
+    question: "Which coin is worth the most?",
+    answer: "Quarter",
+    choices: ["Penny", "Nickel", "Dime", "Quarter"],
+    feedback: {
+      correct: "Correct! A quarter is worth 25 cents, the most among the coins listed.",
+      incorrect: "Not quite. A quarter has the highest value."
+    }
+  },
+  {
+    question: "How much more do you need to make $1 if you have 75 cents?",
+    answer: "25 cents",
+    choices: ["15 cents", "20 cents", "25 cents", "30 cents"],
+    feedback: {
+      correct: "Correct! $1 - 75 cents = 25 cents.",
+      incorrect: "Not quite. Subtract 75 cents from 100 cents."
+    }
+  },
+  {
+    question: "If you buy an apple for 40 cents and pay with a 50-cent coin, how much change will you get?",
+    answer: "10 cents",
+    choices: ["5 cents", "10 cents", "15 cents", "20 cents"],
+    feedback: {
+      correct: "Correct! 50 cents - 40 cents = 10 cents.",
+      incorrect: "Not quite. Subtract the cost from the amount you paid."
+    }
+  },
+  {
+    question: "How many dimes are in a dollar?",
+    answer: "10",
+    choices: ["5", "10", "20", "25"],
+    feedback: {
+      correct: "Correct! There are 10 dimes in a dollar.",
+      incorrect: "Not quite. A dime is worth 10 cents, and a dollar is 100 cents."
+    }
+  },
+  {
+    question: "What is the total value of 2 quarters and 3 nickels?",
+    answer: "65 cents",
+    choices: ["55 cents", "60 cents", "65 cents", "70 cents"],
+    feedback: {
+      correct: "Correct! 2 quarters (50 cents) + 3 nickels (15 cents) = 65 cents.",
+      incorrect: "Not quite. Add the values of the quarters and nickels."
+    }
+  },
+  {
+    question: "What is the value of 4 dimes and 1 nickel?",
+    answer: "45 cents",
+    choices: ["40 cents", "45 cents", "50 cents", "55 cents"],
+    feedback: {
+      correct: "Correct! 4 dimes (40 cents) + 1 nickel (5 cents) = 45 cents.",
+      incorrect: "Not quite. Add the value of the dimes and nickel."
+    }
+  },
+  {
+    question: "If you save 2 quarters each day, how much money will you have in 4 days?",
+    answer: "$2.00",
+    choices: ["$1.00", "$1.50", "$2.00", "$2.50"],
+    feedback: {
+      correct: "Correct! 2 quarters per day equals 50 cents per day. In 4 days, you save $2.00.",
+      incorrect: "Not quite. Multiply 50 cents by 4."
+    }
+  },
+  {
+    question: "If a toy costs $1 and you only have 3 quarters, how much more money do you need?",
+    answer: "25 cents",
+    choices: ["10 cents", "20 cents", "25 cents", "30 cents"],
+    feedback: {
+      correct: "Correct! $1 - 75 cents = 25 cents.",
+      incorrect: "Not quite. Subtract 75 cents from $1."
+    }
+  },
+  {
+    question: "If you have 5 nickels, how much money do you have?",
+    answer: "25 cents",
+    choices: ["20 cents", "25 cents", "30 cents", "35 cents"],
+    feedback: {
+      correct: "Correct! 5 nickels (5 cents each) = 25 cents.",
+      incorrect: "Not quite. Multiply the value of one nickel by 5."
+    }
+  },
+  {
+    question: "What is the total value of 3 quarters, 1 dime, and 2 nickels?",
+    answer: "95 cents",
+    choices: ["85 cents", "90 cents", "95 cents", "100 cents"],
+    feedback: {
+      correct: "Correct! 3 quarters (75 cents) + 1 dime (10 cents) + 2 nickels (10 cents) = 95 cents.",
+      incorrect: "Not quite. Add the values of all the coins."
+    }
+  },
+  {
+    question: "How many pennies make a dollar?",
+    answer: "100",
+    choices: ["50", "75", "100", "125"],
+    feedback: {
+      correct: "Correct! There are 100 pennies in a dollar.",
+      incorrect: "Not quite. A penny is worth 1 cent, and a dollar is 100 cents."
+    }
+  },
+  {
+    question: "If you have $1 and spend 60 cents, how much is left?",
+    answer: "40 cents",
+    choices: ["30 cents", "40 cents", "50 cents", "60 cents"],
+    feedback: {
+      correct: "Correct! $1 - 60 cents = 40 cents.",
+      incorrect: "Not quite. Subtract the amount spent from $1."
+    }
+  },
+  {
+    question: "If a book costs 85 cents and you pay with a dollar, how much change will you get?",
+    answer: "15 cents",
+    choices: ["10 cents", "15 cents", "20 cents", "25 cents"],
+    feedback: {
+      correct: "Correct! $1 - 85 cents = 15 cents.",
+      incorrect: "Not quite. Subtract 85 cents from $1."
+    }
+  },
+  {
+    question: "How many dimes make 50 cents?",
+    answer: "5",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! 5 dimes (10 cents each) make 50 cents.",
+      incorrect: "Not quite. Divide 50 cents by the value of one dime (10 cents)."
+    }
+  },
+  {
+    question: "If you save 1 quarter, 1 dime, and 2 nickels each day, how much money will you save in 3 days?",
+    answer: "$1.20",
+    choices: ["$1.00", "$1.20", "$1.30", "$1.50"],
+    feedback: {
+      correct: "Correct! The total daily savings is 50 cents, so in 3 days, you save $1.20.",
+      incorrect: "Not quite. Add the daily amounts and multiply by 3."
+    }
+  },
+  {
+    question: "If you have 4 dimes and spend 30 cents, how much is left?",
+    answer: "10 cents",
+    choices: ["5 cents", "10 cents", "15 cents", "20 cents"],
+    feedback: {
+      correct: "Correct! 4 dimes (40 cents) - 30 cents = 10 cents.",
+      incorrect: "Not quite. Subtract the amount spent from the total."
+    }
+  }
+];
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G2_Units.Van.html?unit5score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

@@ -1,68 +1,322 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Numera - Kindergarten: Number and Operations in Base Ten</title>
-    <link rel="stylesheet" href="../styles.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Number and Operations in Base Ten</title>
+    <link rel="stylesheet" href="../styles.css" />
 </head>
 <body>
-    <div class="question-container">
-        <h2>Number and Operations in Base Ten</h2>
-        <p>Work with numbers 11–19 to gain foundations for place value.</p>
-        <div id="question-box">
-            <h3 id="question-text">Loading question...</h3>
-            <div id="answer-options-container"></div>
-            <button class="submit-button" onclick="nextQuestion()">Submit</button>
-        </div>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
     </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
 
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
     <script>
-        const questions = [
-            { question: "What is 10 + 5?", answer: "15", choices: ["10", "12", "15", "19"] },
-            { question: "Which number comes after 11?", answer: "12", choices: ["10", "12", "13", "9"] },
-            { question: "Decompose 14 into tens and ones.", answer: "10 + 4", choices: ["10 + 4", "11 + 3", "9 + 5", "7 + 7"] },
-            { question: "How many ones are in 18?", answer: "8", choices: ["8", "10", "1", "9"] },
-            { question: "What is 19 - 10?", answer: "9", choices: ["8", "10", "9", "7"] },
-            // Expand to 25 questions following this pattern
-        ];
+      const questionsDatabase = [
+  {
+    question: "What is the number 14 made of?",
+    answer: "10 ones and 4 ones",
+    choices: ["10 ones and 4 ones", "14 ones", "1 ten and 14 ones", "4 tens"],
+    feedback: {
+      correct: "Correct! 14 is made up of 10 ones and 4 ones.",
+      incorrect: "Remember, 14 has one group of 10 and 4 left over.",
+    },
+  },
+  {
+    question: "What comes after 18?",
+    answer: "19",
+    choices: ["17", "19", "20", "18"],
+    feedback: {
+      correct: "Well done! 19 comes after 18.",
+      incorrect: "Count forward: 18, then 19.",
+    },
+  },
+  {
+    question: "Which number is made of 1 ten and 5 ones?",
+    answer: "15",
+    choices: ["51", "15", "10", "5"],
+    feedback: {
+      correct: "Correct! 15 is made of 1 ten and 5 ones.",
+      incorrect: "Think carefully: 1 ten plus 5 ones equals 15.",
+    },
+  },
+  {
+    question: "What is 11 made of?",
+    answer: "1 ten and 1 one",
+    choices: ["11 ones", "1 ten and 1 one", "2 tens", "10 ones and 11 ones"],
+    feedback: {
+      correct: "That's right! 11 is made of 1 ten and 1 one.",
+      incorrect: "Remember, 11 is 10 plus 1 more.",
+    },
+  },
+  {
+    question: "What number comes before 20?",
+    answer: "19",
+    choices: ["18", "19", "20", "21"],
+    feedback: {
+      correct: "Good job! 19 comes before 20.",
+      incorrect: "Count backward: 20, then 19.",
+    },
+  },
+  {
+    question: "How many ones are there in 13?",
+    answer: "3",
+    choices: ["13", "3", "10", "1"],
+    feedback: {
+      correct: "Correct! 13 has 3 ones.",
+      incorrect: "Think again: 13 is 10 plus 3 ones.",
+    },
+  },
+  {
+    question: "If you see the number 19, how many groups of 10 are there?",
+    answer: "1",
+    choices: ["9", "1", "19", "0"],
+    feedback: {
+      correct: "Great! 19 has 1 group of 10.",
+      incorrect: "Remember, 19 is 10 plus 9 ones.",
+    },
+  },
+  {
+    question: "Which number is larger: 12 or 14?",
+    answer: "14",
+    choices: ["12", "14", "They're the same", "10"],
+    feedback: {
+      correct: "Correct! 14 is larger than 12.",
+      incorrect: "Compare carefully: 14 is greater than 12.",
+    },
+  },
+  {
+    question: "What is 10 + 4?",
+    answer: "14",
+    choices: ["10", "14", "15", "13"],
+    feedback: {
+      correct: "Good work! 10 + 4 equals 14.",
+      incorrect: "Think carefully: 10 plus 4 is 14.",
+    },
+  },
+  {
+    question: "Which number is made of 2 tens?",
+    answer: "20",
+    choices: ["2", "10", "20", "12"],
+    feedback: {
+      correct: "That's right! 20 is made of 2 tens.",
+      incorrect: "Think again: 2 tens equal 20.",
+    },
+  },
+  {
+    question: "What comes between 12 and 14?",
+    answer: "13",
+    choices: ["11", "12", "13", "14"],
+    feedback: {
+      correct: "Correct! 13 comes between 12 and 14.",
+      incorrect: "Count forward: 12, 13, 14.",
+    },
+  },
+  {
+    question: "What is the last number if you count from 11 to 15?",
+    answer: "15",
+    choices: ["14", "15", "11", "12"],
+    feedback: {
+      correct: "Great! 15 is the last number.",
+      incorrect: "Count carefully: 11, 12, 13, 14, 15.",
+    },
+  },
+  {
+    question: "How many tens are there in 18?",
+    answer: "1",
+    choices: ["18", "8", "1", "2"],
+    feedback: {
+      correct: "Good job! 18 has 1 ten.",
+      incorrect: "Remember, 18 is 10 plus 8 ones.",
+    },
+  },
+  {
+    question: "What is 16 made of?",
+    answer: "1 ten and 6 ones",
+    choices: ["16 ones", "6 tens", "1 ten and 6 ones", "10 ones and 16 ones"],
+    feedback: {
+      correct: "Correct! 16 is 1 ten and 6 ones.",
+      incorrect: "Think carefully: 16 is 10 plus 6 more.",
+    },
+  },
+  {
+    question: "Which number is smaller: 17 or 15?",
+    answer: "15",
+    choices: ["15", "17", "They're the same", "10"],
+    feedback: {
+      correct: "Well done! 15 is smaller than 17.",
+      incorrect: "Compare carefully: 15 is less than 17.",
+    },
+  },
+  {
+    question: "What number comes after 11?",
+    answer: "12",
+    choices: ["10", "12", "11", "13"],
+    feedback: {
+      correct: "Great! 12 comes after 11.",
+      incorrect: "Count forward: 11, then 12.",
+    },
+  },
+  {
+    question: "How many ones are there in 15?",
+    answer: "5",
+    choices: ["15", "5", "10", "1"],
+    feedback: {
+      correct: "Correct! 15 has 5 ones.",
+      incorrect: "Think carefully: 15 is 10 plus 5 ones.",
+    },
+  },
+  {
+    question: "Which number is 1 ten and 2 ones?",
+    answer: "12",
+    choices: ["10", "12", "11", "21"],
+    feedback: {
+      correct: "Correct! 12 is 1 ten and 2 ones.",
+      incorrect: "Think again: 10 plus 2 equals 12.",
+    },
+  },
+  {
+    question: "What is the largest number: 11, 14, or 13?",
+    answer: "14",
+    choices: ["11", "14", "13", "10"],
+    feedback: {
+      correct: "Well done! 14 is the largest.",
+      incorrect: "Compare carefully: 14 is greater than the others.",
+    },
+  },
+  {
+    question: "Which number is made of 1 ten and 9 ones?",
+    answer: "19",
+    choices: ["9", "19", "10", "18"],
+    feedback: {
+      correct: "Good job! 19 is 1 ten and 9 ones.",
+      incorrect: "Remember, 10 plus 9 equals 19.",
+    },
+  },
+];
 
-        let currentIndex = 0;
 
-        function loadQuestion() {
-            const questionObj = questions[currentIndex];
-            document.getElementById("question-text").textContent = questionObj.question;
-            const options = document.getElementById("answer-options-container");
-            options.innerHTML = "";
-            questionObj.choices.forEach(choice => {
-                const button = document.createElement("button");
-                button.className = "choice-button";
-                button.textContent = choice;
-                button.onclick = () => checkAnswer(choice);
-                options.appendChild(button);
-            });
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
         }
 
-        function checkAnswer(selected) {
-            const correct = questions[currentIndex].answer;
-            if (selected === correct) {
-                alert("Correct!");
-                nextQuestion();
-            } else {
-                alert("Try Again.");
-            }
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
         }
 
-        function nextQuestion() {
-            currentIndex++;
-            if (currentIndex < questions.length) {
-                loadQuestion();
-            } else {
-                alert("You've completed all questions!");
-            }
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
         }
 
-        loadQuestion();
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../K_Units_cam.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
     </script>
-</body>
+  </body>
 </html>

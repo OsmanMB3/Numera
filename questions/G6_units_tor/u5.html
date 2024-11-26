@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 5 - Data Management and Probability</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+     const questionsDatabase = [
+  {
+    question: "What is the mean of the numbers 4, 8, 6, and 2?",
+    answer: "5",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! Mean = (4 + 8 + 6 + 2) ÷ 4 = 20 ÷ 4 = 5.",
+      incorrect: "Not quite. Add all the numbers, then divide by the count."
+    }
+  },
+  {
+    question: "What is the median of the numbers 3, 7, 5, and 9?",
+    answer: "6",
+    choices: ["5", "6", "7", "8"],
+    feedback: {
+      correct: "Correct! Arrange the numbers: 3, 5, 7, 9. Median = (5 + 7) ÷ 2 = 6.",
+      incorrect: "Not quite. Arrange the numbers in order and find the middle."
+    }
+  },
+  {
+    question: "What is the mode of the numbers 2, 4, 4, 6, and 8?",
+    answer: "4",
+    choices: ["2", "4", "6", "8"],
+    feedback: {
+      correct: "Correct! 4 appears most frequently.",
+      incorrect: "Not quite. Mode is the number that appears most often."
+    }
+  },
+  {
+    question: "If you roll a die 60 times and get 10 sixes, what is the experimental probability of rolling a six?",
+    answer: "1/6",
+    choices: ["1/6", "1/5", "1/3", "1/4"],
+    feedback: {
+      correct: "Correct! Probability = 10 ÷ 60 = 1/6.",
+      incorrect: "Not quite. Divide the number of sixes by the total rolls."
+    }
+  },
+  {
+    question: "What is the range of the numbers 12, 5, 9, and 15?",
+    answer: "10",
+    choices: ["5", "9", "10", "12"],
+    feedback: {
+      correct: "Correct! Range = largest - smallest = 15 - 5 = 10.",
+      incorrect: "Not quite. Subtract the smallest number from the largest."
+    }
+  },
+  {
+    question: "In a survey, 15 students like pizza, 10 like burgers, and 5 like pasta. What is the mode?",
+    answer: "Pizza",
+    choices: ["Pizza", "Burgers", "Pasta", "There is no mode"],
+    feedback: {
+      correct: "Correct! Pizza is the mode because it has the highest count.",
+      incorrect: "Not quite. Mode is the category with the highest frequency."
+    }
+  },
+  {
+    question: "What is the mean of the numbers 6, 8, 10, and 12?",
+    answer: "9",
+    choices: ["8", "9", "10", "11"],
+    feedback: {
+      correct: "Correct! Mean = (6 + 8 + 10 + 12) ÷ 4 = 36 ÷ 4 = 9.",
+      incorrect: "Not quite. Add all the numbers, then divide by the count."
+    }
+  },
+  {
+    question: "What is the experimental probability of drawing a red marble if a red marble is drawn 3 times out of 20 draws?",
+    answer: "3/20",
+    choices: ["3/20", "1/5", "1/6", "1/4"],
+    feedback: {
+      correct: "Correct! Probability = 3 ÷ 20 = 3/20.",
+      incorrect: "Not quite. Divide the number of red marbles by the total draws."
+    }
+  },
+  {
+    question: "If the data set is 7, 9, 5, 7, 6, what is the mode?",
+    answer: "7",
+    choices: ["5", "6", "7", "9"],
+    feedback: {
+      correct: "Correct! 7 appears most frequently.",
+      incorrect: "Not quite. Mode is the number that occurs most often."
+    }
+  },
+  {
+    question: "What is the median of the numbers 11, 15, 14, and 13?",
+    answer: "14",
+    choices: ["13", "14", "15", "16"],
+    feedback: {
+      correct: "Correct! Arrange the numbers: 11, 13, 14, 15. Median = (13 + 14) ÷ 2 = 14.",
+      incorrect: "Not quite. Arrange the numbers in order and find the middle."
+    }
+  },
+  {
+    question: "What is the probability of drawing a heart from a standard deck of cards?",
+    answer: "1/4",
+    choices: ["1/13", "1/4", "1/3", "1/2"],
+    feedback: {
+      correct: "Correct! There are 13 hearts in a deck of 52 cards, so 13/52 = 1/4.",
+      incorrect: "Not quite. Divide the number of hearts by the total number of cards."
+    }
+  },
+  {
+    question: "If the range of a data set is 18 and the smallest value is 5, what is the largest value?",
+    answer: "23",
+    choices: ["18", "23", "24", "25"],
+    feedback: {
+      correct: "Correct! Largest value = smallest value + range = 5 + 18 = 23.",
+      incorrect: "Not quite. Add the range to the smallest value."
+    }
+  },
+  {
+    question: "If the mean of 6, 8, and 10 is 8, what is the sum of the numbers?",
+    answer: "24",
+    choices: ["20", "22", "24", "26"],
+    feedback: {
+      correct: "Correct! Mean = sum ÷ count, so sum = mean × count = 8 × 3 = 24.",
+      incorrect: "Not quite. Multiply the mean by the number of values."
+    }
+  },
+  {
+    question: "In a probability experiment, what is the total probability of all outcomes?",
+    answer: "1",
+    choices: ["0", "1", "1/2", "100%"],
+    feedback: {
+      correct: "Correct! The total probability of all possible outcomes is always 1.",
+      incorrect: "Not quite. Probability for all outcomes must add up to 1."
+    }
+  },
+  {
+    question: "What is the mode of the data set: 10, 15, 20, 15, 25?",
+    answer: "15",
+    choices: ["10", "15", "20", "25"],
+    feedback: {
+      correct: "Correct! 15 is the mode because it appears twice.",
+      incorrect: "Not quite. Mode is the number that appears most frequently."
+    }
+  },
+  {
+    question: "A coin is flipped 100 times and lands on heads 45 times. What is the experimental probability of heads?",
+    answer: "45%",
+    choices: ["50%", "45%", "40%", "55%"],
+    feedback: {
+      correct: "Correct! Probability = 45 ÷ 100 = 45%.",
+      incorrect: "Not quite. Divide the number of heads by the total flips."
+    }
+  },
+  {
+    question: "If the data set is 12, 15, 12, 18, 20, what is the median?",
+    answer: "15",
+    choices: ["12", "15", "18", "20"],
+    feedback: {
+      correct: "Correct! Arrange the data: 12, 12, 15, 18, 20. Median = 15.",
+      incorrect: "Not quite. Arrange the data and find the middle value."
+    }
+  },
+  {
+    question: "If a spinner is divided into 4 equal sections, what is the probability of landing on one section?",
+    answer: "1/4",
+    choices: ["1/2", "1/3", "1/4", "1/5"],
+    feedback: {
+      correct: "Correct! There are 4 sections, so the probability is 1/4.",
+      incorrect: "Not quite. Each section has an equal probability."
+    }
+  },
+  {
+    question: "What is the mean of the numbers 10, 15, 20, and 25?",
+    answer: "17.5",
+    choices: ["17", "17.5", "18", "18.5"],
+    feedback: {
+      correct: "Correct! Mean = (10 + 15 + 20 + 25) ÷ 4 = 70 ÷ 4 = 17.5.",
+      incorrect: "Not quite. Add all the numbers, then divide by the count."
+    }
+  },
+  {
+    question: "If the experimental probability of rain is 30%, how many rainy days would you expect in a 10-day forecast?",
+    answer: "3 days",
+    choices: ["2 days", "3 days", "4 days", "5 days"],
+    feedback: {
+      correct: "Correct! 30% of 10 days = 0.3 × 10 = 3 days.",
+      incorrect: "Not quite. Multiply the probability by the total days."
+    }
+  }
+];
+
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G6_Units.Tor.html?unit5score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

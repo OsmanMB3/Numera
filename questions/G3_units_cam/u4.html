@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 4 - Measurement and Data</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="question-container">
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+      <div class="score-display">Score: <span id="score">0</span>/20</div>
+      <div class="question-box">
+        <h3>Question <span id="question-number">1</span>/20:</h3>
+        <p id="question-text">Loading question...</p>
+        <div id="answer-options-container"></div>
+      </div>
+    </div>
+
+    <div id="feedback-modal" class="feedback-modal">
+      <h2 id="feedback-title"></h2>
+      <p id="feedback-message"></p>
+      <button
+        class="choice-button"
+        id="continue-button"
+        onclick="closeFeedback()"
+      >
+        Continue
+      </button>
+    </div>
+
+    <script>
+      const questionsDatabase = [
+  {
+    question: "What is the perimeter of a rectangle with a length of 8 cm and width of 3 cm?",
+    answer: "22 cm",
+    choices: ["22 cm", "24 cm", "20 cm", "16 cm"],
+    feedback: {
+      correct: "Correct! Perimeter = 2 × (length + width). So, 2 × (8 + 3) = 22 cm.",
+      incorrect: "Perimeter is the total distance around the shape. Add all the sides together.",
+    },
+  },
+  {
+    question: "How many minutes are in 2 hours?",
+    answer: "120 minutes",
+    choices: ["60 minutes", "120 minutes", "90 minutes", "150 minutes"],
+    feedback: {
+      correct: "Correct! Each hour has 60 minutes, so 2 × 60 = 120 minutes.",
+      incorrect: "Remember, 1 hour equals 60 minutes. Multiply by the number of hours.",
+    },
+  },
+  {
+    question: "A rectangular garden measures 4 meters by 5 meters. What is its area?",
+    answer: "20 square meters",
+    choices: ["9 square meters", "20 square meters", "10 square meters", "25 square meters"],
+    feedback: {
+      correct: "Correct! Area = length × width. So, 4 × 5 = 20 square meters.",
+      incorrect: "Area is calculated by multiplying the length by the width of the rectangle.",
+    },
+  },
+  {
+    question: "A container holds 3 liters of water. How many milliliters is that?",
+    answer: "3000 milliliters",
+    choices: ["300 milliliters", "3000 milliliters", "30 milliliters", "3 milliliters"],
+    feedback: {
+      correct: "Correct! 1 liter equals 1000 milliliters, so 3 × 1000 = 3000 milliliters.",
+      incorrect: "Convert liters to milliliters by multiplying by 1000.",
+    },
+  },
+  {
+    question: "Which unit is best for measuring the length of a classroom?",
+    answer: "Meters",
+    choices: ["Centimeters", "Meters", "Kilometers", "Millimeters"],
+    feedback: {
+      correct: "Correct! Meters are appropriate for measuring a classroom's length.",
+      incorrect: "Centimeters and millimeters are too small, and kilometers are too large.",
+    },
+  },
+  {
+    question: "If you run 3 kilometers, how many meters have you run?",
+    answer: "3000 meters",
+    choices: ["300 meters", "3000 meters", "30 meters", "3 meters"],
+    feedback: {
+      correct: "Correct! 1 kilometer equals 1000 meters, so 3 × 1000 = 3000 meters.",
+      incorrect: "Multiply kilometers by 1000 to convert to meters.",
+    },
+  },
+  {
+    question: "A clock shows the time as 3:15. How many minutes have passed since 3:00?",
+    answer: "15 minutes",
+    choices: ["15 minutes", "30 minutes", "45 minutes", "60 minutes"],
+    feedback: {
+      correct: "Correct! 3:15 means 15 minutes past 3:00.",
+      incorrect: "The difference between 3:00 and 3:15 is 15 minutes.",
+    },
+  },
+  {
+    question: "How much is 1 kilogram in grams?",
+    answer: "1000 grams",
+    choices: ["100 grams", "1000 grams", "10 grams", "500 grams"],
+    feedback: {
+      correct: "Correct! 1 kilogram equals 1000 grams.",
+      incorrect: "Convert kilograms to grams by multiplying by 1000.",
+    },
+  },
+  {
+    question: "What is the volume of a cube with sides of 3 cm?",
+    answer: "27 cubic cm",
+    choices: ["9 cubic cm", "27 cubic cm", "18 cubic cm", "36 cubic cm"],
+    feedback: {
+      correct: "Correct! Volume = side × side × side. So, 3 × 3 × 3 = 27 cubic cm.",
+      incorrect: "For cubes, multiply the side length by itself three times to find the volume.",
+    },
+  },
+  {
+    question: "How many seconds are there in 5 minutes?",
+    answer: "300 seconds",
+    choices: ["60 seconds", "300 seconds", "120 seconds", "600 seconds"],
+    feedback: {
+      correct: "Correct! 1 minute equals 60 seconds, so 5 × 60 = 300 seconds.",
+      incorrect: "Multiply the number of minutes by 60 to convert to seconds.",
+    },
+  },
+  {
+    question: "A square has a side length of 6 cm. What is its perimeter?",
+    answer: "24 cm",
+    choices: ["18 cm", "24 cm", "36 cm", "12 cm"],
+    feedback: {
+      correct: "Correct! Perimeter = 4 × side length. So, 4 × 6 = 24 cm.",
+      incorrect: "For a square, multiply the side length by 4 to find the perimeter.",
+    },
+  },
+  {
+    question: "What is the perimeter of a triangle with sides measuring 4 cm, 5 cm, and 6 cm?",
+    answer: "15 cm",
+    choices: ["15 cm", "16 cm", "14 cm", "12 cm"],
+    feedback: {
+      correct: "Correct! Perimeter = sum of all sides. So, 4 + 5 + 6 = 15 cm.",
+      incorrect: "Add up the lengths of all sides to find the perimeter.",
+    },
+  },
+  {
+    question: "A jug contains 2 liters of juice. How many milliliters is that?",
+    answer: "2000 milliliters",
+    choices: ["200 milliliters", "2000 milliliters", "20 milliliters", "2 milliliters"],
+    feedback: {
+      correct: "Correct! 1 liter equals 1000 milliliters, so 2 × 1000 = 2000 milliliters.",
+      incorrect: "Multiply the liters by 1000 to convert to milliliters.",
+    },
+  },
+  {
+    question: "How many meters are in 1.5 kilometers?",
+    answer: "1500 meters",
+    choices: ["150 meters", "1500 meters", "15 meters", "1.5 meters"],
+    feedback: {
+      correct: "Correct! 1 kilometer equals 1000 meters, so 1.5 × 1000 = 1500 meters.",
+      incorrect: "Convert kilometers to meters by multiplying by 1000.",
+    },
+  },
+  {
+    question: "A rectangle has a length of 7 cm and a width of 2 cm. What is its area?",
+    answer: "14 square cm",
+    choices: ["9 square cm", "14 square cm", "12 square cm", "16 square cm"],
+    feedback: {
+      correct: "Correct! Area = length × width. So, 7 × 2 = 14 square cm.",
+      incorrect: "Multiply the length by the width to find the area of a rectangle.",
+    },
+  },
+  {
+    question: "A rectangle has a length of 5 cm and a width of 4 cm. What is its perimeter?",
+    answer: "18 cm",
+    choices: ["18 cm", "20 cm", "15 cm", "10 cm"],
+    feedback: {
+      correct: "Correct! Perimeter = 2 × (length + width). So, 2 × (5 + 4) = 18 cm.",
+      incorrect: "Add the length and width, then multiply by 2 to find the perimeter.",
+    },
+  },
+  {
+    question: "How many hours are there in 3 days?",
+    answer: "72 hours",
+    choices: ["24 hours", "48 hours", "72 hours", "96 hours"],
+    feedback: {
+      correct: "Correct! 1 day has 24 hours, so 3 × 24 = 72 hours.",
+      incorrect: "Multiply the number of days by 24 to find the total hours.",
+    },
+  },
+  {
+    question: "A rectangular field has a length of 10 m and width of 8 m. What is its area?",
+    answer: "80 square meters",
+    choices: ["80 square meters", "100 square meters", "60 square meters", "90 square meters"],
+    feedback: {
+      correct: "Correct! Area = length × width. So, 10 × 8 = 80 square meters.",
+      incorrect: "Multiply the length by the width to calculate the area.",
+    },
+  },
+  {
+    question: "What is the perimeter of a square with sides of 9 cm?",
+    answer: "36 cm",
+    choices: ["18 cm", "36 cm", "45 cm", "27 cm"],
+    feedback: {
+      correct: "Correct! Perimeter = 4 × side length. So, 4 × 9 = 36 cm.",
+      incorrect: "Multiply the side length by 4 to find the perimeter of a square.",
+    },
+  },
+  {
+    question: "How many grams are in 3.2 kilograms?",
+    answer: "3200 grams",
+    choices: ["320 grams", "3200 grams", "32 grams", "32000 grams"],
+    feedback: {
+      correct: "Correct! 1 kilogram equals 1000 grams, so 3.2 × 1000 = 3200 grams.",
+      incorrect: "Convert kilograms to grams by multiplying by 1000.",
+    },
+  },
+];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const percentage = (score / questionsDatabase.length) * 100;
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        // Ensure any previous buttons are removed first to avoid duplication
+        const existingContinueButton = document.querySelector(
+          "#feedback-modal .choice-button"
+        );
+        if (existingContinueButton) {
+          existingContinueButton.remove();
+        }
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+        Your score: ${score}/${questionsDatabase.length} (${percentage.toFixed(
+          1
+        )}%)<br><br>
+        ${
+          percentage >= 80
+            ? "Outstanding work! 🌟"
+            : percentage >= 60
+            ? "Good job! 💪"
+            : "Keep practicing! 🌱"
+        }<br><br>
+      `;
+
+        const continueButton = document.createElement("button");
+        continueButton.classList.add("choice-button");
+        continueButton.innerText = "Continue";
+        continueButton.onclick = returnToUnits;
+        feedbackMessage.appendChild(continueButton);
+
+        feedbackModal.style.display = "block";
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G3_units.cam.html?unit4score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

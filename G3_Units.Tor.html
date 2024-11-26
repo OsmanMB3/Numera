@@ -7,111 +7,170 @@
     <title>Numera - Grade 3 Mathematical Mastery</title>
     <style>
         :root {
-            --primary-color: #000033;
-            --header-color: white;
+          --primary-color: #000033;
+          --header-color: white;
         }
+  
         body {
-            font-family: 'Georgia', serif;
-            margin: 0;
-            padding: 0;
-            background-color: white;
+          font-family: "Georgia", serif;
+          margin: 0;
+          padding: 0;
+          background-color: white;
         }
+  
         .header {
-            position: relative;
-            background-color: var(--header-color);
-            color: var(--primary-color);
-            padding: 10px;
-            text-align: center;
+          background-color: var(--header-color);
+          color: var(--primary-color);
+          padding: 20px;
+          text-align: center;
         }
+  
         .content {
-            margin: 30px;
-            padding: 20px;
+          margin: 30px;
+          padding: 20px;
         }
+  
         .box {
-            padding: 20px;
-            border: 2px solid var(--primary-color);
-            border-radius: 15px;
-            color: var(--primary-color);
-            background-color: var(--header-color);
-            margin: 20px 0;
-            transition: border 0.3s ease;
-            position: relative;
+          padding: 20px;
+          border: 2px solid var(--primary-color);
+          border-radius: 15px;
+          color: var(--primary-color);
+          background-color: var(--header-color);
+          margin: 20px 0;
+          position: relative;
+          transition: border 0.3s ease;
         }
+  
         .box:hover {
-            border: 4px solid var(--primary-color);
+          border: 4px solid var(--primary-color);
         }
+  
         .launch-button {
-            padding: 10px 20px;
-            border: 2px solid var(--primary-color);
-            background-color: var(--header-color);
-            color: var(--primary-color);
-            cursor: pointer;
-            font-size: 1rem;
-            border-radius: 15px;
-            transition: border 0.3s ease;
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
+          padding: 10px 20px;
+          border: 2px solid var(--primary-color);
+          background-color: var(--header-color);
+          color: var(--primary-color);
+          cursor: pointer;
+          font-size: 1rem;
+          border-radius: 15px;
+          position: absolute;
+          bottom: 10px;
+          right: 10px;
+          transition: border 0.3s ease;
         }
+  
         .launch-button:hover {
-            border: 4px solid var(--primary-color);
+          border: 4px solid var(--primary-color);
         }
+  
         .footer {
-            text-align: center;
-            background-color: var(--header-color);
-            color: var(--primary-color);
+          text-align: center;
+          background-color: var(--header-color);
+          color: var(--primary-color);
+          padding: 15px;
         }
-    </style>
+  
+        .score-display {
+          margin-top: 10px;
+          font-size: 1rem;
+          color: var(--primary-color);
+        }
+      </style>
 </head>
 <body>
     <header class="header">
         <h1>Numera</h1>
-        <h2>Enriching Minds with Mathematics</h2>
+        <h2>Grade 3: Enriching Minds with Mathematics</h2>
     </header>
     <div class="content">
-        <div class="box">
+        <div class="box" id="unit1-box">
             <h2>Number Sense and Numeration</h2>
             <ul>
-                <li>- Numbers up to 1000, multiplication and division introduction.</li>
+                <li> Numbers up to 1000, multiplication and division introduction.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('numbersG3')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('u1.html')">
+                Launch
+              </button>
         </div>
-        <div class="box">
+        <div class="box" id="unit2-box">
             <h2>Measurement</h2>
             <ul>
-                <li>- Exploring area, elapsed time, and capacity.</li>
+                <li>Exploring area, elapsed time, and capacity.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('measurementG3')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('u2.html')">
+                Launch
+              </button>
         </div>
-        <div class="box">
+        <div class="box" id="unit3-box">
             <h2>Geometry and Spatial Sense</h2>
             <ul>
-                <li>- Exploring geometric properties and relationships.</li>
+                <li>Exploring geometric properties and relationships.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('geometryG3')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('u3.html')">
+                Launch
+              </button>
         </div>
-        <div class="box">
+        <div class="box" id="unit4-box">
             <h2>Patterning and Algebra</h2>
             <ul>
-                <li>- Introduction to algebraic expressions.</li>
+                <li>Introduction to algebraic expressions.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('algebraG3')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('u4.html')">
+                Launch
+              </button>
         </div>
-        <div class="box">
+        <div class="box" id="unit5-box">
             <h2>Data Management and Probability</h2>
             <ul>
-                <li>- Data collection, display, and interpretation.</li>
+                <li>Data collection, display, and interpretation.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('dataG3')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('u5.html')">
+                Launch
+              </button>
         </div>
-    </div>
-    <footer class="footer">
+   <footer class="footer">
         <p>Numera, Inc &copy; 2024</p>
-    </footer>
-    <script>
-        function launchCurriculum(section) {
-            console.log(`Launching ${section}`);
+      </footer>
+  
+      <script>
+        // Function to launch the selected unit
+        function launchCurriculum(unit) {
+          const path = `questions/G3_units_tor/${unit}`;
+          window.location.href = path;
         }
-    </script>
-</body>
-</html>
+  
+        // Function to display scores for each unit based on URL parameters
+        function displayScore() {
+          const urlParams = new URLSearchParams(window.location.search);
+          const scores = {
+            unit1: urlParams.get("unit1score"),
+            unit2: urlParams.get("unit2score"),
+            unit3: urlParams.get("unit3score"),
+            unit4: urlParams.get("unit4score"),  
+            unit5: urlParams.get("unit5score"),          
+          };
+  
+          Object.entries(scores).forEach(([unit, score], index) => {
+            if (score !== null) {
+              const unitBox = document.getElementById(`unit${index + 1}-box`);
+              const scoreDisplay = document.createElement("div");
+              scoreDisplay.classList.add("score-display");
+              scoreDisplay.innerHTML = `
+                <p>Your last score: ${score}/20</p>
+                <button class="launch-button" onclick="launchCurriculum('u${
+                  index + 1
+                }.html')">Try Again</button>
+              `;
+              // Remove any existing score display to prevent duplication
+              const existingScore = unitBox.querySelector(".score-display");
+              if (existingScore) existingScore.remove();
+              unitBox.appendChild(scoreDisplay);
+            }
+          });
+        }
+  
+        // Call the function to display scores on page load
+        displayScore();
+      </script>
+    </body>
+  </html>

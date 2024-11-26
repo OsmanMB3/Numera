@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 4 - Measurement
+    </title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    const questionsDatabase = [
+  {
+    question: "What unit would you use to measure the length of a pencil?",
+    answer: "Centimeters",
+    choices: ["Meters", "Centimeters", "Kilometers", "Inches"],
+    feedback: {
+      correct: "Correct! Centimeters are used to measure smaller objects like pencils.",
+      incorrect: "Not quite. Use centimeters for small lengths."
+    }
+  },
+  {
+    question: "How many centimeters are in 1 meter?",
+    answer: "100",
+    choices: ["10", "100", "1000", "10000"],
+    feedback: {
+      correct: "Correct! 1 meter = 100 centimeters.",
+      incorrect: "Not quite. A meter is 100 centimeters."
+    }
+  },
+  {
+    question: "What is the best tool to measure the length of a book?",
+    answer: "Ruler",
+    choices: ["Ruler", "Scale", "Clock", "Measuring Tape"],
+    feedback: {
+      correct: "Correct! A ruler is best for measuring smaller objects like books.",
+      incorrect: "Not quite. Use a ruler for small lengths."
+    }
+  },
+  {
+    question: "How many meters are in 1 kilometer?",
+    answer: "1000",
+    choices: ["10", "100", "1000", "10000"],
+    feedback: {
+      correct: "Correct! 1 kilometer = 1000 meters.",
+      incorrect: "Not quite. A kilometer is 1000 meters."
+    }
+  },
+  {
+    question: "What unit would you use to measure the distance between two cities?",
+    answer: "Kilometers",
+    choices: ["Centimeters", "Meters", "Kilometers", "Inches"],
+    feedback: {
+      correct: "Correct! Kilometers are used for long distances.",
+      incorrect: "Not quite. Use kilometers for large distances."
+    }
+  },
+  {
+    question: "If a string measures 50 cm, how many meters is it?",
+    answer: "0.5 meters",
+    choices: ["0.5 meters", "5 meters", "50 meters", "500 meters"],
+    feedback: {
+      correct: "Correct! 50 cm = 0.5 meters.",
+      incorrect: "Not quite. Divide centimeters by 100 to get meters."
+    }
+  },
+  {
+    question: "What tool would you use to measure the height of a door?",
+    answer: "Measuring Tape",
+    choices: ["Ruler", "Scale", "Clock", "Measuring Tape"],
+    feedback: {
+      correct: "Correct! Measuring tape is best for larger objects like doors.",
+      incorrect: "Not quite. Use a measuring tape for tall objects."
+    }
+  },
+  {
+    question: "How many millimeters are in 1 centimeter?",
+    answer: "10",
+    choices: ["1", "10", "100", "1000"],
+    feedback: {
+      correct: "Correct! 1 centimeter = 10 millimeters.",
+      incorrect: "Not quite. A centimeter is 10 millimeters."
+    }
+  },
+  {
+    question: "Which is longer: 50 cm or 1 meter?",
+    answer: "1 meter",
+    choices: ["50 cm", "1 meter", "They are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! 1 meter (100 cm) is longer than 50 cm.",
+      incorrect: "Not quite. 1 meter = 100 cm, so it's longer."
+    }
+  },
+  {
+    question: "What unit would you use to measure the length of a football field?",
+    answer: "Meters",
+    choices: ["Centimeters", "Meters", "Kilometers", "Millimeters"],
+    feedback: {
+      correct: "Correct! Meters are used to measure medium-length objects like a football field.",
+      incorrect: "Not quite. Use meters for longer lengths but not as large as kilometers."
+    }
+  },
+  {
+    question: "If a rope is 3 meters long, how many centimeters is it?",
+    answer: "300 cm",
+    choices: ["30 cm", "300 cm", "3000 cm", "3 cm"],
+    feedback: {
+      correct: "Correct! 3 meters = 300 centimeters.",
+      incorrect: "Not quite. Multiply meters by 100 to get centimeters."
+    }
+  },
+  {
+    question: "What unit would you use to measure the thickness of a coin?",
+    answer: "Millimeters",
+    choices: ["Millimeters", "Centimeters", "Meters", "Inches"],
+    feedback: {
+      correct: "Correct! Millimeters are used for very small measurements like the thickness of a coin.",
+      incorrect: "Not quite. Use millimeters for tiny lengths."
+    }
+  },
+  {
+    question: "If a book is 25 cm tall, how many millimeters is it?",
+    answer: "250 mm",
+    choices: ["25 mm", "250 mm", "2500 mm", "25 cm"],
+    feedback: {
+      correct: "Correct! 25 cm = 250 millimeters.",
+      incorrect: "Not quite. Multiply centimeters by 10 to get millimeters."
+    }
+  },
+  {
+    question: "Which is shorter: 1 meter or 150 centimeters?",
+    answer: "1 meter",
+    choices: ["1 meter", "150 centimeters", "They are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! 1 meter (100 cm) is shorter than 150 cm.",
+      incorrect: "Not quite. 150 cm is longer than 1 meter."
+    }
+  },
+  {
+    question: "What is the best unit to measure the length of a car?",
+    answer: "Meters",
+    choices: ["Centimeters", "Meters", "Millimeters", "Kilometers"],
+    feedback: {
+      correct: "Correct! Meters are best for medium-sized objects like a car.",
+      incorrect: "Not quite. Use meters for objects of medium length."
+    }
+  },
+  {
+    question: "How many meters are in 500 centimeters?",
+    answer: "5 meters",
+    choices: ["0.5 meters", "5 meters", "50 meters", "500 meters"],
+    feedback: {
+      correct: "Correct! 500 cm = 5 meters.",
+      incorrect: "Not quite. Divide centimeters by 100 to get meters."
+    }
+  },
+  {
+    question: "What unit would you use to measure the width of a table?",
+    answer: "Centimeters",
+    choices: ["Millimeters", "Centimeters", "Meters", "Kilometers"],
+    feedback: {
+      correct: "Correct! Centimeters are best for measuring smaller objects like a table.",
+      incorrect: "Not quite. Use centimeters for smaller measurements."
+    }
+  },
+  {
+    question: "What is the best tool to measure the length of a classroom?",
+    answer: "Measuring Tape",
+    choices: ["Ruler", "Clock", "Measuring Tape", "Scale"],
+    feedback: {
+      correct: "Correct! Measuring tape is best for larger spaces like a classroom.",
+      incorrect: "Not quite. Use measuring tape for long distances."
+    }
+  },
+  {
+    question: "What is the best tool to measure the thickness of a textbook?",
+    answer: "Ruler",
+    choices: ["Ruler", "Scale", "Measuring Tape", "Clock"],
+    feedback: {
+      correct: "Correct! A ruler is best for small lengths like the thickness of a book.",
+      incorrect: "Not quite. Use a ruler for small objects."
+    }
+  },
+  {
+    question: "Which is longer: 2000 millimeters or 2 meters?",
+    answer: "They are the same",
+    choices: ["2000 millimeters", "2 meters", "They are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! 2000 millimeters = 2 meters.",
+      incorrect: "Not quite. 2000 millimeters and 2 meters are equal."
+    }
+  }
+];
+
+  
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G3_units.edm.html?unit4score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

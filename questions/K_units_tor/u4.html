@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title> Unit 4 - Patterning and Algebra</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+      const questionsDatabase = [
+    {
+        question: "What comes next? 🔵🔴🔵🔴🔵",
+        answer: "🔴",
+        choices: ["🔵", "🔴", "🟢", "🟡"],
+        feedback: {
+            correct: "Correct! The pattern alternates between blue and red. 🔵🔴🔵🔴🔵🔴",
+            incorrect: "Not quite. The pattern goes blue, red, blue, red.",
+        },
+    },
+    {
+        question: "What comes next? 🟢🟡🟢🟡🟢",
+        answer: "🟡",
+        choices: ["🟢", "🟡", "🔴", "🔵"],
+        feedback: {
+            correct: "Correct! The pattern alternates between green and yellow. 🟢🟡🟢🟡🟢🟡",
+            incorrect: "Not quite. The pattern is green, yellow, green, yellow.",
+        },
+    },
+    {
+        question: "Complete the pattern: ▲▲⬛⬛▲▲⬛⬛",
+        answer: "▲",
+        choices: ["▲", "⬛", "🔴", "🔵"],
+        feedback: {
+            correct: "Correct! The pattern repeats two triangles followed by two squares. ▲▲⬛⬛▲▲⬛⬛▲",
+            incorrect: "Not quite. The pattern is two triangles, two squares.",
+        },
+    },
+    {
+        question: "Which symbol makes the equation true? 5 + 2 = ?",
+        answer: "7",
+        choices: ["6", "7", "8", "9"],
+        feedback: {
+            correct: "Correct! 5 + 2 equals 7.",
+            incorrect: "Not quite. Add 5 and 2 to get 7.",
+        },
+    },
+    {
+        question: "What comes next? 🔺🔺🔺🔵🔺🔺🔺🔵",
+        answer: "🔺",
+        choices: ["🔺", "🔵", "🟢", "🟡"],
+        feedback: {
+            correct: "Correct! The pattern is three triangles and one blue circle. 🔺🔺🔺🔵🔺🔺🔺🔵🔺",
+            incorrect: "Not quite. The pattern repeats three triangles, one circle.",
+        },
+    },
+    {
+        question: "What comes next? 🟢🔴🔵🟢🔴🔵🟢",
+        answer: "🔴",
+        choices: ["🔴", "🔵", "🟢", "🟡"],
+        feedback: {
+            correct: "Correct! The pattern repeats green, red, blue. 🟢🔴🔵",
+            incorrect: "Not quite. The pattern goes green, red, blue.",
+        },
+    },
+    {
+        question: "Which symbol makes the equation true? 3 + 4 = ?",
+        answer: "7",
+        choices: ["6", "7", "8", "5"],
+        feedback: {
+            correct: "Correct! 3 + 4 equals 7.",
+            incorrect: "Not quite. Add 3 and 4 to find 7.",
+        },
+    },
+    {
+        question: "What comes next? 🟠🟠🟠🔵🔵🔵🟠",
+        answer: "🟠",
+        choices: ["🟠", "🔵", "🟢", "🔴"],
+        feedback: {
+            correct: "Correct! The pattern repeats three orange and three blue. 🟠🟠🟠🔵🔵🔵",
+            incorrect: "Not quite. Count three oranges, then three blues.",
+        },
+    },
+    {
+        question: "Which number is missing? 2 + ? = 5",
+        answer: "3",
+        choices: ["2", "3", "4", "5"],
+        feedback: {
+            correct: "Correct! 2 + 3 equals 5.",
+            incorrect: "Not quite. Add 2 and 3 to get 5.",
+        },
+    },
+    {
+        question: "Complete the pattern: 🔷🔷🔴🔷🔷🔴🔷",
+        answer: "🔷",
+        choices: ["🔴", "🔷", "🟢", "🔵"],
+        feedback: {
+            correct: "Correct! The pattern is two diamonds and one red. 🔷🔷🔴",
+            incorrect: "Not quite. The pattern repeats two diamonds, one red.",
+        },
+    },
+    {
+        question: "What comes next? 🔵🔵🔴🔴🔵🔵🔴🔴🔵",
+        answer: "🔵",
+        choices: ["🔵", "🔴", "🟡", "🟢"],
+        feedback: {
+            correct: "Correct! The pattern alternates two blue and two red. 🔵🔵🔴🔴🔵🔵🔴🔴🔵",
+            incorrect: "Not quite. The pattern is two blues, two reds.",
+        },
+    },
+    {
+        question: "Which number is missing? 7 - ? = 3",
+        answer: "4",
+        choices: ["3", "4", "5", "6"],
+        feedback: {
+            correct: "Correct! 7 - 4 equals 3.",
+            incorrect: "Not quite. Subtract 4 from 7 to get 3.",
+        },
+    },
+    {
+        question: "What comes next? 🟡🟡🔵🟡🟡🔵🟡",
+        answer: "🟡",
+        choices: ["🟡", "🔵", "🔴", "🟢"],
+        feedback: {
+            correct: "Correct! The pattern is two yellows and one blue. 🟡🟡🔵",
+            incorrect: "Not quite. The pattern repeats two yellows, one blue.",
+        },
+    },
+    {
+        question: "What comes next? 🔴🔴🔴🟠🔴🔴🔴🟠🔴",
+        answer: "🔴",
+        choices: ["🔴", "🟠", "🔵", "🟢"],
+        feedback: {
+            correct: "Correct! The pattern is three reds and one orange. 🔴🔴🔴🟠",
+            incorrect: "Not quite. Count three reds, then one orange.",
+        },
+    },
+    {
+        question: "Which number makes this true? 5 + 2 = ?",
+        answer: "7",
+        choices: ["6", "7", "8", "5"],
+        feedback: {
+            correct: "Correct! 5 + 2 equals 7.",
+            incorrect: "Not quite. Add 5 and 2 to find 7.",
+        },
+    },
+    {
+        question: "What comes next? 🔷🔴🔷🔴🔷🔴🔷",
+        answer: "🔴",
+        choices: ["🔷", "🔴", "🔵", "🟢"],
+        feedback: {
+            correct: "Correct! The pattern alternates diamonds and red circles. 🔷🔴🔷🔴🔷🔴🔷🔴",
+            incorrect: "Not quite. The pattern goes diamond, red circle.",
+        },
+    },
+    {
+        question: "Which number is missing? 10 - ? = 6",
+        answer: "4",
+        choices: ["3", "4", "5", "6"],
+        feedback: {
+            correct: "Correct! 10 - 4 equals 6.",
+            incorrect: "Not quite. Subtract 4 from 10 to get 6.",
+        },
+    },
+    {
+        question: "What comes next? 🔺🔵🔺🔵🔺🔵🔺",
+        answer: "🔵",
+        choices: ["🔺", "🔵", "🟠", "🟢"],
+        feedback: {
+            correct: "Correct! The pattern alternates triangle and blue. 🔺🔵🔺🔵🔺🔵",
+            incorrect: "Not quite. The pattern goes triangle, blue.",
+        },
+    },
+    {
+        question: "Which number makes this true? 3 + ? = 8",
+        answer: "5",
+        choices: ["4", "5", "6", "7"],
+        feedback: {
+            correct: "Correct! 3 + 5 equals 8.",
+            incorrect: "Not quite. Add 3 and 5 to find 8.",
+        },
+    },
+    {
+        question: "Complete the pattern: 🔵🟠🔵🟠🔵",
+        answer: "🟠",
+        choices: ["🔵", "🟠", "🔴", "🟢"],
+        feedback: {
+            correct: "Correct! The pattern alternates blue and orange. 🔵🟠🔵🟠🔵🟠",
+            incorrect: "Not quite. The pattern is blue, orange.",
+        },
+    },
+];
+
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../K_Units_Tor.html?unit4score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

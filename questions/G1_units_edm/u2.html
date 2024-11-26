@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Geometry    </title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    
+    const questionsDatabase= [
+  {
+    question: "Which shape has 4 equal sides?",
+    answer: "Square",
+    choices: ["Circle", "Triangle", "Square", "Rectangle"],
+    feedback: {
+      correct: "Correct! A square has 4 equal sides.",
+      incorrect: "Not quite. Think about which shape has all sides equal."
+    }
+  },
+  {
+    question: "Which shape is round and has no corners?",
+    answer: "Circle",
+    choices: ["Rectangle", "Triangle", "Circle", "Hexagon"],
+    feedback: {
+      correct: "Correct! A circle is round and has no corners.",
+      incorrect: "Not quite. Circles do not have corners or straight sides."
+    }
+  },
+  {
+    question: "Which shape is this? 🔺",
+    answer: "Triangle",
+    choices: ["Square", "Triangle", "Hexagon", "Circle"],
+    feedback: {
+      correct: "Correct! This is a triangle.",
+      incorrect: "Not quite. Think about the number of sides."
+    }
+  },
+  {
+    question: "How many sides does a rectangle have?",
+    answer: "4",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! A rectangle has 4 sides.",
+      incorrect: "Not quite. Count the sides of a rectangle."
+    }
+  },
+  {
+    question: "Which shape has 6 sides?",
+    answer: "Hexagon",
+    choices: ["Square", "Pentagon", "Hexagon", "Triangle"],
+    feedback: {
+      correct: "Correct! A hexagon has 6 sides.",
+      incorrect: "Not quite. Review the number of sides each shape has."
+    }
+  },
+  {
+    question: "Which shape is this? ⬛",
+    answer: "Square",
+    choices: ["Square", "Circle", "Triangle", "Rectangle"],
+    feedback: {
+      correct: "Correct! This is a square.",
+      incorrect: "Not quite. Squares have 4 equal sides."
+    }
+  },
+  {
+    question: "Which shape is 3D and looks like a box?",
+    answer: "Cube",
+    choices: ["Sphere", "Cube", "Cone", "Cylinder"],
+    feedback: {
+      correct: "Correct! A cube looks like a box.",
+      incorrect: "Not quite. Think about the shape with equal 3D sides."
+    }
+  },
+  {
+    question: "Which shape has only one curved surface and comes to a point?",
+    answer: "Cone",
+    choices: ["Cylinder", "Cone", "Sphere", "Cube"],
+    feedback: {
+      correct: "Correct! A cone has one curved surface and a pointed top.",
+      incorrect: "Not quite. Cones have a curved surface and a flat base."
+    }
+  },
+  {
+    question: "How many corners does a triangle have?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! A triangle has 3 corners.",
+      incorrect: "Not quite. Count the corners of a triangle."
+    }
+  },
+  {
+    question: "Which shape has 2 flat circular faces and a curved surface?",
+    answer: "Cylinder",
+    choices: ["Sphere", "Cylinder", "Cone", "Cube"],
+    feedback: {
+      correct: "Correct! A cylinder has 2 flat circular faces and a curved surface.",
+      incorrect: "Not quite. Think about shapes like a can."
+    }
+  },
+  {
+    question: "Which shape is flat and has 5 sides?",
+    answer: "Pentagon",
+    choices: ["Hexagon", "Pentagon", "Square", "Triangle"],
+    feedback: {
+      correct: "Correct! A pentagon has 5 sides.",
+      incorrect: "Not quite. Review the number of sides for each shape."
+    }
+  },
+  {
+    question: "Which shape is 3D and round, like a ball?",
+    answer: "Sphere",
+    choices: ["Cube", "Sphere", "Cone", "Cylinder"],
+    feedback: {
+      correct: "Correct! A sphere is round like a ball.",
+      incorrect: "Not quite. Think about shapes with no edges or corners."
+    }
+  },
+  {
+    question: "Which shape has equal sides and equal angles?",
+    answer: "Square",
+    choices: ["Rectangle", "Triangle", "Square", "Pentagon"],
+    feedback: {
+      correct: "Correct! A square has equal sides and equal angles.",
+      incorrect: "Not quite. Rectangles do not always have equal sides."
+    }
+  },
+  {
+    question: "How many sides does a hexagon have?",
+    answer: "6",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! A hexagon has 6 sides.",
+      incorrect: "Not quite. Count the sides of a hexagon."
+    }
+  },
+  {
+    question: "Which shape has 3 sides?",
+    answer: "Triangle",
+    choices: ["Square", "Triangle", "Hexagon", "Circle"],
+    feedback: {
+      correct: "Correct! A triangle has 3 sides.",
+      incorrect: "Not quite. Count the sides of a triangle."
+    }
+  },
+  {
+    question: "Which 3D shape has 6 square faces?",
+    answer: "Cube",
+    choices: ["Sphere", "Cube", "Cone", "Cylinder"],
+    feedback: {
+      correct: "Correct! A cube has 6 square faces.",
+      incorrect: "Not quite. Review the properties of a cube."
+    }
+  },
+  {
+    question: "Which shape has no sides and no corners?",
+    answer: "Circle",
+    choices: ["Triangle", "Circle", "Rectangle", "Square"],
+    feedback: {
+      correct: "Correct! A circle has no sides or corners.",
+      incorrect: "Not quite. Think about which shape is completely round."
+    }
+  },
+  {
+    question: "Which shape has 4 sides, but opposite sides are equal in length?",
+    answer: "Rectangle",
+    choices: ["Square", "Rectangle", "Triangle", "Pentagon"],
+    feedback: {
+      correct: "Correct! A rectangle has opposite sides equal in length.",
+      incorrect: "Not quite. Think about which shape has 4 sides, but not all are equal."
+    }
+  },
+  {
+    question: "Which 3D shape has one flat circular base and one curved surface?",
+    answer: "Cone",
+    choices: ["Cylinder", "Sphere", "Cone", "Cube"],
+    feedback: {
+      correct: "Correct! A cone has one flat base and a curved surface.",
+      incorrect: "Not quite. Review the properties of a cone."
+    }
+  },
+  {
+    question: "Which shape is made of 4 sides and 4 corners, but the sides are not equal?",
+    answer: "Rectangle",
+    choices: ["Square", "Rectangle", "Triangle", "Pentagon"],
+    feedback: {
+      correct: "Correct! A rectangle has 4 sides, but not all are equal.",
+      incorrect: "Not quite. Think about the difference between a square and a rectangle."
+    }
+  }
+];
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G1_units.edm.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

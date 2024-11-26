@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Measurement    </title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    const questionsDatabase = [
+  {
+    question: "How many centimeters long is a pencil if it measures from 0 to 10 on a ruler?",
+    answer: "10 cm",
+    choices: ["5 cm", "10 cm", "15 cm", "20 cm"],
+    feedback: {
+      correct: "Correct! The pencil is 10 cm long.",
+      incorrect: "Not quite. Count the number of centimeters from 0 to 10."
+    }
+  },
+  {
+    question: "Which is longer: a 12 cm stick or a 15 cm stick?",
+    answer: "15 cm stick",
+    choices: ["12 cm stick", "15 cm stick", "Both are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! The 15 cm stick is longer.",
+      incorrect: "Not quite. Compare the lengths of the two sticks."
+    }
+  },
+  {
+    question: "How many days are in a week?",
+    answer: "7 days",
+    choices: ["5 days", "6 days", "7 days", "8 days"],
+    feedback: {
+      correct: "Correct! There are 7 days in a week.",
+      incorrect: "Not quite. A week has 7 days."
+    }
+  },
+  {
+    question: "How many months are in a year?",
+    answer: "12 months",
+    choices: ["10 months", "11 months", "12 months", "13 months"],
+    feedback: {
+      correct: "Correct! There are 12 months in a year.",
+      incorrect: "Not quite. Count from January to December."
+    }
+  },
+  {
+    question: "Which is shorter: a 5 cm rope or an 8 cm rope?",
+    answer: "5 cm rope",
+    choices: ["5 cm rope", "8 cm rope", "Both are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! The 5 cm rope is shorter.",
+      incorrect: "Not quite. Compare the lengths of the two ropes."
+    }
+  },
+  {
+    question: "Which is longer: a book measuring 20 cm or a notebook measuring 25 cm?",
+    answer: "Notebook",
+    choices: ["Book", "Notebook", "Both are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! The notebook is 25 cm and is longer.",
+      incorrect: "Not quite. Compare their lengths carefully."
+    }
+  },
+  {
+    question: "How many days are in February during a leap year?",
+    answer: "29 days",
+    choices: ["28 days", "29 days", "30 days", "31 days"],
+    feedback: {
+      correct: "Correct! February has 29 days during a leap year.",
+      incorrect: "Not quite. Leap years add an extra day to February."
+    }
+  },
+  {
+    question: "How many days are in a non-leap year?",
+    answer: "365 days",
+    choices: ["364 days", "365 days", "366 days", "367 days"],
+    feedback: {
+      correct: "Correct! A non-leap year has 365 days.",
+      incorrect: "Not quite. A regular year has 365 days."
+    }
+  },
+  {
+    question: "What is the length of a ruler if it measures from 0 to 30 cm?",
+    answer: "30 cm",
+    choices: ["20 cm", "25 cm", "30 cm", "35 cm"],
+    feedback: {
+      correct: "Correct! The ruler is 30 cm long.",
+      incorrect: "Not quite. Check the measurement from 0 to 30."
+    }
+  },
+  {
+    question: "How many weeks are in one month approximately?",
+    answer: "4 weeks",
+    choices: ["3 weeks", "4 weeks", "5 weeks", "6 weeks"],
+    feedback: {
+      correct: "Correct! One month usually has about 4 weeks.",
+      incorrect: "Not quite. Think about how many weeks are in a month."
+    }
+  },
+  {
+    question: "How many months are in one year?",
+    answer: "12",
+    choices: ["10", "11", "12", "13"],
+    feedback: {
+      correct: "Correct! There are 12 months in one year.",
+      incorrect: "Not quite. Count from January to December."
+    }
+  },
+  {
+    question: "Which is shorter: a pencil measuring 15 cm or a crayon measuring 10 cm?",
+    answer: "Crayon",
+    choices: ["Pencil", "Crayon", "Both are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! The crayon is shorter.",
+      incorrect: "Not quite. Compare their lengths carefully."
+    }
+  },
+  {
+    question: "Which is longer: a 30 cm ruler or a 25 cm book?",
+    answer: "30 cm ruler",
+    choices: ["30 cm ruler", "25 cm book", "Both are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! The 30 cm ruler is longer.",
+      incorrect: "Not quite. Compare their lengths carefully."
+    }
+  },
+  {
+    question: "How many days are in one week?",
+    answer: "7 days",
+    choices: ["5 days", "6 days", "7 days", "8 days"],
+    feedback: {
+      correct: "Correct! There are 7 days in one week.",
+      incorrect: "Not quite. A week has 7 days."
+    }
+  },
+  {
+    question: "How many years are in one decade?",
+    answer: "10 years",
+    choices: ["5 years", "10 years", "15 years", "20 years"],
+    feedback: {
+      correct: "Correct! A decade is 10 years.",
+      incorrect: "Not quite. A decade is a group of 10 years."
+    }
+  },
+  {
+    question: "What is the length of a table if it measures 150 cm?",
+    answer: "150 cm",
+    choices: ["140 cm", "150 cm", "160 cm", "170 cm"],
+    feedback: {
+      correct: "Correct! The table measures 150 cm.",
+      incorrect: "Not quite. Double-check the measurement provided."
+    }
+  },
+  {
+    question: "How many days are in the month of April?",
+    answer: "30 days",
+    choices: ["28 days", "29 days", "30 days", "31 days"],
+    feedback: {
+      correct: "Correct! April has 30 days.",
+      incorrect: "Not quite. April is one of the months with 30 days."
+    }
+  },
+  {
+    question: "Which is longer: a rope measuring 45 cm or a chain measuring 40 cm?",
+    answer: "Rope",
+    choices: ["Rope", "Chain", "Both are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! The rope is longer.",
+      incorrect: "Not quite. Compare their lengths carefully."
+    }
+  },
+  {
+    question: "How many weeks are in one year?",
+    answer: "52 weeks",
+    choices: ["50 weeks", "51 weeks", "52 weeks", "53 weeks"],
+    feedback: {
+      correct: "Correct! There are 52 weeks in one year.",
+      incorrect: "Not quite. A year has 52 weeks."
+    }
+  },
+  {
+    question: "How many hours are in one day?",
+    answer: "24 hours",
+    choices: ["12 hours", "24 hours", "36 hours", "48 hours"],
+    feedback: {
+      correct: "Correct! A day has 24 hours.",
+      incorrect: "Not quite. A full day has 24 hours."
+    }
+  }
+];
+
+    
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G2_units.edm.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

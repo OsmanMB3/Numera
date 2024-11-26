@@ -1,66 +1,322 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Numera - Kindergarten: Measurement and Data</title>
-    <link rel="stylesheet" href="../styles.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 4 - Measurement and Data</title>
+    <link rel="stylesheet" href="../styles.css" />
 </head>
 <body>
-    <div class="question-container">
-        <h2>Measurement and Data</h2>
-        <p>Describe and compare measurable attributes.</p>
-        <div id="question-box">
-            <h3 id="question-text">Loading question...</h3>
-            <div id="answer-options-container"></div>
-            <button class="submit-button" onclick="nextQuestion()">Submit</button>
-        </div>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
     </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
 
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
     <script>
-        const questions = [
-            { question: "Which object is heavier: a book or a pencil?", answer: "book", choices: ["book", "pencil"] },
-            { question: "Which is taller: a chair or a table?", answer: "table", choices: ["chair", "table"] },
-            { question: "How many apples are in a group of 5 apples?", answer: "5", choices: ["4", "5", "6"] },
-            // Expand to 25 questions
-        ];
+      const questionsDatabase = [
+  {
+    question: "Which is taller: a tree or a flower?",
+    answer: "A tree",
+    choices: ["A tree", "A flower", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Correct! Trees are generally taller than flowers.",
+      incorrect: "Think carefully: Trees grow much taller than flowers.",
+    },
+  },
+  {
+    question: "Which object is heavier: a car or a bicycle?",
+    answer: "A car",
+    choices: ["A car", "A bicycle", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Great! A car is much heavier than a bicycle.",
+      incorrect: "Remember, cars weigh much more than bicycles.",
+    },
+  },
+  {
+    question: "Which container holds more water: a glass or a bucket?",
+    answer: "A bucket",
+    choices: ["A glass", "A bucket", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Correct! A bucket can hold more water than a glass.",
+      incorrect: "Think carefully: Buckets are larger than glasses.",
+    },
+  },
+  {
+    question: "What is longer: a pencil or a ruler?",
+    answer: "A ruler",
+    choices: ["A pencil", "A ruler", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Well done! A ruler is longer than a pencil.",
+      incorrect: "Remember, rulers are longer than pencils.",
+    },
+  },
+  {
+    question: "Which weighs more: an apple or a watermelon?",
+    answer: "A watermelon",
+    choices: ["An apple", "A watermelon", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Correct! Watermelons are much heavier than apples.",
+      incorrect: "Think carefully: Watermelons are larger and heavier.",
+    },
+  },
+  {
+    question: "Which is shorter: a spoon or a broom?",
+    answer: "A spoon",
+    choices: ["A spoon", "A broom", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Good job! A spoon is much shorter than a broom.",
+      incorrect: "Remember, spoons are smaller than brooms.",
+    },
+  },
+  {
+    question: "Which object is lighter: a balloon or a book?",
+    answer: "A balloon",
+    choices: ["A balloon", "A book", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Great! A balloon is lighter than a book.",
+      incorrect: "Think again: Balloons are much lighter than books.",
+    },
+  },
+  {
+    question: "Which holds more: a bathtub or a cup?",
+    answer: "A bathtub",
+    choices: ["A bathtub", "A cup", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Correct! A bathtub can hold much more water than a cup.",
+      incorrect: "Remember, bathtubs are much larger than cups.",
+    },
+  },
+  {
+    question: "Which is smaller: a grain of rice or a basketball?",
+    answer: "A grain of rice",
+    choices: ["A grain of rice", "A basketball", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Correct! A grain of rice is much smaller than a basketball.",
+      incorrect: "Think carefully: A basketball is much larger than a grain of rice.",
+    },
+  },
+  {
+    question: "What is heavier: a feather or a brick?",
+    answer: "A brick",
+    choices: ["A feather", "A brick", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Well done! A brick is much heavier than a feather.",
+      incorrect: "Think again: Bricks are heavier than feathers.",
+    },
+  },
+  {
+    question: "Which is taller: a giraffe or a dog?",
+    answer: "A giraffe",
+    choices: ["A giraffe", "A dog", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Good job! Giraffes are much taller than dogs.",
+      incorrect: "Remember, giraffes are taller than most animals.",
+    },
+  },
+  {
+    question: "Which object is bigger: a book or a chair?",
+    answer: "A chair",
+    choices: ["A book", "A chair", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Correct! Chairs are bigger than books.",
+      incorrect: "Think carefully: Chairs are larger than books.",
+    },
+  },
+  {
+    question: "Which holds more water: a lake or a swimming pool?",
+    answer: "A lake",
+    choices: ["A lake", "A swimming pool", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Great! Lakes hold much more water than swimming pools.",
+      incorrect: "Remember, lakes are much larger than pools.",
+    },
+  },
+  {
+    question: "Which is lighter: a paperclip or a rock?",
+    answer: "A paperclip",
+    choices: ["A paperclip", "A rock", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Good work! A paperclip is lighter than a rock.",
+      incorrect: "Think again: Rocks are heavier than paperclips.",
+    },
+  },
+  {
+    question: "Which is smaller: a grain of sand or a marble?",
+    answer: "A grain of sand",
+    choices: ["A grain of sand", "A marble", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Well done! A grain of sand is smaller than a marble.",
+      incorrect: "Remember, grains of sand are very tiny.",
+    },
+  },
+  {
+    question: "What is heavier: a bag of flour or a loaf of bread?",
+    answer: "A bag of flour",
+    choices: ["A bag of flour", "A loaf of bread", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Correct! A bag of flour is heavier than a loaf of bread.",
+      incorrect: "Think carefully: Flour bags are heavier.",
+    },
+  },
+  {
+    question: "Which is longer: a train or a car?",
+    answer: "A train",
+    choices: ["A train", "A car", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Great! Trains are much longer than cars.",
+      incorrect: "Remember, trains are very long vehicles.",
+    },
+  },
+  {
+    question: "Which is shorter: a straw or a broomstick?",
+    answer: "A straw",
+    choices: ["A straw", "A broomstick", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Good work! A straw is shorter than a broomstick.",
+      incorrect: "Think carefully: Straws are smaller than broomsticks.",
+    },
+  },
+  {
+    question: "Which is heavier: a bucket of water or a spoon?",
+    answer: "A bucket of water",
+    choices: ["A bucket of water", "A spoon", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Correct! A bucket of water is much heavier than a spoon.",
+      incorrect: "Remember, buckets of water weigh more than spoons.",
+    },
+  },
+  {
+    question: "Which is taller: a ladder or a table?",
+    answer: "A ladder",
+    choices: ["A ladder", "A table", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "Well done! Ladders are taller than tables.",
+      incorrect: "Think again: Ladders are used to reach higher places.",
+    },
+  },
+];
 
-        let currentIndex = 0;
 
-        function loadQuestion() {
-            const questionObj = questions[currentIndex];
-            document.getElementById("question-text").textContent = questionObj.question;
-            const options = document.getElementById("answer-options-container");
-            options.innerHTML = "";
-            questionObj.choices.forEach(choice => {
-                const button = document.createElement("button");
-                button.className = "choice-button";
-                button.textContent = choice;
-                button.onclick = () => checkAnswer(choice);
-                options.appendChild(button);
-            });
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
         }
 
-        function checkAnswer(selected) {
-            const correct = questions[currentIndex].answer;
-            if (selected === correct) {
-                alert("Correct!");
-                nextQuestion();
-            } else {
-                alert("Try Again.");
-            }
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
         }
 
-        function nextQuestion() {
-            currentIndex++;
-            if (currentIndex < questions.length) {
-                loadQuestion();
-            } else {
-                alert("You've completed all questions!");
-            }
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
         }
 
-        loadQuestion();
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../K_Units_cam.html?unit4score=${score}`;
+      }
+
+      displayNextQuestion();
     </script>
-</body>
+  </body>
 </html>

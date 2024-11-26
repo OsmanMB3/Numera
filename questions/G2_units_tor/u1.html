@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1 - Number Sense and Numeration</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+      const questionsDatabase = [
+  {
+    question: "What number comes after 149?",
+    answer: "150",
+    choices: ["140", "150", "151", "160"],
+    feedback: {
+      correct: "Well done! 150 comes after 149.",
+      incorrect: "Oops! Try counting up from 149 to find the next number.",
+    },
+  },
+  {
+    question: "Which of these numbers is the largest: 135, 153, or 145?",
+    answer: "153",
+    choices: ["135", "145", "153", "None of these"],
+    feedback: {
+      correct: "That's correct! 153 is the largest number.",
+      incorrect: "Not quite. Check carefully which number is the biggest.",
+    },
+  },
+  {
+    question: "How many tens are in 120?",
+    answer: "12",
+    choices: ["12", "10", "20", "2"],
+    feedback: {
+      correct: "Great! 120 has 12 tens.",
+      incorrect: "Not quite. Think about how many groups of 10 are in 120.",
+    },
+  },
+  {
+    question: "If you have 27 candies 🍬 and you give away 15, how many do you have left?",
+    answer: "12",
+    choices: ["12", "10", "13", "15"],
+    feedback: {
+      correct: "Nice work! 27 - 15 = 12.",
+      incorrect: "Close! Try subtracting 15 from 27 again.",
+    },
+  },
+  {
+    question: "What is 3 + 9 + 7?",
+    answer: "19",
+    choices: ["19", "20", "18", "17"],
+    feedback: {
+      correct: "Awesome! 3 + 9 + 7 = 19.",
+      incorrect: "Not quite. Try adding the numbers step by step.",
+    },
+  },
+  {
+    question: "Which number is greater: 92 or 129?",
+    answer: "129",
+    choices: ["92", "129", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "You're right! 129 is greater than 92.",
+      incorrect: "Not quite. Compare the numbers carefully.",
+    },
+  },
+  {
+    question: "What is the place value of 7 in 173?",
+    answer: "Tens",
+    choices: ["Ones", "Tens", "Hundreds", "Thousands"],
+    feedback: {
+      correct: "That's right! 7 is in the tens place.",
+      incorrect: "Not quite. Think about the place value of each digit.",
+    },
+  },
+  {
+    question: "What is 6 x 4?",
+    answer: "24",
+    choices: ["24", "20", "16", "30"],
+    feedback: {
+      correct: "Good job! 6 times 4 equals 24.",
+      incorrect: "Close! Try multiplying 6 by 4 again.",
+    },
+  },
+  {
+    question: "What is half of 200?",
+    answer: "100",
+    choices: ["50", "100", "150", "200"],
+    feedback: {
+      correct: "Great work! Half of 200 is 100.",
+      incorrect: "Not quite. Think about dividing 200 into two equal parts.",
+    },
+  },
+  {
+    question: "Which number is smaller: 98 or 89?",
+    answer: "89",
+    choices: ["98", "89", "They're the same", "Cannot tell"],
+    feedback: {
+      correct: "That's correct! 89 is smaller than 98.",
+      incorrect: "Oops! Double-check which number is smaller.",
+    },
+  },
+  {
+    question: "What is 45 + 32?",
+    answer: "77",
+    choices: ["77", "75", "67", "85"],
+    feedback: {
+      correct: "Well done! 45 + 32 = 77.",
+      incorrect: "Not quite. Try adding step by step.",
+    },
+  },
+  {
+    question: "You have 120 apples 🍎. You sell 50. How many apples are left?",
+    answer: "70",
+    choices: ["70", "80", "50", "60"],
+    feedback: {
+      correct: "Correct! 120 - 50 = 70 apples left.",
+      incorrect: "Close! Subtract 50 from 120 to find the answer.",
+    },
+  },
+  {
+    question: "What is the sum of 15 and 28?",
+    answer: "43",
+    choices: ["43", "42", "45", "41"],
+    feedback: {
+      correct: "Great! 15 + 28 = 43.",
+      incorrect: "Not quite. Add the two numbers carefully.",
+    },
+  },
+  {
+    question: "What is 140 divided by 2?",
+    answer: "70",
+    choices: ["70", "60", "75", "80"],
+    feedback: {
+      correct: "Nice work! 140 ÷ 2 = 70.",
+      incorrect: "Close! Divide 140 into two equal parts.",
+    },
+  },
+  {
+    question: "Which number is missing: 120, 130, ___, 150?",
+    answer: "140",
+    choices: ["140", "135", "125", "145"],
+    feedback: {
+      correct: "Good job! The missing number is 140.",
+      incorrect: "Not quite. Look at the pattern carefully.",
+    },
+  },
+  {
+    question: "How many ones are in the number 123?",
+    answer: "3",
+    choices: ["3", "1", "12", "23"],
+    feedback: {
+      correct: "That's right! The ones place in 123 is 3.",
+      incorrect: "Not quite. Check the last digit of the number.",
+    },
+  },
+  {
+    question: "What is double 65?",
+    answer: "130",
+    choices: ["130", "120", "125", "135"],
+    feedback: {
+      correct: "Great! Double 65 is 130.",
+      incorrect: "Close! Try multiplying 65 by 2.",
+    },
+  },
+  {
+    question: "Which number is closest to 150: 140, 155, or 160?",
+    answer: "155",
+    choices: ["140", "155", "160", "150"],
+    feedback: {
+      correct: "Correct! 155 is the closest to 150.",
+      incorrect: "Not quite. Compare each number to 150.",
+    },
+  },
+  {
+    question: "You have 10 boxes 📦 with 15 items in each. How many items do you have in total?",
+    answer: "150",
+    choices: ["150", "120", "140", "160"],
+    feedback: {
+      correct: "Good job! 10 x 15 = 150 items.",
+      incorrect: "Close! Multiply 10 by 15 to find the total.",
+    },
+  },
+  {
+    question: "What is the value of the digit 5 in the number 250?",
+    answer: "50",
+    choices: ["50", "5", "500", "25"],
+    feedback: {
+      correct: "That's correct! The digit 5 in 250 has a value of 50.",
+      incorrect: "Not quite. Think about the place value of 5.",
+    },
+  },
+];
+
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G2_Units.Tor.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

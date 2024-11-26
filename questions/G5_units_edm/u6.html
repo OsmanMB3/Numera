@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 6 - Measurement  </title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+
+const questionsDatabase = [
+  {
+    question: "What is the area of a rectangle with a length of 5 meters and a width of 3 meters?",
+    answer: "15 square meters",
+    choices: ["12 square meters", "13 square meters", "15 square meters", "16 square meters"],
+    feedback: {
+      correct: "Correct! Area = Length × Width, so 5 × 3 = 15 square meters.",
+      incorrect: "Not quite. Multiply the length by the width to find the area."
+    }
+  },
+  {
+    question: "What is the perimeter of a rectangle with a length of 8 meters and a width of 4 meters?",
+    answer: "24 meters",
+    choices: ["22 meters", "24 meters", "26 meters", "28 meters"],
+    feedback: {
+      correct: "Correct! Perimeter = 2 × (Length + Width), so 2 × (8 + 4) = 24 meters.",
+      incorrect: "Not quite. Add the length and width, then multiply by 2 to get the perimeter."
+    }
+  },
+  {
+    question: "If a box has a length of 10 cm, a width of 5 cm, and a height of 2 cm, what is its volume?",
+    answer: "100 cubic centimeters",
+    choices: ["90 cubic centimeters", "100 cubic centimeters", "110 cubic centimeters", "120 cubic centimeters"],
+    feedback: {
+      correct: "Correct! Volume = Length × Width × Height, so 10 × 5 × 2 = 100 cubic centimeters.",
+      incorrect: "Not quite. Multiply the length, width, and height to find the volume."
+    }
+  },
+  {
+    question: "If a swimming pool is 12 meters long, 5 meters wide, and 2 meters deep, what is its volume?",
+    answer: "120 cubic meters",
+    choices: ["110 cubic meters", "120 cubic meters", "130 cubic meters", "140 cubic meters"],
+    feedback: {
+      correct: "Correct! Volume = Length × Width × Depth, so 12 × 5 × 2 = 120 cubic meters.",
+      incorrect: "Not quite. Multiply the length, width, and depth to find the volume."
+    }
+  },
+  {
+    question: "What is the area of a square with a side length of 6 centimeters?",
+    answer: "36 square centimeters",
+    choices: ["30 square centimeters", "36 square centimeters", "40 square centimeters", "42 square centimeters"],
+    feedback: {
+      correct: "Correct! Area = Side × Side, so 6 × 6 = 36 square centimeters.",
+      incorrect: "Not quite. Multiply the side length by itself to find the area."
+    }
+  },
+  {
+    question: "A rectangle has an area of 24 square centimeters. If the width is 4 cm, what is the length?",
+    answer: "6 cm",
+    choices: ["5 cm", "6 cm", "7 cm", "8 cm"],
+    feedback: {
+      correct: "Correct! Length = Area ÷ Width, so 24 ÷ 4 = 6 cm.",
+      incorrect: "Not quite. Divide the area by the width to find the length."
+    }
+  },
+  {
+    question: "A shape has a perimeter of 20 cm. If the length is 7 cm, what is the width?",
+    answer: "3 cm",
+    choices: ["2 cm", "3 cm", "4 cm", "5 cm"],
+    feedback: {
+      correct: "Correct! Perimeter = 2 × (Length + Width), so 20 = 2 × (7 + Width), Width = 3 cm.",
+      incorrect: "Not quite. Use the perimeter formula to find the width."
+    }
+  },
+  {
+    question: "How many grams are in 2 kilograms?",
+    answer: "2,000 grams",
+    choices: ["1,000 grams", "2,000 grams", "2,500 grams", "3,000 grams"],
+    feedback: {
+      correct: "Correct! 1 kilogram = 1,000 grams, so 2 kilograms = 2,000 grams.",
+      incorrect: "Not quite. Multiply 2 kilograms by 1,000 to convert to grams."
+    }
+  },
+  {
+    question: "How many milliliters are in 3 liters?",
+    answer: "3,000 milliliters",
+    choices: ["1,000 milliliters", "2,000 milliliters", "3,000 milliliters", "4,000 milliliters"],
+    feedback: {
+      correct: "Correct! 1 liter = 1,000 milliliters, so 3 liters = 3,000 milliliters.",
+      incorrect: "Not quite. Multiply 3 liters by 1,000 to convert to milliliters."
+    }
+  },
+  {
+    question: "A bag of flour weighs 5 kilograms. How many grams does the bag weigh?",
+    answer: "5,000 grams",
+    choices: ["500 grams", "5,000 grams", "5000 kilograms", "50,000 grams"],
+    feedback: {
+      correct: "Correct! 1 kilogram = 1,000 grams, so 5 kilograms = 5,000 grams.",
+      incorrect: "Not quite. Multiply 5 kilograms by 1,000 to convert to grams."
+    }
+  },
+  {
+    question: "A book has a weight of 300 grams. If you have 4 books, what is the total weight?",
+    answer: "1,200 grams",
+    choices: ["1,100 grams", "1,200 grams", "1,300 grams", "1,400 grams"],
+    feedback: {
+      correct: "Correct! 300 grams × 4 books = 1,200 grams.",
+      incorrect: "Not quite. Multiply the weight of one book by the number of books."
+    }
+  },
+  {
+    question: "Which unit would you use to measure the length of a pencil?",
+    answer: "Centimeters",
+    choices: ["Meters", "Centimeters", "Millimeters", "Kilometers"],
+    feedback: {
+      correct: "Correct! Centimeters are used to measure the length of small objects like a pencil.",
+      incorrect: "Not quite. Centimeters are more appropriate for measuring the length of a pencil."
+    }
+  },
+  {
+    question: "Which unit would you use to measure the capacity of a swimming pool?",
+    answer: "Liters",
+    choices: ["Milliliters", "Liters", "Cubic meters", "Kilograms"],
+    feedback: {
+      correct: "Correct! Liters are used for measuring the capacity of liquids.",
+      incorrect: "Not quite. Liters are more appropriate for measuring liquids like water."
+    }
+  },
+  {
+    question: "What is the volume of a rectangular prism with a length of 5 cm, width of 3 cm, and height of 4 cm?",
+    answer: "60 cubic centimeters",
+    choices: ["50 cubic centimeters", "60 cubic centimeters", "70 cubic centimeters", "80 cubic centimeters"],
+    feedback: {
+      correct: "Correct! Volume = Length × Width × Height, so 5 × 3 × 4 = 60 cubic centimeters.",
+      incorrect: "Not quite. Multiply the length, width, and height to find the volume."
+    }
+  },
+  {
+    question: "If a box has dimensions 12 cm × 6 cm × 3 cm, what is the volume?",
+    answer: "216 cubic centimeters",
+    choices: ["206 cubic centimeters", "216 cubic centimeters", "226 cubic centimeters", "236 cubic centimeters"],
+    feedback: {
+      correct: "Correct! Volume = Length × Width × Height, so 12 × 6 × 3 = 216 cubic centimeters.",
+      incorrect: "Not quite. Multiply the length, width, and height to find the volume."
+    }
+  },
+  {
+    question: "What is the area of a triangle with a base of 8 cm and a height of 5 cm?",
+    answer: "20 square centimeters",
+    choices: ["18 square centimeters", "20 square centimeters", "22 square centimeters", "24 square centimeters"],
+    feedback: {
+      correct: "Correct! Area = 1/2 × Base × Height, so 1/2 × 8 × 5 = 20 square centimeters.",
+      incorrect: "Not quite. Use the formula for the area of a triangle to find the result."
+    }
+  },
+  {
+    question: "What is the area of a triangle with a base of 6 cm and a height of 4 cm?",
+    answer: "12 square centimeters",
+    choices: ["10 square centimeters", "12 square centimeters", "14 square centimeters", "16 square centimeters"],
+    feedback: {
+      correct: "Correct! Area = 1/2 × Base × Height, so 1/2 × 6 × 4 = 12 square centimeters.",
+      incorrect: "Not quite. Use the formula for the area of a triangle to calculate."
+    }
+  },
+  {
+    question: "Which of the following shapes is best measured using centimeters?",
+    answer: "A book",
+    choices: ["A book", "A swimming pool", "A soccer field", "A building"],
+    feedback: {
+      correct: "Correct! Centimeters are best for measuring smaller objects like a book.",
+      incorrect: "Not quite. A book is measured in centimeters."
+    }
+  }
+];
+
+    
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G5_units.edm.html?unit6score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1  - Ratios and Proportional Relationships</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+      const questionsDatabase = [
+  {
+    question: "What is the ratio of wings to beaks if there are 8 wings and 4 beaks?",
+    answer: "2:1",
+    choices: ["2:1", "4:1", "1:2", "8:4"],
+    feedback: {
+      correct: "Well done! For every two wings, there is one beak, so the ratio is 2:1.",
+      incorrect: "Remember, a ratio compares the quantities. Divide the number of wings by the number of beaks.",
+    },
+  },
+  {
+    question: "A recipe calls for 3 cups of flour for every 4 cups of sugar. What is the unit rate of cups of flour per cup of sugar?",
+    answer: "3/4 cup",
+    choices: ["3/4 cup", "4/3 cup", "3 cups", "4 cups"],
+    feedback: {
+      correct: "Great! The ratio 3:4 means 3/4 cup of flour per cup of sugar.",
+      incorrect: "Think of the ratio as a fraction: 3 cups of flour divided by 4 cups of sugar.",
+    },
+  },
+  {
+    question: "If the ratio of red balls to blue balls is 5:2, how many blue balls are there when there are 15 red balls?",
+    answer: "6",
+    choices: ["6", "5", "7", "10"],
+    feedback: {
+      correct: "Good job! If the ratio is 5:2, 15 red balls mean 6 blue balls because 15 ÷ 5 = 3, and 3 × 2 = 6.",
+      incorrect: "Use the ratio 5:2. Divide 15 by 5, then multiply by 2 to find the number of blue balls.",
+    },
+  },
+  {
+    question: "What percentage of 200 is 50?",
+    answer: "25%",
+    choices: ["25%", "50%", "20%", "30%"],
+    feedback: {
+      correct: "Correct! 50 out of 200 is 25%.",
+      incorrect: "Divide 50 by 200 and multiply by 100 to find the percentage.",
+    },
+  },
+  {
+    question: "Convert 3 feet to inches if 1 foot = 12 inches.",
+    answer: "36 inches",
+    choices: ["36 inches", "24 inches", "48 inches", "12 inches"],
+    feedback: {
+      correct: "Excellent! Multiply 3 by 12 to get 36 inches.",
+      incorrect: "Remember, 1 foot equals 12 inches. Multiply the number of feet by 12.",
+    },
+  },
+  {
+    question: "If it takes 4 hours to travel 240 miles, what is the speed in miles per hour?",
+    answer: "60 mph",
+    choices: ["60 mph", "40 mph", "80 mph", "50 mph"],
+    feedback: {
+      correct: "Good work! Divide the distance (240 miles) by time (4 hours) to get 60 mph.",
+      incorrect: "Speed is distance divided by time. Divide 240 by 4.",
+    },
+  },
+  {
+    question: "Malik needs to measure 1/4 cup of sugar but only has a tablespoon. How many tablespoons will he use if 1 cup = 16 tablespoons?",
+    answer: "4 tablespoons",
+    choices: ["4 tablespoons", "8 tablespoons", "16 tablespoons", "2 tablespoons"],
+    feedback: {
+      correct: "Correct! Since 1 cup equals 16 tablespoons, 1/4 cup is 16 ÷ 4 = 4 tablespoons.",
+      incorrect: "Use the conversion: 1 cup = 16 tablespoons. Divide 16 by 4 to find 1/4 cup.",
+    },
+  },
+  {
+    question: "A car travels 300 miles in 5 hours. What is the speed in miles per hour?",
+    answer: "60 mph",
+    choices: ["60 mph", "50 mph", "70 mph", "65 mph"],
+    feedback: {
+      correct: "Great job! Divide 300 miles by 5 hours to get 60 mph.",
+      incorrect: "Speed = Distance ÷ Time. Divide 300 by 5.",
+    },
+  },
+  {
+    question: "If a shirt costs $20 and is on sale for 25% off, what is the sale price?",
+    answer: "$15",
+    choices: ["$15", "$10", "$12", "$18"],
+    feedback: {
+      correct: "Well done! 25% of $20 is $5. Subtract $5 from $20 to get $15.",
+      incorrect: "Find 25% of $20 by multiplying by 0.25. Then subtract that value from $20.",
+    },
+  },
+  {
+    question: "What is 40% of 120?",
+    answer: "48",
+    choices: ["48", "60", "36", "72"],
+    feedback: {
+      correct: "Correct! Multiply 120 by 0.4 to get 48.",
+      incorrect: "40% of 120 is 0.4 × 120. Multiply to find the answer.",
+    },
+  },
+  {
+    question: "If 3 apples cost $1.50, what is the cost per apple?",
+    answer: "$0.50",
+    choices: ["$0.50", "$0.75", "$1.00", "$1.25"],
+    feedback: {
+      correct: "Correct! Divide $1.50 by 3 apples to get $0.50 per apple.",
+      incorrect: "Find the unit rate by dividing the total cost by the number of apples.",
+    },
+  },
+  {
+    question: "What is the ratio of cats to dogs if there are 8 cats and 12 dogs?",
+    answer: "2:3",
+    choices: ["2:3", "3:2", "4:3", "1:2"],
+    feedback: {
+      correct: "Great! Simplify the ratio 8:12 by dividing both numbers by 4 to get 2:3.",
+      incorrect: "Simplify the ratio by finding the greatest common factor of 8 and 12.",
+    },
+  },
+  {
+    question: "Which is the correct unit rate: $45 for 5 items?",
+    answer: "$9 per item",
+    choices: ["$9 per item", "$5 per item", "$8 per item", "$10 per item"],
+    feedback: {
+      correct: "Good work! Divide $45 by 5 items to get $9 per item.",
+      incorrect: "Find the unit rate by dividing the total cost by the number of items.",
+    },
+  },
+  {
+    question: "If 2/3 of a cake serves 4 people, how many people does the whole cake serve?",
+    answer: "6",
+    choices: ["6", "8", "5", "7"],
+    feedback: {
+      correct: "Correct! If 2/3 serves 4 people, the whole cake (3/3) serves 6 people.",
+      incorrect: "Multiply 4 by 3/2 to calculate the number of people the full cake serves.",
+    },
+  },
+  {
+    question: "What is 75% as a fraction in simplest form?",
+    answer: "3/4",
+    choices: ["3/4", "5/8", "7/8", "2/3"],
+    feedback: {
+      correct: "Excellent! 75% is 75/100, which simplifies to 3/4.",
+      incorrect: "Divide 75 and 100 by their greatest common factor, which is 25.",
+    },
+  },
+  {
+    question: "A car travels 150 miles in 3 hours. What is its speed?",
+    answer: "50 mph",
+    choices: ["50 mph", "60 mph", "40 mph", "45 mph"],
+    feedback: {
+      correct: "Great! Divide 150 miles by 3 hours to get 50 mph.",
+      incorrect: "Speed = Distance ÷ Time. Divide 150 by 3.",
+    },
+  },
+  {
+    question: "What is the ratio of 18 to 12 in simplest form?",
+    answer: "3:2",
+    choices: ["3:2", "2:3", "6:4", "9:6"],
+    feedback: {
+      correct: "Good! Simplify 18:12 by dividing both by 6 to get 3:2.",
+      incorrect: "Simplify by finding the greatest common factor of 18 and 12.",
+    },
+  },
+  {
+    question: "What is the percent of 25 out of 200?",
+    answer: "12.5%",
+    choices: ["12.5%", "25%", "10%", "15%"],
+    feedback: {
+      correct: "Correct! Divide 25 by 200, then multiply by 100 to get 12.5%.",
+      incorrect: "Find the percentage by dividing the part by the whole, then multiplying by 100.",
+    },
+  },
+  {
+    question: "If 60% of a class of 30 students are girls, how many girls are there?",
+    answer: "18",
+    choices: ["18", "12", "15", "20"],
+    feedback: {
+      correct: "Excellent! 60% of 30 is 0.6 × 30 = 18.",
+      incorrect: "Find 60% by multiplying 30 by 0.6.",
+    },
+  },
+  {
+    question: "Convert 2 hours to minutes.",
+    answer: "120 minutes",
+    choices: ["120 minutes", "150 minutes", "90 minutes", "100 minutes"],
+    feedback: {
+      correct: "Great! Multiply 2 hours by 60 minutes per hour to get 120 minutes.",
+      incorrect: "Remember, there are 60 minutes in an hour. Multiply 2 by 60.",
+    },
+  },
+];
+
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G6_Units.cam.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

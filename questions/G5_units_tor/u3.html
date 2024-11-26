@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Geometry and Spatial Sense</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+      
+      const questionsDatabase = [
+  {
+    question: "How many sides does a pentagon have?",
+    answer: "5",
+    choices: ["4", "5", "6", "8"],
+    feedback: {
+      correct: "Correct! A pentagon has 5 sides.",
+      incorrect: "Not quite. A pentagon is defined as a polygon with 5 sides."
+    }
+  },
+  {
+    question: "What is the name of a 3D shape with 6 square faces?",
+    answer: "Cube",
+    choices: ["Cube", "Pyramid", "Sphere", "Cylinder"],
+    feedback: {
+      correct: "Correct! A cube has 6 square faces.",
+      incorrect: "Not quite. Think of a shape made entirely of squares."
+    }
+  },
+  {
+    question: "Which of these is a regular polygon?",
+    answer: "Equilateral triangle",
+    choices: ["Rectangle", "Equilateral triangle", "Scalene triangle", "Trapezoid"],
+    feedback: {
+      correct: "Correct! A regular polygon has all sides and angles equal, like an equilateral triangle.",
+      incorrect: "Not quite. Regular polygons have equal sides and angles."
+    }
+  },
+  {
+    question: "What is the name of a polygon with 8 sides?",
+    answer: "Octagon",
+    choices: ["Hexagon", "Heptagon", "Octagon", "Decagon"],
+    feedback: {
+      correct: "Correct! An octagon has 8 sides.",
+      incorrect: "Not quite. Remember that 'octa-' means 8."
+    }
+  },
+  {
+    question: "How many vertices does a rectangular prism have?",
+    answer: "8",
+    choices: ["6", "8", "10", "12"],
+    feedback: {
+      correct: "Correct! A rectangular prism has 8 vertices.",
+      incorrect: "Not quite. Visualize the corners of a rectangular prism."
+    }
+  },
+  {
+    question: "What is the name of a 3D shape with a circular base and one vertex?",
+    answer: "Cone",
+    choices: ["Cylinder", "Cone", "Sphere", "Pyramid"],
+    feedback: {
+      correct: "Correct! A cone has a circular base and one vertex.",
+      incorrect: "Not quite. A cone tapers to a single vertex from its circular base."
+    }
+  },
+  {
+    question: "Which shape is a quadrilateral but not a parallelogram?",
+    answer: "Trapezoid",
+    choices: ["Square", "Rectangle", "Rhombus", "Trapezoid"],
+    feedback: {
+      correct: "Correct! A trapezoid is a quadrilateral with only one pair of parallel sides.",
+      incorrect: "Not quite. A quadrilateral with one pair of parallel sides is a trapezoid."
+    }
+  },
+  {
+    question: "How many edges does a cube have?",
+    answer: "12",
+    choices: ["8", "10", "12", "14"],
+    feedback: {
+      correct: "Correct! A cube has 12 edges.",
+      incorrect: "Not quite. Count the edges along each face of the cube."
+    }
+  },
+  {
+    question: "What is a line segment that connects two vertices of a polygon but is not a side?",
+    answer: "Diagonal",
+    choices: ["Angle", "Side", "Diagonal", "Perpendicular"],
+    feedback: {
+      correct: "Correct! A diagonal connects two vertices but is not a side.",
+      incorrect: "Not quite. A diagonal cuts across a polygon."
+    }
+  },
+  {
+    question: "What is the sum of the interior angles of a triangle?",
+    answer: "180°",
+    choices: ["90°", "180°", "360°", "270°"],
+    feedback: {
+      correct: "Correct! The sum of the interior angles of a triangle is 180°.",
+      incorrect: "Not quite. Think of how a triangle divides a straight line."
+    }
+  },
+  {
+    question: "What type of polygon has all sides and angles equal?",
+    answer: "Regular polygon",
+    choices: ["Regular polygon", "Irregular polygon", "Quadrilateral", "Triangle"],
+    feedback: {
+      correct: "Correct! A regular polygon has all sides and angles equal.",
+      incorrect: "Not quite. A regular polygon must have equal sides and angles."
+    }
+  },
+  {
+    question: "Which of these is a property of a parallelogram?",
+    answer: "Opposite sides are equal",
+    choices: [
+      "All sides are equal",
+      "Opposite sides are equal",
+      "All angles are 90°",
+      "It has 3 sides"
+    ],
+    feedback: {
+      correct: "Correct! Opposite sides of a parallelogram are equal.",
+      incorrect: "Not quite. Opposite sides, not all sides, are equal."
+    }
+  },
+  {
+    question: "What is the name of a 3D shape with no vertices or edges?",
+    answer: "Sphere",
+    choices: ["Cube", "Cylinder", "Sphere", "Cone"],
+    feedback: {
+      correct: "Correct! A sphere has no vertices or edges.",
+      incorrect: "Not quite. Think of a ball-like shape with no corners or edges."
+    }
+  },
+  {
+    question: "How many faces does a pyramid with a square base have?",
+    answer: "5",
+    choices: ["4", "5", "6", "8"],
+    feedback: {
+      correct: "Correct! A square-based pyramid has 4 triangular faces and 1 square face.",
+      incorrect: "Not quite. Count the base and triangular faces of the pyramid."
+    }
+  },
+  {
+    question: "What is a characteristic of all polygons?",
+    answer: "They are closed shapes",
+    choices: [
+      "They are closed shapes",
+      "They have curved sides",
+      "They are 3D shapes",
+      "They all have equal sides"
+    ],
+    feedback: {
+      correct: "Correct! Polygons are closed shapes with straight sides.",
+      incorrect: "Not quite. Polygons must be closed shapes with straight sides."
+    }
+  },
+  {
+    question: "What is the name of a polygon with 10 sides?",
+    answer: "Decagon",
+    choices: ["Hexagon", "Heptagon", "Nonagon", "Decagon"],
+    feedback: {
+      correct: "Correct! A decagon has 10 sides.",
+      incorrect: "Not quite. Remember that 'deca-' means 10."
+    }
+  },
+  {
+    question: "Which 3D shape has 2 circular bases and a curved surface?",
+    answer: "Cylinder",
+    choices: ["Sphere", "Cylinder", "Cone", "Prism"],
+    feedback: {
+      correct: "Correct! A cylinder has 2 circular bases and a curved surface.",
+      incorrect: "Not quite. Think of a shape like a can."
+    }
+  },
+  {
+    question: "What is the sum of the interior angles of a quadrilateral?",
+    answer: "360°",
+    choices: ["180°", "270°", "360°", "540°"],
+    feedback: {
+      correct: "Correct! The sum of the interior angles of a quadrilateral is 360°.",
+      incorrect: "Not quite. Quadrilaterals have 4 angles summing to 360°."
+    }
+  },
+  {
+    question: "How many faces does a triangular prism have?",
+    answer: "5",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! A triangular prism has 2 triangular faces and 3 rectangular faces.",
+      incorrect: "Not quite. Count the triangular and rectangular faces."
+    }
+  },
+  {
+    question: "What is the name of a 3D shape with 4 triangular faces?",
+    answer: "Tetrahedron",
+    choices: ["Cube", "Tetrahedron", "Pyramid", "Cone"],
+    feedback: {
+      correct: "Correct! A tetrahedron has 4 triangular faces.",
+      incorrect: "Not quite. Think of a shape made entirely of triangles."
+    }
+  }
+];
+
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G5_Units.Tor.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

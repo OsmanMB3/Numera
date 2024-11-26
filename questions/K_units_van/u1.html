@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1 - Number Sense and Operations</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    
+    const questionsDatabase = [
+  {
+    question: "What comes after 6 when counting forward?",
+    answer: "7",
+    choices: ["5", "6", "7", "8"],
+    feedback: {
+      correct: "Correct! After 6 comes 7.",
+      incorrect: "Not quite. Try counting forward from 6."
+    }
+  },
+  {
+    question: "What comes before 5 when counting backward?",
+    answer: "4",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! Before 5 comes 4.",
+      incorrect: "Not quite. Try counting backward from 5."
+    }
+  },
+  {
+    question: "How many fingers are there on one hand?",
+    answer: "5",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! One hand has 5 fingers.",
+      incorrect: "Not quite. Count the fingers on one hand."
+    }
+  },
+  {
+    question: "If you have 4 apples 🍎🍎🍎🍎 and eat 2, how many are left?",
+    answer: "2",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! 4 - 2 = 2.",
+      incorrect: "Not quite. Subtract the apples you ate from 4."
+    }
+  },
+  {
+    question: "What is the total when you add 3 + 2?",
+    answer: "5",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! 3 + 2 = 5.",
+      incorrect: "Not quite. Add the numbers together."
+    }
+  },
+  {
+    question: "If you have 10 candies and give away 4, how many are left?",
+    answer: "6",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! 10 - 4 = 6.",
+      incorrect: "Not quite. Subtract the candies you gave away from 10."
+    }
+  },
+  {
+    question: "Which number comes between 4 and 6?",
+    answer: "5",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! The number between 4 and 6 is 5.",
+      incorrect: "Not quite. Count forward from 4 to find the answer."
+    }
+  },
+  {
+    question: "How many eyes do most humans have?",
+    answer: "2",
+    choices: ["1", "2", "3", "4"],
+    feedback: {
+      correct: "Correct! Most humans have 2 eyes.",
+      incorrect: "Not quite. Count the eyes on a person's face."
+    }
+  },
+  {
+    question: "If you have 3 oranges 🍊🍊🍊 and get 2 more, how many do you have now?",
+    answer: "5",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! 3 + 2 = 5.",
+      incorrect: "Not quite. Add the 2 new oranges to the 3 you already have."
+    }
+  },
+  {
+    question: "How many wheels does a tricycle have?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! A tricycle has 3 wheels.",
+      incorrect: "Not quite. Count the wheels on a tricycle."
+    }
+  },
+  {
+    question: "What is the total when you add 2 + 4?",
+    answer: "6",
+    choices: ["5", "6", "7", "8"],
+    feedback: {
+      correct: "Correct! 2 + 4 = 6.",
+      incorrect: "Not quite. Add the numbers together."
+    }
+  },
+  {
+    question: "What is 10 - 3?",
+    answer: "7",
+    choices: ["6", "7", "8", "9"],
+    feedback: {
+      correct: "Correct! 10 - 3 = 7.",
+      incorrect: "Not quite. Subtract 3 from 10."
+    }
+  },
+  {
+    question: "What is 1 less than 5?",
+    answer: "4",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! 1 less than 5 is 4.",
+      incorrect: "Not quite. Subtract 1 from 5."
+    }
+  },
+  {
+    question: "What is 1 more than 7?",
+    answer: "8",
+    choices: ["6", "7", "8", "9"],
+    feedback: {
+      correct: "Correct! 1 more than 7 is 8.",
+      incorrect: "Not quite. Add 1 to 7."
+    }
+  },
+  {
+    question: "If you have 5 balloons and give 2 away, how many are left?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! 5 - 2 = 3.",
+      incorrect: "Not quite. Subtract the balloons you gave away from 5."
+    }
+  },
+  {
+    question: "Which is the larger number: 3 or 5?",
+    answer: "5",
+    choices: ["3", "5", "They are equal", "Cannot be determined"],
+    feedback: {
+      correct: "Correct! 5 is larger than 3.",
+      incorrect: "Not quite. Compare the two numbers."
+    }
+  },
+  {
+    question: "What is the smallest number: 6, 9, or 4?",
+    answer: "4",
+    choices: ["4", "6", "9", "They are equal"],
+    feedback: {
+      correct: "Correct! 4 is the smallest number.",
+      incorrect: "Not quite. Compare the numbers to find the smallest."
+    }
+  },
+  {
+    question: "How many legs does a cat 🐈 have?",
+    answer: "4",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! A cat has 4 legs.",
+      incorrect: "Not quite. Count the legs on a cat."
+    }
+  },
+  {
+    question: "If you have 8 candies and eat 3, how many are left?",
+    answer: "5",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! 8 - 3 = 5.",
+      incorrect: "Not quite. Subtract 3 from 8."
+    }
+  },
+  {
+    question: "What is the sum of 4 + 4?",
+    answer: "8",
+    choices: ["6", "7", "8", "9"],
+    feedback: {
+      correct: "Correct! 4 + 4 = 8.",
+      incorrect: "Not quite. Add the two numbers together."
+    }
+  }
+];
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../K_Units.Van.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Number and Operations in Base Ten </title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="question-container">
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+      <div class="score-display">Score: <span id="score">0</span>/20</div>
+      <div class="question-box">
+        <h3>Question <span id="question-number">1</span>/20:</h3>
+        <p id="question-text">Loading question...</p>
+        <div id="answer-options-container"></div>
+      </div>
+    </div>
+
+    <div id="feedback-modal" class="feedback-modal">
+      <h2 id="feedback-title"></h2>
+      <p id="feedback-message"></p>
+      <button
+        class="choice-button"
+        id="continue-button"
+        onclick="closeFeedback()"
+      >
+        Continue
+      </button>
+    </div>
+
+    <script>
+      // Question Database Template
+      const questionsDatabase = [
+  {
+    question: "What is 563 rounded to the nearest 10?",
+    answer: "560",
+    choices: ["550", "560", "570", "600"],
+    feedback: {
+      correct: "Correct! 563 rounds down to 560 because 3 is less than 5.",
+      incorrect: "Remember, if the ones digit is less than 5, round down to the nearest 10.",
+    },
+  },
+  {
+    question: "What is 842 rounded to the nearest 100?",
+    answer: "800",
+    choices: ["700", "800", "850", "900"],
+    feedback: {
+      correct: "Nice! 842 rounds to 800 because 42 is closer to 0 than 100.",
+      incorrect: "Look at the tens place: if it's 5 or more, round up; otherwise, round down.",
+    },
+  },
+  {
+    question: "What is 7,923 rounded to the nearest thousand?",
+    answer: "8,000",
+    choices: ["7,000", "7,500", "8,000", "9,000"],
+    feedback: {
+      correct: "Good job! 7,923 rounds up to 8,000 because 923 is closer to 1,000.",
+      incorrect: "Check the hundreds digit: if it’s 500 or more, round up.",
+    },
+  },
+  {
+    question: "What is the sum of 456 and 234?",
+    answer: "690",
+    choices: ["680", "690", "700", "710"],
+    feedback: {
+      correct: "Great work! Adding 456 and 234 gives 690.",
+      incorrect: "Add the digits place by place: start with ones, then tens, then hundreds.",
+    },
+  },
+  {
+    question: "What is 872 - 456?",
+    answer: "416",
+    choices: ["416", "426", "436", "446"],
+    feedback: {
+      correct: "Correct! Subtracting 456 from 872 equals 416.",
+      incorrect: "Start subtracting from the rightmost place. Don’t forget to borrow if needed.",
+    },
+  },
+  {
+    question: "What is 9 x 40?",
+    answer: "360",
+    choices: ["360", "390", "400", "420"],
+    feedback: {
+      correct: "Well done! 9 x 40 equals 360.",
+      incorrect: "Use place value: 9 x 4 = 36, then add the zero back for 360.",
+    },
+  },
+  {
+    question: "Which number is 10 more than 783?",
+    answer: "793",
+    choices: ["773", "793", "803", "813"],
+    feedback: {
+      correct: "That's right! Adding 10 to 783 gives 793.",
+      incorrect: "Remember, adding 10 affects only the tens place.",
+    },
+  },
+  {
+    question: "Which number is 100 less than 4,215?",
+    answer: "4,115",
+    choices: ["4,115", "4,125", "4,205", "4,215"],
+    feedback: {
+      correct: "Good job! Subtracting 100 from 4,215 gives 4,115.",
+      incorrect: "Subtract 1 from the hundreds place while keeping the other digits the same.",
+    },
+  },
+  {
+    question: "What is the product of 6 and 90?",
+    answer: "540",
+    choices: ["540", "560", "600", "630"],
+    feedback: {
+      correct: "Excellent! 6 x 90 equals 540.",
+      incorrect: "Multiply 6 by 9 to get 54, then add the zero for 540.",
+    },
+  },
+  {
+    question: "Which equation shows the correct expanded form of 842?",
+    answer: "800 + 40 + 2",
+    choices: ["842", "800 + 40 + 2", "80 + 42", "840 + 2"],
+    feedback: {
+      correct: "Correct! 842 expands to 800 + 40 + 2.",
+      incorrect: "Break the number into hundreds, tens, and ones: 800 + 40 + 2.",
+    },
+  },
+  {
+    question: "What is 234 + 678?",
+    answer: "912",
+    choices: ["900", "912", "910", "920"],
+    feedback: {
+      correct: "Great! Adding 234 and 678 gives 912.",
+      incorrect: "Add each column carefully: ones, tens, and hundreds.",
+    },
+  },
+  {
+    question: "What is 3,145 - 2,467?",
+    answer: "678",
+    choices: ["678", "688", "698", "708"],
+    feedback: {
+      correct: "Good job! Subtracting 2,467 from 3,145 gives 678.",
+      incorrect: "Borrow when needed: subtract ones, tens, hundreds, and thousands.",
+    },
+  },
+  {
+    question: "What is 8 x 70?",
+    answer: "560",
+    choices: ["560", "580", "600", "620"],
+    feedback: {
+      correct: "Excellent! 8 x 70 equals 560.",
+      incorrect: "Multiply 8 by 7 to get 56, then add the zero for 560.",
+    },
+  },
+  {
+    question: "What is the nearest 100 to 374?",
+    answer: "400",
+    choices: ["300", "350", "400", "450"],
+    feedback: {
+      correct: "Correct! 374 rounds to 400 because 74 is closer to 100.",
+      incorrect: "Check the tens place: 7 is greater than 5, so round up.",
+    },
+  },
+  {
+    question: "What is the sum of 1,482 and 2,345?",
+    answer: "3,827",
+    choices: ["3,827", "3,837", "3,847", "3,857"],
+    feedback: {
+      correct: "Good work! Adding 1,482 and 2,345 gives 3,827.",
+      incorrect: "Carefully add the digits place by place, starting from the right.",
+    },
+  },
+  {
+    question: "What is 5 x 60?",
+    answer: "300",
+    choices: ["300", "310", "320", "330"],
+    feedback: {
+      correct: "That's correct! 5 x 60 equals 300.",
+      incorrect: "Multiply 5 by 6 to get 30, then add the zero.",
+    },
+  },
+  {
+    question: "What is 1,000 minus 325?",
+    answer: "675",
+    choices: ["665", "675", "685", "695"],
+    feedback: {
+      correct: "Well done! Subtracting 325 from 1,000 equals 675.",
+      incorrect: "Borrow from the thousands place if needed to subtract.",
+    },
+  },
+  {
+    question: "Which number is 10 less than 456?",
+    answer: "446",
+    choices: ["446", "450", "454", "466"],
+    feedback: {
+      correct: "Good job! 10 less than 456 is 446.",
+      incorrect: "Subtract 10 by reducing the tens place by 1.",
+    },
+  },
+  {
+    question: "What is 734 - 478?",
+    answer: "256",
+    choices: ["246", "256", "266", "276"],
+    feedback: {
+      correct: "Great work! Subtracting 478 from 734 equals 256.",
+      incorrect: "Carefully subtract column by column. Borrow if necessary.",
+    },
+  },
+  {
+    question: "What is 7 x 50?",
+    answer: "350",
+    choices: ["340", "350", "360", "370"],
+    feedback: {
+      correct: "Well done! 7 x 50 equals 350.",
+      incorrect: "Multiply 7 by 5 to get 35, then add the zero.",
+    },
+  },
+];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const percentage = (score / questionsDatabase.length) * 100;
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        // Ensure any previous buttons are removed first to avoid duplication
+        const existingContinueButton = document.querySelector(
+          "#feedback-modal .choice-button"
+        );
+        if (existingContinueButton) {
+          existingContinueButton.remove();
+        }
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+        Your score: ${score}/${questionsDatabase.length} (${percentage.toFixed(
+          1
+        )}%)<br><br>
+        ${
+          percentage >= 80
+            ? "Outstanding work! 🌟"
+            : percentage >= 60
+            ? "Good job! 💪"
+            : "Keep practicing! 🌱"
+        }<br><br>
+      `;
+
+        const continueButton = document.createElement("button");
+        continueButton.classList.add("choice-button");
+        continueButton.innerText = "Continue";
+        continueButton.onclick = returnToUnits;
+        feedbackMessage.appendChild(continueButton);
+
+        feedbackModal.style.display = "block";
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G3_units.cam.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

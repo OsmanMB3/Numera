@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Patterns and Algebra
+    </title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    
+    const questionsDatabase = [
+  {
+    question: "What is the next number in the pattern: 3, 6, 12, 24, ...?",
+    answer: "48",
+    choices: ["36", "48", "60", "72"],
+    feedback: {
+      correct: "Correct! The pattern doubles each time.",
+      incorrect: "Not quite. Multiply the previous term by 2."
+    }
+  },
+  {
+    question: "If x = 5, what is the value of 3x + 7?",
+    answer: "22",
+    choices: ["15", "22", "18", "12"],
+    feedback: {
+      correct: "Correct! Substituting x = 5 gives 3(5) + 7 = 22.",
+      incorrect: "Not quite. Substitute and solve step by step."
+    }
+  },
+  {
+    question: "Write an equation for the pattern: Start at 2 and multiply by 3 each time.",
+    answer: "2 × 3^n",
+    choices: ["2 × n", "2 + 3n", "2 × 3^n", "2n + 3"],
+    feedback: {
+      correct: "Correct! Start at 2 and multiply by 3 for each step.",
+      incorrect: "Not quite. Focus on the multiplication rule."
+    }
+  },
+  {
+    question: "Which value of x satisfies the equation 4x = 32?",
+    answer: "8",
+    choices: ["6", "7", "8", "9"],
+    feedback: {
+      correct: "Correct! Divide 32 by 4 to get x = 8.",
+      incorrect: "Not quite. Solve for x by dividing both sides by 4."
+    }
+  },
+  {
+    question: "What is the rule for the sequence: 10, 15, 20, 25, ...?",
+    answer: "Add 5",
+    choices: ["Add 4", "Add 5", "Multiply by 5", "Multiply by 4"],
+    feedback: {
+      correct: "Correct! The pattern adds 5 to each term.",
+      incorrect: "Not quite. Check the difference between consecutive terms."
+    }
+  },
+  {
+    question: "Which expression represents the sum of 7 and a number y?",
+    answer: "7 + y",
+    choices: ["y - 7", "7y", "7 + y", "7 ÷ y"],
+    feedback: {
+      correct: "Correct! The sum of 7 and y is 7 + y.",
+      incorrect: "Not quite. Think about how addition is represented."
+    }
+  },
+  {
+    question: "What is the value of x if 5x + 10 = 35?",
+    answer: "5",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! Subtract 10 from both sides, then divide by 5.",
+      incorrect: "Not quite. Isolate x by solving step by step."
+    }
+  },
+  {
+    question: "Which of these patterns matches the rule: Start at 3, add 7 each time?",
+    answer: "3, 10, 17, 24, ...",
+    choices: ["3, 10, 17, 24, ...", "3, 7, 11, 15, ...", "3, 5, 8, 12, ...", "3, 9, 15, 21, ..."],
+    feedback: {
+      correct: "Correct! Adding 7 to 3 repeatedly gives this pattern.",
+      incorrect: "Not quite. Add 7 to the previous term."
+    }
+  },
+  {
+    question: "What is the value of y in 6y = 72?",
+    answer: "12",
+    choices: ["10", "11", "12", "13"],
+    feedback: {
+      correct: "Correct! Dividing 72 by 6 gives y = 12.",
+      incorrect: "Not quite. Divide both sides by 6."
+    }
+  },
+  {
+    question: "Which equation matches this pattern: 4, 8, 16, 32, ...?",
+    answer: "4 × 2^n",
+    choices: ["4n", "4 × 2^n", "4 + n", "4 × n"],
+    feedback: {
+      correct: "Correct! Multiply by 2 repeatedly to form this pattern.",
+      incorrect: "Not quite. Look at the multiplication involved in the sequence."
+    }
+  },
+  {
+    question: "What is the value of 3x - 5 when x = 4?",
+    answer: "7",
+    choices: ["5", "6", "7", "8"],
+    feedback: {
+      correct: "Correct! Substitute x = 4 into the equation: 3(4) - 5 = 7.",
+      incorrect: "Not quite. Replace x with 4 and solve step by step."
+    }
+  },
+  {
+    question: "Which expression represents a rule: Multiply a number n by 4, then subtract 2?",
+    answer: "4n - 2",
+    choices: ["4n - 2", "4 - 2n", "4 + n - 2", "4n + 2"],
+    feedback: {
+      correct: "Correct! Multiply n by 4, then subtract 2.",
+      incorrect: "Not quite. Pay attention to the order of operations."
+    }
+  },
+  {
+    question: "If the sequence starts at 2 and triples each time, what is the 5th term?",
+    answer: "162",
+    choices: ["162", "128", "243", "121"],
+    feedback: {
+      correct: "Correct! The sequence is 2, 6, 18, 54, 162.",
+      incorrect: "Not quite. Multiply by 3 repeatedly to find the 5th term."
+    }
+  },
+  {
+    question: "Which of these is NOT a term in the sequence 5, 10, 15, 20, ...?",
+    answer: "19",
+    choices: ["15", "20", "19", "25"],
+    feedback: {
+      correct: "Correct! 19 is not in the sequence because it is not a multiple of 5.",
+      incorrect: "Not quite. Check the pattern carefully."
+    }
+  },
+  {
+    question: "Which of the following expressions is equivalent to 2x + 2x?",
+    answer: "4x",
+    choices: ["4", "4x", "x + x", "2x^2"],
+    feedback: {
+      correct: "Correct! Combining like terms gives 4x.",
+      incorrect: "Not quite. Add the coefficients of x."
+    }
+  },
+  {
+    question: "What is the next number in the sequence: 1, 4, 9, 16, ...?",
+    answer: "25",
+    choices: ["20", "22", "24", "25"],
+    feedback: {
+      correct: "Correct! The sequence is the squares of consecutive numbers: 1², 2², 3², 4², 5².",
+      incorrect: "Not quite. Think about square numbers."
+    }
+  },
+  {
+    question: "If y = 3, what is the value of 2y + 5?",
+    answer: "11",
+    choices: ["10", "11", "12", "13"],
+    feedback: {
+      correct: "Correct! Substitute y = 3 into the equation: 2(3) + 5 = 11.",
+      incorrect: "Not quite. Replace y with 3 and solve."
+    }
+  },
+  {
+    question: "If x = 7, what is the value of 2x - 4?",
+    answer: "10",
+    choices: ["8", "9", "10", "11"],
+    feedback: {
+      correct: "Correct! Substitute x = 7 into the equation: 2(7) - 4 = 10.",
+      incorrect: "Not quite. Replace x with 7 and calculate."
+    }
+  },
+  {
+    question: "What is the value of x if 3x + 12 = 24?",
+    answer: "4",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! Subtract 12 from both sides, then divide by 3.",
+      incorrect: "Not quite. Solve step by step to isolate x."
+    }
+  },
+  {
+    question: "What is the rule for this sequence: 100, 90, 81, 72.9, ...?",
+    answer: "Subtract 10%, then repeat",
+    choices: ["Subtract 10%", "Multiply by 0.9", "Subtract 10%, then repeat", "Divide by 2"],
+    feedback: {
+      correct: "Correct! Each term decreases by 10% of its value.",
+      incorrect: "Not quite. Check how the percentage decreases affect each term."
+    }
+  }
+];
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G5_Units.Van.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

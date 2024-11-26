@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Measurement</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+      const questionsDatabase = [
+    {
+        question: "What time of day do you eat breakfast? 🥞",
+        answer: "Morning",
+        choices: ["Morning", "Afternoon", "Evening", "Night"],
+        feedback: {
+            correct: "Correct! Breakfast is usually eaten in the morning. 🌅",
+            incorrect: "Not quite. Think about when the sun rises. 🌞",
+        },
+    },
+    {
+        question: "Which coin is worth more? 🪙",
+        answer: "Quarter",
+        choices: ["Penny", "Nickel", "Dime", "Quarter"],
+        feedback: {
+            correct: "Correct! A quarter is worth more than the other coins. 💰",
+            incorrect: "Oops! Remember, a quarter is worth 25 cents. 🪙",
+        },
+    },
+    {
+        question: "Which object is bigger: a car 🚗 or a bicycle 🚲?",
+        answer: "Car",
+        choices: ["Car", "Bicycle", "They're the same size"],
+        feedback: {
+            correct: "That's right! A car is bigger than a bicycle. 🚗",
+            incorrect: "Not quite. A car is much larger than a bicycle. 🚗🚲",
+        },
+    },
+    {
+        question: "What season comes after spring? 🌱",
+        answer: "Summer",
+        choices: ["Winter", "Spring", "Summer", "Fall"],
+        feedback: {
+            correct: "Correct! Summer comes after spring. ☀️",
+            incorrect: "Not quite. Think about the warm weather and sunshine. 🌞",
+        },
+    },
+    {
+        question: "How many minutes are in one hour? ⏰",
+        answer: "60",
+        choices: ["30", "60", "90", "120"],
+        feedback: {
+            correct: "Great job! There are 60 minutes in an hour. ⏳",
+            incorrect: "Not quite. Think about how long it takes for the minute hand to go around. 🕒",
+        },
+    },
+    {
+        question: "Which is longer: a pencil ✏️ or a ruler 📏?",
+        answer: "Ruler",
+        choices: ["Pencil", "Ruler", "They're the same length"],
+        feedback: {
+            correct: "Correct! A ruler is longer than a pencil. 📏",
+            incorrect: "Not quite. A ruler is 12 inches long, which is longer than most pencils. ✏️",
+        },
+    },
+    {
+        question: "Which weighs more: a feather 🪶 or a rock 🪨?",
+        answer: "Rock",
+        choices: ["Feather", "Rock", "They weigh the same"],
+        feedback: {
+            correct: "That's right! A rock weighs more than a feather. 🪨",
+            incorrect: "Not quite. Rocks are much heavier than feathers. 🪶",
+        },
+    },
+    {
+        question: "Which is smaller: a cup 🥤 or a bottle 🍼?",
+        answer: "Cup",
+        choices: ["Cup", "Bottle", "They're the same size"],
+        feedback: {
+            correct: "Correct! A cup is smaller than a bottle. 🥤",
+            incorrect: "Oops! Bottles hold more than cups. Try again. 🍼",
+        },
+    },
+    {
+        question: "What coin is the smallest in size? 🪙",
+        answer: "Dime",
+        choices: ["Penny", "Nickel", "Dime", "Quarter"],
+        feedback: {
+            correct: "Correct! The dime is the smallest coin in size. 🪙",
+            incorrect: "Not quite. A dime is smaller than the other coins. 💰",
+        },
+    },
+    {
+        question: "If it’s 3:00 PM, how many hours until bedtime at 9:00 PM? 🕒",
+        answer: "6",
+        choices: ["5", "6", "7", "8"],
+        feedback: {
+            correct: "Correct! There are 6 hours between 3:00 PM and 9:00 PM. 🛌",
+            incorrect: "Not quite. Count forward: 4, 5, 6, 7, 8, 9.",
+        },
+    },
+    {
+        question: "Which is taller: a tree 🌳 or a house 🏠?",
+        answer: "Tree",
+        choices: ["Tree", "House", "They're the same height"],
+        feedback: {
+            correct: "Correct! Trees are usually taller than houses. 🌳",
+            incorrect: "Not quite. Trees grow much taller than most houses. 🌳",
+        },
+    },
+    {
+        question: "What coin is worth 5 cents? 🪙",
+        answer: "Nickel",
+        choices: ["Penny", "Nickel", "Dime", "Quarter"],
+        feedback: {
+            correct: "That's right! A nickel is worth 5 cents. 🪙",
+            incorrect: "Not quite. A nickel is 5 cents, and it’s larger than a penny. 💰",
+        },
+    },
+    {
+        question: "Which is shorter: a minute or an hour? ⏱️",
+        answer: "Minute",
+        choices: ["Minute", "Hour", "They're the same length"],
+        feedback: {
+            correct: "Correct! A minute is shorter than an hour. ⏱️",
+            incorrect: "Not quite. There are 60 minutes in an hour. ⏳",
+        },
+    },
+    {
+        question: "How many sides does a triangle have? 🔺",
+        answer: "3",
+        choices: ["2", "3", "4", "5"],
+        feedback: {
+            correct: "Correct! A triangle has 3 sides. 🔺",
+            incorrect: "Oops! Count the sides of a triangle: 1, 2, 3.",
+        },
+    },
+    {
+        question: "What time of day is dinner usually eaten? 🍽️",
+        answer: "Evening",
+        choices: ["Morning", "Afternoon", "Evening", "Night"],
+        feedback: {
+            correct: "Correct! Dinner is usually eaten in the evening. 🌆",
+            incorrect: "Not quite. Think about when the sun sets. 🌞",
+        },
+    },
+    {
+        question: "Which is heavier: a book 📖 or a balloon 🎈?",
+        answer: "Book",
+        choices: ["Book", "Balloon", "They weigh the same"],
+        feedback: {
+            correct: "That's right! A book is heavier than a balloon. 📖",
+            incorrect: "Not quite. Balloons are very light compared to books. 🎈",
+        },
+    },
+    {
+        question: "If you have 10 blocks and give 4 to your friend, how many are left? 🧱",
+        answer: "6",
+        choices: ["4", "5", "6", "7"],
+        feedback: {
+            correct: "Great job! 10 - 4 = 6 blocks. 🧱🧱🧱🧱🧱🧱",
+            incorrect: "Not quite. Subtract 4 from 10 to find the answer. 🧱",
+        },
+    },
+    {
+        question: "What coin is worth 1 cent? 🪙",
+        answer: "Penny",
+        choices: ["Penny", "Nickel", "Dime", "Quarter"],
+        feedback: {
+            correct: "Correct! A penny is worth 1 cent. 🪙",
+            incorrect: "Oops! A penny is the smallest value coin. 💰",
+        },
+    },
+    {
+        question: "If it’s 12:00 noon, what time will it be in 3 hours? 🕛",
+        answer: "3:00 PM",
+        choices: ["1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM"],
+        feedback: {
+            correct: "Correct! 12:00 noon + 3 hours = 3:00 PM. 🕒",
+            incorrect: "Not quite. Count forward: 1:00, 2:00, 3:00.",
+        },
+    },
+    {
+        question: "Which is longer: a scarf 🧣 or a glove 🧤?",
+        answer: "Scarf",
+        choices: ["Scarf", "Glove", "They're the same length"],
+        feedback: {
+            correct: "Correct! A scarf is longer than a glove. 🧣",
+            incorrect: "Not quite. Scarves are much longer than gloves. 🧤",
+        },
+    },
+];
+
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../K_Units_Tor.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

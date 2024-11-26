@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Geometry and Spatial Sense</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+     
+ 
+     const questionsDatabase = [
+  {
+    question: "What is the name of a 7-sided polygon?",
+    answer: "Heptagon",
+    choices: ["Hexagon", "Heptagon", "Octagon", "Nonagon"],
+    feedback: {
+      correct: "Correct! A polygon with 7 sides is called a heptagon.",
+      incorrect: "Not quite. A 7-sided polygon is called a heptagon."
+    }
+  },
+  {
+    question: "Which shape has four equal sides and four right angles?",
+    answer: "Square",
+    choices: ["Rectangle", "Square", "Rhombus", "Trapezoid"],
+    feedback: {
+      correct: "Correct! A square has four equal sides and four right angles.",
+      incorrect: "Not quite. A square has both equal sides and right angles."
+    }
+  },
+  {
+    question: "What is the term for a straight path that extends infinitely in both directions?",
+    answer: "Line",
+    choices: ["Line", "Line segment", "Ray", "Point"],
+    feedback: {
+      correct: "Correct! A line extends infinitely in both directions.",
+      incorrect: "Not quite. A line is straight and goes on forever in both directions."
+    }
+  },
+  {
+    question: "In a coordinate plane, what does the pair (3, 2) represent?",
+    answer: "A point 3 units right and 2 units up from the origin",
+    choices: [
+      "A point 3 units right and 2 units up from the origin",
+      "A point 3 units left and 2 units down from the origin",
+      "A point 2 units right and 3 units up from the origin",
+      "A point 2 units left and 3 units down from the origin"
+    ],
+    feedback: {
+      correct: "Correct! (3, 2) is 3 units right and 2 units up from the origin.",
+      incorrect: "Not quite. The first number is the horizontal (x) position, and the second is the vertical (y) position."
+    }
+  },
+  {
+    question: "What is the sum of the angles in a triangle?",
+    answer: "180°",
+    choices: ["90°", "180°", "360°", "270°"],
+    feedback: {
+      correct: "Correct! The sum of the angles in a triangle is always 180°.",
+      incorrect: "Not quite. The angles of any triangle always add up to 180°."
+    }
+  },
+  {
+    question: "Which shape has only one pair of parallel sides?",
+    answer: "Trapezoid",
+    choices: ["Square", "Trapezoid", "Rectangle", "Rhombus"],
+    feedback: {
+      correct: "Correct! A trapezoid has only one pair of parallel sides.",
+      incorrect: "Not quite. A trapezoid has one pair of parallel sides."
+    }
+  },
+  {
+    question: "What is the term for a corner where two sides of a polygon meet?",
+    answer: "Vertex",
+    choices: ["Angle", "Edge", "Vertex", "Side"],
+    feedback: {
+      correct: "Correct! A vertex is where two sides of a polygon meet.",
+      incorrect: "Not quite. The correct term is vertex."
+    }
+  },
+  {
+    question: "How many lines of symmetry does a rectangle have?",
+    answer: "2",
+    choices: ["1", "2", "3", "4"],
+    feedback: {
+      correct: "Correct! A rectangle has 2 lines of symmetry.",
+      incorrect: "Not quite. A rectangle has a vertical and a horizontal line of symmetry."
+    }
+  },
+  {
+    question: "What is a 3D shape with a circular base and a pointed top called?",
+    answer: "Cone",
+    choices: ["Cylinder", "Sphere", "Cone", "Pyramid"],
+    feedback: {
+      correct: "Correct! A cone has a circular base and a pointed top.",
+      incorrect: "Not quite. The correct shape is a cone."
+    }
+  },
+  {
+    question: "What is the name of the longest side of a right triangle?",
+    answer: "Hypotenuse",
+    choices: ["Base", "Height", "Hypotenuse", "Diagonal"],
+    feedback: {
+      correct: "Correct! The hypotenuse is the longest side of a right triangle.",
+      incorrect: "Not quite. The hypotenuse is opposite the right angle."
+    }
+  },
+  {
+    question: "If a square is divided into two equal triangles, what is the shape of each triangle?",
+    answer: "Right triangle",
+    choices: ["Equilateral triangle", "Isosceles triangle", "Right triangle", "Scalene triangle"],
+    feedback: {
+      correct: "Correct! Each triangle is a right triangle.",
+      incorrect: "Not quite. The diagonals of a square form two right triangles."
+    }
+  },
+  {
+    question: "What is the term for a part of a line with two endpoints?",
+    answer: "Line segment",
+    choices: ["Ray", "Line segment", "Line", "Angle"],
+    feedback: {
+      correct: "Correct! A line segment has two endpoints.",
+      incorrect: "Not quite. A line segment is a part of a line with two endpoints."
+    }
+  },
+  {
+    question: "What is the name of a shape with no sides or corners?",
+    answer: "Circle",
+    choices: ["Sphere", "Circle", "Oval", "Square"],
+    feedback: {
+      correct: "Correct! A circle has no sides or corners.",
+      incorrect: "Not quite. The correct shape is a circle."
+    }
+  },
+  {
+    question: "Which direction does the x-axis go on a coordinate plane?",
+    answer: "Horizontal",
+    choices: ["Horizontal", "Vertical", "Diagonal", "Circular"],
+    feedback: {
+      correct: "Correct! The x-axis is horizontal.",
+      incorrect: "Not quite. The x-axis goes left to right, which is horizontal."
+    }
+  },
+  {
+    question: "What is the shape of the base of a cylinder?",
+    answer: "Circle",
+    choices: ["Square", "Rectangle", "Circle", "Triangle"],
+    feedback: {
+      correct: "Correct! The base of a cylinder is a circle.",
+      incorrect: "Not quite. A cylinder has a circular base."
+    }
+  },
+  {
+    question: "If a point is located at (0, 0) on a coordinate plane, what is it called?",
+    answer: "Origin",
+    choices: ["Origin", "Vertex", "Intersection", "Center"],
+    feedback: {
+      correct: "Correct! (0, 0) is called the origin.",
+      incorrect: "Not quite. The origin is the point where the x-axis and y-axis intersect."
+    }
+  },
+  {
+    question: "What is the term for a flat surface that extends infinitely in all directions?",
+    answer: "Plane",
+    choices: ["Line", "Plane", "Space", "Surface"],
+    feedback: {
+      correct: "Correct! A plane extends infinitely in all directions.",
+      incorrect: "Not quite. A plane is a flat surface that goes on forever."
+    }
+  },
+  {
+    question: "Which shape has exactly one curved side and no corners?",
+    answer: "Circle",
+    choices: ["Oval", "Circle", "Sphere", "Cylinder"],
+    feedback: {
+      correct: "Correct! A circle has one curved side and no corners.",
+      incorrect: "Not quite. A circle is the correct answer."
+    }
+  },
+  {
+    question: "What do you call two lines that never meet, no matter how far they are extended?",
+    answer: "Parallel lines",
+    choices: ["Parallel lines", "Perpendicular lines", "Intersecting lines", "Diagonal lines"],
+    feedback: {
+      correct: "Correct! Parallel lines never meet.",
+      incorrect: "Not quite. Parallel lines run in the same direction and never intersect."
+    }
+  },
+  {
+    question: "What is the term for a three-dimensional shape with six identical square faces?",
+    answer: "Cube",
+    choices: ["Cube", "Rectangular prism", "Pyramid", "Sphere"],
+    feedback: {
+      correct: "Correct! A cube has six identical square faces.",
+      incorrect: "Not quite. A cube is made up of six equal square faces."
+    }
+  }
+];
+
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_Units.Tor.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

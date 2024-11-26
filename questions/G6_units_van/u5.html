@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 5 - Data and Probability
+    </title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    
+
+    const questionsDatabase = [
+  {
+    question: "What type of graph is best for showing trends over time?",
+    answer: "Line graph",
+    choices: ["Bar graph", "Line graph", "Pie chart", "Pictograph"],
+    feedback: {
+      correct: "Correct! Line graphs are ideal for displaying trends over time.",
+      incorrect: "Not quite. Consider which graph connects data points to show change over time."
+    }
+  },
+  {
+    question: "What is the probability of flipping a coin and it landing on heads?",
+    answer: "50%",
+    choices: ["25%", "50%", "75%", "100%"],
+    feedback: {
+      correct: "Correct! A coin has a 50% chance of landing on heads.",
+      incorrect: "Not quite. Each side of a coin has an equal chance of occurring."
+    }
+  },
+  {
+    question: "You roll a standard six-sided die. What is the probability of rolling a 4?",
+    answer: "1/6",
+    choices: ["1/2", "1/4", "1/6", "1/8"],
+    feedback: {
+      correct: "Correct! There are 6 outcomes, and 4 is one of them, so the probability is 1/6.",
+      incorrect: "Not quite. Divide the number of favorable outcomes by the total outcomes."
+    }
+  },
+  {
+    question: "A spinner has 8 equal sections numbered 1 to 8. What is the probability of landing on an even number?",
+    answer: "1/2",
+    choices: ["1/4", "1/3", "1/2", "2/3"],
+    feedback: {
+      correct: "Correct! Half of the numbers (4 out of 8) are even, so the probability is 1/2.",
+      incorrect: "Not quite. Count the even numbers and divide by the total."
+    }
+  },
+  {
+    question: "What is the mode of this data set: 4, 6, 6, 8, 10?",
+    answer: "6",
+    choices: ["4", "6", "8", "10"],
+    feedback: {
+      correct: "Correct! The mode is the number that appears most often, which is 6.",
+      incorrect: "Not quite. Identify the number that occurs most frequently."
+    }
+  },
+  {
+    question: "What is the mean (average) of the numbers: 5, 10, 15, 20?",
+    answer: "12.5",
+    choices: ["10", "12.5", "15", "17.5"],
+    feedback: {
+      correct: "Correct! Add the numbers and divide by 4: (5 + 10 + 15 + 20) ÷ 4 = 12.5.",
+      incorrect: "Not quite. Add all the numbers and divide by the number of values."
+    }
+  },
+  {
+    question: "What is the range of this data set: 3, 7, 10, 12, 15?",
+    answer: "12",
+    choices: ["10", "12", "15", "18"],
+    feedback: {
+      correct: "Correct! Range = largest number − smallest number, so 15 − 3 = 12.",
+      incorrect: "Not quite. Subtract the smallest value from the largest value."
+    }
+  },
+  {
+    question: "A graph shows the number of pets owned by students: 4 have 1 pet, 6 have 2 pets, and 10 have 3 pets. What is the most common number of pets?",
+    answer: "3",
+    choices: ["1", "2", "3", "4"],
+    feedback: {
+      correct: "Correct! The most common number of pets is 3, as 10 students have 3 pets.",
+      incorrect: "Not quite. Look at the highest bar in the graph."
+    }
+  },
+  {
+    question: "A die is rolled 60 times, and the number 5 appears 15 times. What is the experimental probability of rolling a 5?",
+    answer: "1/4",
+    choices: ["1/4", "1/3", "1/2", "1/6"],
+    feedback: {
+      correct: "Correct! The probability is 15/60, which simplifies to 1/4.",
+      incorrect: "Not quite. Divide the number of favorable outcomes by the total outcomes."
+    }
+  },
+  {
+    question: "A pie chart shows 25% of students like soccer, 50% like basketball, and 25% like baseball. What fraction of students like soccer?",
+    answer: "1/4",
+    choices: ["1/4", "1/3", "1/2", "1/5"],
+    feedback: {
+      correct: "Correct! 25% is equivalent to 1/4.",
+      incorrect: "Not quite. Convert the percentage to a fraction."
+    }
+  },
+  {
+    question: "What type of graph uses pictures to represent data?",
+    answer: "Pictograph",
+    choices: ["Bar graph", "Line graph", "Pie chart", "Pictograph"],
+    feedback: {
+      correct: "Correct! A pictograph uses pictures or symbols to represent data.",
+      incorrect: "Not quite. Think about which graph uses pictures instead of bars or lines."
+    }
+  },
+  {
+    question: "A survey shows 60% of students prefer pizza and 40% prefer burgers. If 50 students were surveyed, how many prefer pizza?",
+    answer: "30",
+    choices: ["25", "30", "35", "40"],
+    feedback: {
+      correct: "Correct! 60% of 50 is 30 students.",
+      incorrect: "Not quite. Multiply the percentage by the total number of students."
+    }
+  },
+  {
+    question: "If a spinner has 4 equal sections (red, blue, green, yellow), what is the theoretical probability of landing on green?",
+    answer: "1/4",
+    choices: ["1/2", "1/3", "1/4", "1/5"],
+    feedback: {
+      correct: "Correct! There is 1 green section out of 4 total, so the probability is 1/4.",
+      incorrect: "Not quite. Divide the number of green sections by the total sections."
+    }
+  },
+  {
+    question: "A die is rolled. What is the probability of rolling an odd number?",
+    answer: "1/2",
+    choices: ["1/2", "1/3", "2/3", "1/6"],
+    feedback: {
+      correct: "Correct! Half of the numbers (1, 3, 5) are odd, so the probability is 1/2.",
+      incorrect: "Not quite. Count the odd numbers and divide by the total."
+    }
+  },
+  {
+    question: "Which measure of central tendency is calculated by adding all numbers and dividing by the total count?",
+    answer: "Mean",
+    choices: ["Mean", "Median", "Mode", "Range"],
+    feedback: {
+      correct: "Correct! The mean is calculated by adding all values and dividing by the count.",
+      incorrect: "Not quite. Recall that the mean is the average."
+    }
+  },
+  {
+    question: "A bar graph shows sales for 4 products: Product A = $50, Product B = $70, Product C = $90, and Product D = $40. Which product had the highest sales?",
+    answer: "Product C",
+    choices: ["Product A", "Product B", "Product C", "Product D"],
+    feedback: {
+      correct: "Correct! Product C had the highest sales with $90.",
+      incorrect: "Not quite. Look at the tallest bar in the graph."
+    }
+  },
+  {
+    question: "What is the median of the data set: 8, 10, 12, 14, 16?",
+    answer: "12",
+    choices: ["10", "12", "14", "16"],
+    feedback: {
+      correct: "Correct! The median is the middle value, which is 12.",
+      incorrect: "Not quite. Arrange the data in order and find the middle value."
+    }
+  },
+  {
+    question: "What is the probability of rolling a number less than 3 on a standard die?",
+    answer: "1/3",
+    choices: ["1/6", "1/3", "1/2", "2/3"],
+    feedback: {
+      correct: "Correct! The numbers less than 3 are 1 and 2, so the probability is 2/6 = 1/3.",
+      incorrect: "Not quite. Count the favorable outcomes and divide by the total outcomes."
+    }
+  },
+  {
+    question: "What is the range of the data set: 2, 4, 6, 8, 10?",
+    answer: "8",
+    choices: ["6", "8", "10", "12"],
+    feedback: {
+      correct: "Correct! Range = largest value − smallest value, so 10 − 2 = 8.",
+      incorrect: "Not quite. Subtract the smallest value from the largest value."
+    }
+  },
+  {
+    question: "A coin is flipped 20 times, and it lands on heads 8 times. What is the experimental probability of getting heads?",
+    answer: "2/5",
+    choices: ["1/2", "2/5", "3/5", "4/5"],
+    feedback: {
+      correct: "Correct! The probability is 8/20, which simplifies to 2/5.",
+      incorrect: "Not quite. Divide the number of heads by the total flips."
+    }
+  }
+];
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G6_Units.Van.html?unit5score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

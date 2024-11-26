@@ -1,115 +1,322 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Unit 2 - Operations and Algebraic Thinking</title>
-    <style>
-        body {
-            font-family: 'Georgia', serif;
-            background-color: #fef9e7;
-            margin: 0;
-            padding: 20px;
-            color: #000033;
-        }
-        .question-container {
-            padding: 40px;
-            text-align: center;
-        }
-        .question-box {
-            border: 2px solid #000033;
-            padding: 20px;
-            border-radius: 15px;
-            margin: 20px 0;
-            background-color: #fff;
-        }
-        .choice-button {
-            display: inline-block;
-            margin: 10px;
-            padding: 10px 20px;
-            border: 2px solid #000033;
-            border-radius: 15px;
-            cursor: pointer;
-            background-color: #fff;
-            transition: background-color 0.3s;
-        }
-        .choice-button:hover {
-            background-color: #ffebcc;
-        }
-    </style>
+    <link rel="stylesheet" href="../styles.css" />
 </head>
 <body>
-    <div class="question-container">
-        <div class="question-box">
-            <h2>Unit 2 - Operations and Algebraic Thinking</h2>
-            <h3 id="question-text">Loading question...</h3>
-            <div id="answer-options-container"></div>
-            <button onclick="displayNextQuestion()" class="choice-button">Next</button>
-        </div>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
     </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
 
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
     <script>
-        const questions = [
-            { question: "What is 2 + 3?", answer: "5", choices: ["4", "5", "6"] },
-            { question: "How many apples are left if you take 2 away from 5?", answer: "3", choices: ["2", "3", "4"] },
-            { question: "Which is greater: 7 + 1 or 5 + 3?", answer: "7 + 1", choices: ["7 + 1", "5 + 3", "They are equal"] },
-            { question: "What is the sum of 3 and 4?", answer: "7", choices: ["5", "6", "7"] },
-            { question: "How many fingers on two hands?", answer: "10", choices: ["8", "10", "12"] },
-            { question: "If you add 2 + 0, what do you get?", answer: "2", choices: ["0", "2", "4"] },
-            { question: "Subtract: 5 - 2", answer: "3", choices: ["2", "3", "4"] },
-            { question: "What is 3 + 5?", answer: "8", choices: ["7", "8", "9"] },
-            { question: "Which is smaller: 4 - 3 or 2 + 1?", answer: "4 - 3", choices: ["4 - 3", "2 + 1", "They are equal"] },
-            { question: "How many legs do two cats have?", answer: "8", choices: ["6", "8", "10"] },
-            { question: "Solve: 10 - 7", answer: "3", choices: ["3", "2", "4"] },
-            { question: "Which is greater: 9 + 0 or 8 + 1?", answer: "They are equal", choices: ["9 + 0", "8 + 1", "They are equal"] },
-            { question: "What makes 10 when added to 7?", answer: "3", choices: ["2", "3", "4"] },
-            { question: "What is 1 + 1?", answer: "2", choices: ["1", "2", "3"] },
-            { question: "Add: 6 + 2", answer: "8", choices: ["8", "7", "9"] },
-            { question: "Subtract 4 from 9.", answer: "5", choices: ["5", "4", "6"] },
-            { question: "What is 10 - 5?", answer: "5", choices: ["6", "5", "4"] },
-            { question: "How many ears do 3 rabbits have?", answer: "6", choices: ["4", "6", "8"] },
-            { question: "What is 3 + 6?", answer: "9", choices: ["8", "9", "7"] },
-            { question: "How many legs on 4 chairs?", answer: "16", choices: ["12", "16", "20"] },
-            { question: "Which is bigger: 8 + 2 or 9 - 1?", answer: "8 + 2", choices: ["8 + 2", "9 - 1", "They are equal"] },
-            { question: "Subtract: 10 - 8", answer: "2", choices: ["1", "2", "3"] },
-            { question: "What is 2 + 2 + 2?", answer: "6", choices: ["4", "6", "8"] },
-            { question: "What makes 5 when added to 4?", answer: "1", choices: ["2", "1", "3"] },
-            { question: "What is 5 + 5?", answer: "10", choices: ["9", "10", "11"] }
-        ];
+      const questionsDatabase = [
+  {
+    question: "If you have 3 apples 🍎🍎🍎 and get 2 more 🍎🍎, how many apples do you have now?",
+    answer: "5",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Great job! 3 + 2 equals 5.",
+      incorrect: "Add 3 and 2 together carefully. The total is 5.",
+    },
+  },
+  {
+    question: "What is 4 + 1?",
+    answer: "5",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Well done! 4 + 1 equals 5.",
+      incorrect: "Think again: 4 + 1 equals 5.",
+    },
+  },
+  {
+    question: "If you start with 7 candies 🍬🍬🍬🍬🍬🍬🍬 and eat 3, how many are left?",
+    answer: "4",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! 7 - 3 equals 4.",
+      incorrect: "Try again: 7 minus 3 equals 4.",
+    },
+  },
+  {
+    question: "What is the missing number? 2 + ___ = 5",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "That's right! 2 + 3 equals 5.",
+      incorrect: "Add carefully: 2 + 3 equals 5.",
+    },
+  },
+  {
+    question: "If you have 6 toys and give away 2, how many do you have left?",
+    answer: "4",
+    choices: ["4", "5", "6", "3"],
+    feedback: {
+      correct: "Good job! 6 - 2 equals 4.",
+      incorrect: "Subtract 2 from 6 carefully. The answer is 4.",
+    },
+  },
+  {
+    question: "Which shows 3 + 2?",
+    answer: "5",
+    choices: ["4", "5", "6", "3"],
+    feedback: {
+      correct: "Nice work! 3 + 2 equals 5.",
+      incorrect: "Try again: Add 3 and 2 to get 5.",
+    },
+  },
+  {
+    question: "If you have 5 bananas 🍌🍌🍌🍌🍌 and take away 1, how many bananas are left?",
+    answer: "4",
+    choices: ["5", "4", "3", "6"],
+    feedback: {
+      correct: "Well done! 5 - 1 equals 4.",
+      incorrect: "Take 1 away from 5 carefully. The answer is 4.",
+    },
+  },
+  {
+    question: "What is the result of 2 + 3?",
+    answer: "5",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Great! 2 + 3 equals 5.",
+      incorrect: "Think carefully: 2 + 3 equals 5.",
+    },
+  },
+  {
+    question: "What is 10 - 4?",
+    answer: "6",
+    choices: ["5", "6", "4", "7"],
+    feedback: {
+      correct: "Good work! 10 - 4 equals 6.",
+      incorrect: "Subtract 4 from 10 carefully to get 6.",
+    },
+  },
+  {
+    question: "Find the missing number: 3 + ___ = 6",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! 3 + 3 equals 6.",
+      incorrect: "Think again: 3 + 3 equals 6.",
+    },
+  },
+  {
+    question: "Which number makes this true? 5 - ___ = 2",
+    answer: "3",
+    choices: ["2", "3", "4", "1"],
+    feedback: {
+      correct: "Well done! 5 - 3 equals 2.",
+      incorrect: "Subtract carefully. 5 - 3 equals 2.",
+    },
+  },
+  {
+    question: "If you have 8 blocks and give 3 away, how many are left?",
+    answer: "5",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Good job! 8 - 3 equals 5.",
+      incorrect: "Try again: 8 minus 3 equals 5.",
+    },
+  },
+  {
+    question: "Which number plus 4 equals 7?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "That's correct! 3 + 4 equals 7.",
+      incorrect: "Think carefully: 3 + 4 equals 7.",
+    },
+  },
+  {
+    question: "What is 9 - 5?",
+    answer: "4",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Excellent! 9 - 5 equals 4.",
+      incorrect: "Subtract 5 from 9 carefully. The answer is 4.",
+    },
+  },
+  {
+    question: "If you have 10 apples 🍎🍎🍎🍎🍎🍎🍎🍎🍎🍎 and give away 5, how many are left?",
+    answer: "5",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! 10 - 5 equals 5.",
+      incorrect: "Try again: 10 minus 5 equals 5.",
+    },
+  },
+  {
+    question: "Which equation is true?",
+    answer: "3 + 2 = 5",
+    choices: ["3 + 2 = 4", "3 + 2 = 5", "3 + 2 = 6", "3 + 2 = 3"],
+    feedback: {
+      correct: "That's right! 3 + 2 equals 5.",
+      incorrect: "Check carefully: 3 + 2 equals 5.",
+    },
+  },
+  {
+    question: "What is 7 - 2?",
+    answer: "5",
+    choices: ["4", "5", "6", "3"],
+    feedback: {
+      correct: "Well done! 7 - 2 equals 5.",
+      incorrect: "Subtract 2 from 7 carefully to get 5.",
+    },
+  },
+  {
+    question: "How many more is 8 than 5?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Great! 8 is 3 more than 5.",
+      incorrect: "Think carefully: 8 - 5 equals 3.",
+    },
+  },
+  {
+    question: "What is the sum of 6 + 2?",
+    answer: "8",
+    choices: ["7", "8", "9", "6"],
+    feedback: {
+      correct: "Good job! 6 + 2 equals 8.",
+      incorrect: "Add 6 and 2 carefully to get 8.",
+    },
+  },
+  {
+    question: "What is the difference between 10 and 4?",
+    answer: "6",
+    choices: ["5", "6", "7", "8"],
+    feedback: {
+      correct: "Correct! The difference is 6.",
+      incorrect: "Subtract 4 from 10 carefully. The answer is 6.",
+    },
+  },
+];
 
-        let currentIndex = 0;
 
-        function displayNextQuestion() {
-            if (currentIndex >= questions.length) {
-                alert("Congratulations! You've completed all questions.");
-                return;
-            }
-            const question = questions[currentIndex];
-            document.getElementById("question-text").innerText = question.question;
+      let currentQuestionIndex = 0;
+      let score = 0;
 
-            const answerOptionsContainer = document.getElementById("answer-options-container");
-            answerOptionsContainer.innerHTML = "";
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
 
-            question.choices.forEach(choice => {
-                const button = document.createElement("button");
-                button.innerText = choice;
-                button.className = "choice-button";
-                button.onclick = () => checkAnswer(choice, question.answer);
-                answerOptionsContainer.appendChild(button);
-            });
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
 
-            currentIndex++;
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
         }
 
-        function checkAnswer(selected, correct) {
-            if (selected === correct) {
-                alert("Correct!");
-            } else {
-                alert("Oops! Try again.");
-            }
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
         }
 
-        displayNextQuestion();
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../K_Units_cam.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
     </script>
-</body>
+  </body>
 </html>

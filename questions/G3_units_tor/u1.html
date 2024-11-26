@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1 - Number Sense and Numeration</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+      const questionsDatabase = [
+  {
+    question: "What is the sum of 456 and 289?",
+    answer: "745",
+    choices: ["645", "745", "756", "735"],
+    feedback: {
+      correct: "Great job! Adding 456 and 289 gives 745.",
+      incorrect: "Not quite. Try adding 456 and 289 carefully.",
+    },
+  },
+  {
+    question: "Which number is greater: 879 or 798?",
+    answer: "879",
+    choices: ["879", "798", "Both are equal", "Not enough information"],
+    feedback: {
+      correct: "Correct! 879 is greater than 798.",
+      incorrect: "Not quite. Think about which number has a higher value.",
+    },
+  },
+  {
+    question: "What is 5 × 6?",
+    answer: "30",
+    choices: ["11", "30", "56", "25"],
+    feedback: {
+      correct: "That's right! 5 times 6 equals 30.",
+      incorrect: "Not quite. Multiplying 5 and 6 gives 30.",
+    },
+  },
+  {
+    question: "How many hundreds are in the number 542?",
+    answer: "5",
+    choices: ["5", "4", "2", "50"],
+    feedback: {
+      correct: "Good job! The number 542 has 5 hundreds.",
+      incorrect: "Not quite. Look at the hundreds place in 542.",
+    },
+  },
+  {
+    question: "Which number is divisible by 3?",
+    answer: "216",
+    choices: ["215", "217", "216", "219"],
+    feedback: {
+      correct: "Correct! 216 can be evenly divided by 3.",
+      incorrect: "Not quite. Try dividing each number by 3.",
+    },
+  },
+  {
+    question: "If you have 8 groups of 4, how many do you have in total?",
+    answer: "32",
+    choices: ["12", "24", "32", "16"],
+    feedback: {
+      correct: "That's right! 8 groups of 4 equals 32.",
+      incorrect: "Not quite. Multiply 8 by 4 to get the total.",
+    },
+  },
+  {
+    question: "What is the value of the digit 7 in 735?",
+    answer: "700",
+    choices: ["7", "700", "35", "735"],
+    feedback: {
+      correct: "Good job! The digit 7 represents 700 in 735.",
+      incorrect: "Not quite. Look at the place value of 7.",
+    },
+  },
+  {
+    question: "What is 84 ÷ 7?",
+    answer: "12",
+    choices: ["9", "12", "14", "10"],
+    feedback: {
+      correct: "Great! Dividing 84 by 7 equals 12.",
+      incorrect: "Not quite. Try dividing 84 by 7 carefully.",
+    },
+  },
+  {
+    question: "Round 567 to the nearest hundred.",
+    answer: "600",
+    choices: ["500", "600", "570", "550"],
+    feedback: {
+      correct: "That's correct! 567 rounds to 600.",
+      incorrect: "Not quite. Think about which hundred 567 is closer to.",
+    },
+  },
+  {
+    question: "Which of the following is an even number?",
+    answer: "248",
+    choices: ["239", "248", "345", "193"],
+    feedback: {
+      correct: "Good job! 248 is an even number.",
+      incorrect: "Not quite. Even numbers end in 0, 2, 4, 6, or 8.",
+    },
+  },
+  {
+    question: "What is the product of 9 and 8?",
+    answer: "72",
+    choices: ["81", "63", "72", "64"],
+    feedback: {
+      correct: "Correct! 9 times 8 equals 72.",
+      incorrect: "Not quite. Multiplying 9 by 8 gives 72.",
+    },
+  },
+  {
+    question: "Which is smaller: 432 or 423?",
+    answer: "423",
+    choices: ["432", "423", "Both are equal", "Not enough information"],
+    feedback: {
+      correct: "Great! 423 is smaller than 432.",
+      incorrect: "Not quite. Think about which number is smaller.",
+    },
+  },
+  {
+    question: "What is 100 more than 645?",
+    answer: "745",
+    choices: ["545", "645", "745", "845"],
+    feedback: {
+      correct: "Good job! Adding 100 to 645 gives 745.",
+      incorrect: "Not quite. Add 100 to the number carefully.",
+    },
+  },
+  {
+    question: "Which number is a multiple of 5?",
+    answer: "125",
+    choices: ["124", "126", "125", "123"],
+    feedback: {
+      correct: "Correct! 125 is a multiple of 5.",
+      incorrect: "Not quite. Multiples of 5 end in 0 or 5.",
+    },
+  },
+  {
+    question: "What is the sum of 89 and 47?",
+    answer: "136",
+    choices: ["126", "136", "148", "129"],
+    feedback: {
+      correct: "That's right! Adding 89 and 47 gives 136.",
+      incorrect: "Not quite. Add 89 and 47 carefully.",
+    },
+  },
+  {
+    question: "How many tens are in the number 430?",
+    answer: "43",
+    choices: ["43", "4", "3", "30"],
+    feedback: {
+      correct: "Correct! 430 has 43 tens.",
+      incorrect: "Not quite. Divide 430 by 10 to find the answer.",
+    },
+  },
+  {
+    question: "What is 9 × 0?",
+    answer: "0",
+    choices: ["0", "9", "1", "90"],
+    feedback: {
+      correct: "That's right! Any number multiplied by 0 is 0.",
+      incorrect: "Not quite. Multiplying by 0 always results in 0.",
+    },
+  },
+  {
+    question: "Which number is closest to 450?",
+    answer: "452",
+    choices: ["445", "452", "460", "400"],
+    feedback: {
+      correct: "Good job! 452 is closest to 450.",
+      incorrect: "Not quite. Think about which number is closest.",
+    },
+  },
+  {
+    question: "What is 7 × 7?",
+    answer: "49",
+    choices: ["49", "54", "63", "77"],
+    feedback: {
+      correct: "Correct! 7 times 7 equals 49.",
+      incorrect: "Not quite. Multiply 7 by itself to find the answer.",
+    },
+  },
+  {
+    question: "How many digits are in the number 876?",
+    answer: "3",
+    choices: ["1", "2", "3", "4"],
+    feedback: {
+      correct: "That's right! 876 has 3 digits.",
+      incorrect: "Not quite. Count the digits in the number carefully.",
+    },
+  },
+];
+
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G3_Units.Tor.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 5 - Geometry</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="question-container">
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+      <div class="score-display">Score: <span id="score">0</span>/20</div>
+      <div class="question-box">
+        <h3>Question <span id="question-number">1</span>/20:</h3>
+        <p id="question-text">Loading question...</p>
+        <div id="answer-options-container"></div>
+      </div>
+    </div>
+
+    <div id="feedback-modal" class="feedback-modal">
+      <h2 id="feedback-title"></h2>
+      <p id="feedback-message"></p>
+      <button
+        class="choice-button"
+        id="continue-button"
+        onclick="closeFeedback()"
+      >
+        Continue
+      </button>
+    </div>
+
+    <script>
+      const questionsDatabase = [
+        {
+          question:
+            "What is a line that extends infinitely in both directions called?",
+          answer: "A line",
+          choices: ["A ray", "A line", "A line segment", "A curve"],
+          feedback: {
+            correct: "Correct! A line extends infinitely in both directions.",
+            incorrect:
+              "A line segment and ray do not extend infinitely in both directions.",
+          },
+        },
+        {
+          question: "Which of these is a right angle?",
+          answer: "90°",
+          choices: ["45°", "90°", "180°", "360°"],
+          feedback: {
+            correct: "Well done! A right angle measures exactly 90 degrees.",
+            incorrect: "Remember, a right angle is always 90 degrees.",
+          },
+        },
+        {
+          question:
+            "What do you call an angle greater than 90° but less than 180°?",
+          answer: "Obtuse angle",
+          choices: [
+            "Acute angle",
+            "Obtuse angle",
+            "Right angle",
+            "Straight angle",
+          ],
+          feedback: {
+            correct: "Correct! An obtuse angle is between 90° and 180°.",
+            incorrect:
+              "Acute angles are smaller, and straight angles are exactly 180°.",
+          },
+        },
+        {
+          question: "How many sides does a pentagon have?",
+          answer: "5",
+          choices: ["3", "4", "5", "6"],
+          feedback: {
+            correct: "Correct! A pentagon has 5 sides.",
+            incorrect: "Pentagons always have 5 sides.",
+          },
+        },
+        {
+          question: "Which shape has exactly one pair of parallel sides?",
+          answer: "Trapezoid",
+          choices: ["Square", "Trapezoid", "Triangle", "Rectangle"],
+          feedback: {
+            correct:
+              "Good job! A trapezoid has exactly one pair of parallel sides.",
+            incorrect:
+              "Squares and rectangles have two pairs, while triangles have none.",
+          },
+        },
+        {
+          question: "What is a triangle with all sides equal called?",
+          answer: "Equilateral triangle",
+          choices: [
+            "Isosceles triangle",
+            "Scalene triangle",
+            "Equilateral triangle",
+            "Right triangle",
+          ],
+          feedback: {
+            correct: "Well done! An equilateral triangle has all sides equal.",
+            incorrect: "Equilateral triangles have all sides and angles equal.",
+          },
+        },
+        {
+          question: "How many degrees are in a straight angle?",
+          answer: "180°",
+          choices: ["90°", "180°", "360°", "45°"],
+          feedback: {
+            correct: "Correct! A straight angle measures exactly 180 degrees.",
+            incorrect:
+              "A straight angle is half of a full circle, which is 180 degrees.",
+          },
+        },
+        {
+          question:
+            "Which of the following shapes has four right angles and opposite sides equal?",
+          answer: "Rectangle",
+          choices: ["Rectangle", "Trapezoid", "Parallelogram", "Rhombus"],
+          feedback: {
+            correct:
+              "Great! A rectangle has four right angles and opposite sides equal.",
+            incorrect:
+              "While parallelograms and rhombuses are close, rectangles have four right angles.",
+          },
+        },
+        {
+          question: "What do you call a polygon with 8 sides?",
+          answer: "Octagon",
+          choices: ["Hexagon", "Octagon", "Pentagon", "Nonagon"],
+          feedback: {
+            correct: "Good job! An octagon has 8 sides.",
+            incorrect: "Octagons have 8 sides, not 5 or 6.",
+          },
+        },
+        {
+          question: "What is a line of symmetry?",
+          answer: "A line that divides a figure into two identical parts",
+          choices: [
+            "A line that divides a figure into two identical parts",
+            "A line that measures the perimeter",
+            "A line that extends infinitely",
+            "A line that connects two points",
+          ],
+          feedback: {
+            correct: "Correct! A line of symmetry creates two identical parts.",
+            incorrect:
+              "Review: A line of symmetry divides a shape into two equal halves.",
+          },
+        },
+        {
+          question: "Which angle is the smallest?",
+          answer: "Acute angle",
+          choices: [
+            "Acute angle",
+            "Right angle",
+            "Obtuse angle",
+            "Straight angle",
+          ],
+          feedback: {
+            correct: "Good job! Acute angles are less than 90°.",
+            incorrect: "Acute angles are smaller than right or obtuse angles.",
+          },
+        },
+        {
+          question: "What is a quadrilateral with no parallel sides called?",
+          answer: "Kite",
+          choices: ["Kite", "Trapezoid", "Rectangle", "Square"],
+          feedback: {
+            correct: "Well done! A kite has no parallel sides.",
+            incorrect:
+              "Shapes like rectangles and squares have parallel sides.",
+          },
+        },
+        {
+          question:
+            "Which term describes a closed two-dimensional figure with straight sides?",
+          answer: "Polygon",
+          choices: ["Polygon", "Circle", "Curve", "Line segment"],
+          feedback: {
+            correct:
+              "Correct! A polygon is a closed figure with straight sides.",
+            incorrect: "Circles and curves are not polygons.",
+          },
+        },
+        {
+          question:
+            "What is the name of a three-dimensional shape with a circular base and one vertex?",
+          answer: "Cone",
+          choices: ["Cone", "Cylinder", "Sphere", "Cube"],
+          feedback: {
+            correct: "Correct! A cone has a circular base and one vertex.",
+            incorrect: "Cylinders and spheres have no vertices.",
+          },
+        },
+        {
+          question: "Which shape is a parallelogram with all sides equal?",
+          answer: "Rhombus",
+          choices: ["Square", "Rectangle", "Rhombus", "Trapezoid"],
+          feedback: {
+            correct:
+              "Good job! A rhombus is a parallelogram with all sides equal.",
+            incorrect:
+              "Squares and rectangles have additional unique properties.",
+          },
+        },
+        {
+          question: "How many lines of symmetry does a square have?",
+          answer: "4",
+          choices: ["2", "4", "6", "8"],
+          feedback: {
+            correct: "Well done! A square has 4 lines of symmetry.",
+            incorrect:
+              "Think about folding a square along its axes and diagonals.",
+          },
+        },
+        {
+          question: "What is the term for two lines that will never intersect?",
+          answer: "Parallel lines",
+          choices: [
+            "Parallel lines",
+            "Perpendicular lines",
+            "Intersecting lines",
+            "Diagonal lines",
+          ],
+          feedback: {
+            correct: "Correct! Parallel lines never intersect.",
+            incorrect: "Perpendicular lines intersect at right angles.",
+          },
+        },
+        {
+          question:
+            "What is the sum of the interior angles of a quadrilateral?",
+          answer: "360°",
+          choices: ["360°", "180°", "90°", "270°"],
+          feedback: {
+            correct:
+              "Good job! The sum of the interior angles of a quadrilateral is 360°.",
+            incorrect:
+              "Remember, quadrilaterals have 4 sides, and their angles sum to 360°.",
+          },
+        },
+        {
+          question: "What is a triangle with one right angle called?",
+          answer: "Right triangle",
+          choices: [
+            "Right triangle",
+            "Equilateral triangle",
+            "Isosceles triangle",
+            "Scalene triangle",
+          ],
+          feedback: {
+            correct:
+              "Correct! A triangle with one right angle is called a right triangle.",
+            incorrect:
+              "Equilateral and scalene triangles do not have a right angle.",
+          },
+        },
+        {
+          question: "How many faces does a cube have?",
+          answer: "6",
+          choices: ["4", "6", "8", "12"],
+          feedback: {
+            correct: "Well done! A cube has 6 faces.",
+            incorrect: "Think of a cube as having 6 square faces.",
+          },
+        },
+      ];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_Units.cam.html?unit5score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

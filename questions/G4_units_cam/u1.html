@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Operations and Algebraic Thinking - Numera</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+      const questionsDatabase = [
+  {
+    question: "Which equation represents 36 as 4 times as many as 9?",
+    answer: "36 = 4 × 9",
+    choices: ["36 = 4 × 9", "36 = 9 + 4", "36 = 9 ÷ 4", "36 = 4 ÷ 9"],
+    feedback: {
+      correct: "Correct! 36 is 4 times as many as 9.",
+      incorrect: "Remember, multiplication is used for comparison here.",
+    },
+  },
+  {
+    question: "Solve: 72 ÷ 9 = ?",
+    answer: "8",
+    choices: ["7", "8", "9", "10"],
+    feedback: {
+      correct: "Well done! 72 ÷ 9 = 8.",
+      incorrect: "Division is finding how many groups of 9 make up 72.",
+    },
+  },
+  {
+    question: "Which is an example of a multiplicative comparison?",
+    answer: "Sarah has 3 times as many apples as John.",
+    choices: [
+      "Sarah has 3 more apples than John.",
+      "Sarah has 3 times as many apples as John.",
+      "Sarah gave 3 apples to John.",
+      "Sarah and John have the same number of apples.",
+    ],
+    feedback: {
+      correct: "Correct! Multiplicative comparison involves phrases like 'times as many.'",
+      incorrect: "Additive comparison uses 'more,' while multiplicative uses 'times as many.'",
+    },
+  },
+  {
+    question: "What is the remainder when 29 is divided by 4?",
+    answer: "1",
+    choices: ["1", "2", "3", "4"],
+    feedback: {
+      correct: "Good job! 29 ÷ 4 leaves a remainder of 1.",
+      incorrect: "Try dividing 29 by 4. The remainder is what's left over.",
+    },
+  },
+  {
+    question: "Which of these is a prime number?",
+    answer: "29",
+    choices: ["4", "9", "29", "30"],
+    feedback: {
+      correct: "Correct! 29 is only divisible by 1 and itself.",
+      incorrect: "A prime number has exactly two factors: 1 and itself.",
+    },
+  },
+  {
+    question: "What are the factors of 12?",
+    answer: "1, 2, 3, 4, 6, 12",
+    choices: [
+      "1, 2, 3, 4, 6, 12",
+      "2, 4, 6, 12",
+      "1, 2, 3, 6, 12",
+      "2, 3, 4, 6, 12",
+    ],
+    feedback: {
+      correct: "Correct! These are all numbers that divide evenly into 12.",
+      incorrect: "Make sure to include all factors, starting from 1 up to 12.",
+    },
+  },
+  {
+    question: "Identify the next number in this pattern: 5, 10, 15, 20, ...",
+    answer: "25",
+    choices: ["22", "24", "25", "30"],
+    feedback: {
+      correct: "Great! The pattern increases by 5 each time.",
+      incorrect: "Check the difference between consecutive numbers in the pattern.",
+    },
+  },
+  {
+    question: "What is the smallest multiple of 8 greater than 50?",
+    answer: "56",
+    choices: ["48", "54", "56", "64"],
+    feedback: {
+      correct: "Correct! 56 is a multiple of 8 and is greater than 50.",
+      incorrect: "Try dividing each option by 8 to check for a remainder.",
+    },
+  },
+  {
+    question: "What is the product of 7 × 8?",
+    answer: "56",
+    choices: ["48", "54", "56", "64"],
+    feedback: {
+      correct: "Well done! 7 × 8 = 56.",
+      incorrect: "Use multiplication to find the total.",
+    },
+  },
+  {
+    question: "How many prime numbers are there between 1 and 10?",
+    answer: "4",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! The primes are 2, 3, 5, and 7.",
+      incorrect: "Count the numbers that are only divisible by 1 and themselves.",
+    },
+  },
+  {
+    question: "What is the rule for this pattern: 2, 4, 8, 16, ...?",
+    answer: "Multiply by 2",
+    choices: ["Add 2", "Multiply by 2", "Divide by 2", "Subtract 2"],
+    feedback: {
+      correct: "Good job! Each term is obtained by multiplying the previous term by 2.",
+      incorrect: "Check how each number relates to the one before it.",
+    },
+  },
+  {
+    question: "If 5 × ? = 45, what is the missing number?",
+    answer: "9",
+    choices: ["7", "8", "9", "10"],
+    feedback: {
+      correct: "Correct! 5 × 9 = 45.",
+      incorrect: "Divide 45 by 5 to find the missing number.",
+    },
+  },
+  {
+    question: "Is 18 a prime or composite number?",
+    answer: "Composite",
+    choices: ["Prime", "Composite"],
+    feedback: {
+      correct: "Correct! 18 has more than two factors.",
+      incorrect: "Prime numbers have exactly two factors: 1 and itself.",
+    },
+  },
+  {
+    question: "What is the greatest common factor of 24 and 36?",
+    answer: "12",
+    choices: ["6", "12", "18", "24"],
+    feedback: {
+      correct: "Good job! 12 is the largest number that divides both 24 and 36.",
+      incorrect: "List the factors of each number and find the largest common one.",
+    },
+  },
+  {
+    question: "Which number is both a factor and a multiple of 6?",
+    answer: "6",
+    choices: ["3", "6", "12", "18"],
+    feedback: {
+      correct: "Correct! A number is always a factor and a multiple of itself.",
+      incorrect: "Think about the properties of numbers relative to themselves.",
+    },
+  },
+  {
+    question: "How many multiples of 4 are between 1 and 20?",
+    answer: "5",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! The multiples are 4, 8, 12, 16, and 20.",
+      incorrect: "Divide each multiple by 4 to check if it fits.",
+    },
+  },
+  {
+    question: "Which number is NOT a factor of 36?",
+    answer: "5",
+    choices: ["2", "5", "6", "9"],
+    feedback: {
+      correct: "Correct! 36 is not divisible by 5.",
+      incorrect: "Try dividing 36 by each number.",
+    },
+  },
+  {
+    question: "What is 72 ÷ 8?",
+    answer: "9",
+    choices: ["8", "9", "10", "11"],
+    feedback: {
+      correct: "Correct! 72 ÷ 8 = 9.",
+      incorrect: "Divide 72 evenly by 8.",
+    },
+  },
+  {
+    question: "What is the least common multiple of 4 and 6?",
+    answer: "12",
+    choices: ["6", "8", "12", "18"],
+    feedback: {
+      correct: "Correct! 12 is the smallest number divisible by both 4 and 6.",
+      incorrect: "List the multiples of both numbers and find the smallest one in common.",
+    },
+  },
+  {
+    question: "What is the missing number? 8 × 3 = ?",
+    answer: "24",
+    choices: ["21", "24", "27", "30"],
+    feedback: {
+      correct: "Well done! 8 × 3 = 24.",
+      incorrect: "Use multiplication to calculate the result.",
+    },
+  },
+];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_Units.cam.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

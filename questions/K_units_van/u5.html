@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 5 - Mathematical Reasoning and Financial Literacy</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    
+    const questionsDatabase = [
+  {
+    question: "How many diamonds are there? 💎💎💎",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! There are 3 diamonds.",
+      incorrect: "Not quite. Count the diamonds carefully."
+    }
+  },
+  {
+    question: "Which coin is bigger: a penny or a nickel?",
+    answer: "Nickel",
+    choices: ["Penny", "Nickel", "They are the same size", "Cannot be determined"],
+    feedback: {
+      correct: "Correct! A nickel is larger than a penny.",
+      incorrect: "Not quite. Compare the size of the two coins."
+    }
+  },
+  {
+    question: "If you have 5 coins and give 1 to a friend, how many are left?",
+    answer: "4",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! 5 - 1 = 4.",
+      incorrect: "Not quite. Subtract the coin you gave away."
+    }
+  },
+  {
+    question: "What is the smallest coin: a penny, a nickel, or a dime?",
+    answer: "Dime",
+    choices: ["Penny", "Nickel", "Dime", "They are all the same"],
+    feedback: {
+      correct: "Correct! A dime is the smallest coin.",
+      incorrect: "Not quite. A dime is smaller than a penny or a nickel."
+    }
+  },
+  {
+    question: "You have 2 coins. How many more do you need to have 5 coins?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! 2 + 3 = 5.",
+      incorrect: "Not quite. Add to 2 until you reach 5."
+    }
+  },
+  {
+    question: "Which coin has the least value: a penny, a nickel, or a dime?",
+    answer: "Penny",
+    choices: ["Penny", "Nickel", "Dime", "They are all the same value"],
+    feedback: {
+      correct: "Correct! A penny is worth 1 cent, the least value.",
+      incorrect: "Not quite. A penny is the smallest in value."
+    }
+  },
+  {
+    question: "If you have 4 apples 🍎🍎🍎🍎 and eat 2, how many are left?",
+    answer: "2",
+    choices: ["1", "2", "3", "4"],
+    feedback: {
+      correct: "Correct! 4 - 2 = 2.",
+      incorrect: "Not quite. Subtract the apples you ate."
+    }
+  },
+  {
+    question: "What coin is worth the most: a penny, a nickel, or a dime?",
+    answer: "Dime",
+    choices: ["Penny", "Nickel", "Dime", "They are all the same"],
+    feedback: {
+      correct: "Correct! A dime is worth 10 cents, the highest value of the three.",
+      incorrect: "Not quite. A dime has the greatest value."
+    }
+  },
+  {
+    question: "If you save 1 coin every day, how many coins will you have after 3 days?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! 1 coin per day for 3 days equals 3 coins.",
+      incorrect: "Not quite. Add 1 for each day."
+    }
+  },
+  {
+    question: "Which is a smart way to use money?",
+    answer: "Save it for something you want",
+    choices: [
+      "Save it for something you want",
+      "Throw it away",
+      "Give it all to someone",
+      "Forget about it"
+    ],
+    feedback: {
+      correct: "Correct! Saving money is a good way to plan for the future.",
+      incorrect: "Not quite. Think about saving money for something important."
+    }
+  },
+  {
+    question: "You have 3 coins and get 2 more. How many coins do you have now?",
+    answer: "5",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! 3 + 2 = 5.",
+      incorrect: "Not quite. Add 3 and 2 together."
+    }
+  },
+  {
+    question: "If you have 5 coins and give 2 to your friend, how many coins are left?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! 5 - 2 = 3.",
+      incorrect: "Not quite. Subtract the coins you gave away."
+    }
+  },
+  {
+    question: "Which of these is a good place to save money?",
+    answer: "A piggy bank",
+    choices: ["A piggy bank", "The floor", "Under the bed", "Throw it in the trash"],
+    feedback: {
+      correct: "Correct! A piggy bank is a safe place to store money.",
+      incorrect: "Not quite. Think of where money would be safe."
+    }
+  },
+  {
+    question: "What do you use to buy things at a store?",
+    answer: "Money",
+    choices: ["Money", "Toys", "Food", "Clothes"],
+    feedback: {
+      correct: "Correct! You use money to buy things.",
+      incorrect: "Not quite. Money is used to make purchases."
+    }
+  },
+  {
+    question: "Which coin is worth 5 cents?",
+    answer: "Nickel",
+    choices: ["Penny", "Nickel", "Dime", "Quarter"],
+    feedback: {
+      correct: "Correct! A nickel is worth 5 cents.",
+      incorrect: "Not quite. A nickel has a value of 5 cents."
+    }
+  },
+  {
+    question: "You want to buy a toy that costs 4 coins. You only have 2 coins. How many more coins do you need?",
+    answer: "2",
+    choices: ["1", "2", "3", "4"],
+    feedback: {
+      correct: "Correct! 4 - 2 = 2. You need 2 more coins.",
+      incorrect: "Not quite. Subtract the coins you have from the total cost."
+    }
+  },
+  {
+    question: "If you save 2 coins every day, how many coins will you have after 5 days?",
+    answer: "10",
+    choices: ["8", "9", "10", "12"],
+    feedback: {
+      correct: "Correct! 2 coins per day for 5 days equals 10 coins.",
+      incorrect: "Not quite. Multiply 2 by 5 to find the answer."
+    }
+  },
+  {
+    question: "Which coin is worth 1 cent?",
+    answer: "Penny",
+    choices: ["Penny", "Nickel", "Dime", "Quarter"],
+    feedback: {
+      correct: "Correct! A penny is worth 1 cent.",
+      incorrect: "Not quite. A penny is the coin with the smallest value."
+    }
+  },
+  {
+    question: "If you earn 1 coin for every chore you do, how many coins will you earn after 4 chores?",
+    answer: "4",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! 1 coin per chore for 4 chores equals 4 coins.",
+      incorrect: "Not quite. Multiply 1 by the number of chores."
+    }
+  }
+];
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../K_Units.Van.html?unit5score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

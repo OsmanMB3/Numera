@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Measurement</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+      
+      const questionsDatabase = [
+  {
+    question: "Which object is longer: a pencil ✏️ or a ruler 📏?",
+    answer: "Ruler",
+    choices: ["Pencil", "Ruler", "They are the same length", "Not enough information"],
+    feedback: {
+      correct: "Correct! A ruler is longer than a pencil.",
+      incorrect: "Not quite. A ruler is usually longer than a pencil.",
+    },
+  },
+  {
+    question: "What tool would you use to measure the length of your desk?",
+    answer: "Measuring tape",
+    choices: ["Measuring tape", "Thermometer", "Scale", "Clock"],
+    feedback: {
+      correct: "Great choice! A measuring tape is perfect for measuring length.",
+      incorrect: "Not quite. Try thinking about tools for measuring length.",
+    },
+  },
+  {
+    question: "If it’s 3:00 now, what time will it be in 2 hours?",
+    answer: "5:00",
+    choices: ["4:00", "5:00", "6:00", "3:30"],
+    feedback: {
+      correct: "That's correct! 3:00 plus 2 hours is 5:00.",
+      incorrect: "Not quite. Try adding 2 to the current hour.",
+    },
+  },
+  {
+    question: "Which is heavier: a watermelon 🍉 or a banana 🍌?",
+    answer: "Watermelon",
+    choices: ["Watermelon", "Banana", "They weigh the same", "Not enough information"],
+    feedback: {
+      correct: "That's right! A watermelon is heavier than a banana.",
+      incorrect: "Not quite. Think about the sizes of the two objects.",
+    },
+  },
+  {
+    question: "What unit would you use to measure the weight of an apple 🍎?",
+    answer: "Grams",
+    choices: ["Grams", "Kilograms", "Liters", "Centimeters"],
+    feedback: {
+      correct: "Good job! We use grams to measure lighter objects like an apple.",
+      incorrect: "Not quite. Think about the unit for small weights.",
+    },
+  },
+  {
+    question: "If it’s winter ❄️ now, which season comes next?",
+    answer: "Spring",
+    choices: ["Spring", "Summer", "Fall", "Winter again"],
+    feedback: {
+      correct: "Correct! Spring comes after winter.",
+      incorrect: "Not quite. Think about the order of the seasons.",
+    },
+  },
+  {
+    question: "How many minutes are in one hour?",
+    answer: "60",
+    choices: ["30", "60", "120", "45"],
+    feedback: {
+      correct: "That's correct! One hour has 60 minutes.",
+      incorrect: "Not quite. Remember, there are 60 minutes in one hour.",
+    },
+  },
+  {
+    question: "Which of these would you measure in milliliters?",
+    answer: "A glass of water",
+    choices: ["A glass of water", "The height of a door", "The weight of a cat", "The length of a car"],
+    feedback: {
+      correct: "Good job! Milliliters measure small amounts of liquid.",
+      incorrect: "Not quite. Milliliters are for measuring liquids.",
+    },
+  },
+  {
+    question: "Which is shorter: a second ⏳ or a minute ⏰?",
+    answer: "A second",
+    choices: ["A second", "A minute", "They are the same length", "Not enough information"],
+    feedback: {
+      correct: "That's right! A second is much shorter than a minute.",
+      incorrect: "Not quite. Think about how long a second feels compared to a minute.",
+    },
+  },
+  {
+    question: "If today is Wednesday, what day will it be in 3 days?",
+    answer: "Saturday",
+    choices: ["Saturday", "Thursday", "Friday", "Sunday"],
+    feedback: {
+      correct: "Correct! Three days after Wednesday is Saturday.",
+      incorrect: "Not quite. Try counting forward on the days of the week.",
+    },
+  },
+  {
+    question: "What tool would you use to check how hot or cold it is outside?",
+    answer: "Thermometer",
+    choices: ["Thermometer", "Ruler", "Clock", "Scale"],
+    feedback: {
+      correct: "That's right! A thermometer measures temperature.",
+      incorrect: "Not quite. Think about a tool for measuring heat or cold.",
+    },
+  },
+  {
+    question: "If your shirt is 50 cm long, how many meters is that?",
+    answer: "0.5 meters",
+    choices: ["0.5 meters", "5 meters", "50 meters", "0.05 meters"],
+    feedback: {
+      correct: "Great! 50 cm is the same as 0.5 meters.",
+      incorrect: "Not quite. Remember, 100 cm equals 1 meter.",
+    },
+  },
+  {
+    question: "Which is bigger: 3 kilograms or 300 grams?",
+    answer: "3 kilograms",
+    choices: ["3 kilograms", "300 grams", "They are the same", "Not enough information"],
+    feedback: {
+      correct: "That's correct! 3 kilograms is heavier than 300 grams.",
+      incorrect: "Not quite. 1 kilogram equals 1000 grams.",
+    },
+  },
+  {
+    question: "What time is it if the clock shows the short hand on 2 and the long hand on 12?",
+    answer: "2:00",
+    choices: ["2:00", "12:00", "2:30", "1:30"],
+    feedback: {
+      correct: "Correct! The clock reads 2:00.",
+      incorrect: "Not quite. Remember the short hand shows the hour.",
+    },
+  },
+  {
+    question: "Which of these objects is most likely to weigh more than 1 kilogram?",
+    answer: "A bag of potatoes 🥔",
+    choices: ["A bag of potatoes 🥔", "A book 📖", "A pair of glasses 👓", "A spoon 🥄"],
+    feedback: {
+      correct: "That's right! A bag of potatoes usually weighs more than 1 kilogram.",
+      incorrect: "Not quite. Think about the heaviest item on the list.",
+    },
+  },
+  {
+    question: "What unit would you use to measure the height of a tree 🌳?",
+    answer: "Meters",
+    choices: ["Meters", "Centimeters", "Milliliters", "Kilograms"],
+    feedback: {
+      correct: "Correct! Trees are usually measured in meters.",
+      incorrect: "Not quite. Trees are much taller than a few centimeters.",
+    },
+  },
+  {
+    question: "If you measure the width of your table, what are you measuring?",
+    answer: "Length",
+    choices: ["Length", "Weight", "Volume", "Time"],
+    feedback: {
+      correct: "Great job! The width of a table is a measurement of length.",
+      incorrect: "Not quite. Think about what a ruler measures.",
+    },
+  },
+  {
+    question: "Which season comes after summer 🌞?",
+    answer: "Fall",
+    choices: ["Fall", "Winter", "Spring", "Summer again"],
+    feedback: {
+      correct: "That's correct! Fall comes after summer.",
+      incorrect: "Not quite. Think about the order of the seasons.",
+    },
+  },
+  {
+    question: "What is the perimeter of a rectangle with sides of 5 cm and 3 cm?",
+    answer: "16 cm",
+    choices: ["16 cm", "15 cm", "8 cm", "12 cm"],
+    feedback: {
+      correct: "Well done! The perimeter is 16 cm (5 + 3 + 5 + 3).",
+      incorrect: "Not quite. Add all the sides of the rectangle.",
+    },
+  },
+  {
+    question: "Which of these objects would you most likely measure in liters?",
+    answer: "A bottle of juice 🧃",
+    choices: ["A bottle of juice 🧃", "A pencil case ✏️", "A chair 🪑", "A notebook 📓"],
+    feedback: {
+      correct: "Great! Liters are used to measure liquids like juice.",
+      incorrect: "Not quite. Liters are for measuring liquid amounts.",
+    },
+  },
+];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G2_Units.Tor.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

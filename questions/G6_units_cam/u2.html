@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - The Number System</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="question-container">
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+      <div class="score-display">Score: <span id="score">0</span>/20</div>
+      <div class="question-box">
+        <h3>Question <span id="question-number">1</span>/20:</h3>
+        <p id="question-text">Loading question...</p>
+        <div id="answer-options-container"></div>
+      </div>
+    </div>
+
+    <div id="feedback-modal" class="feedback-modal">
+      <h2 id="feedback-title"></h2>
+      <p id="feedback-message"></p>
+      <button
+        class="choice-button"
+        id="continue-button"
+        onclick="closeFeedback()"
+      >
+        Continue
+      </button>
+    </div>
+    <script>
+      const questionsDatabase = [
+        {
+          question: "What is the result of dividing 3/4 by 1/2?",
+          answer: "1 1/2",
+          choices: ["1 1/2", "3/8", "2", "1/3"],
+          feedback: {
+            correct:
+              "Correct! Dividing fractions means multiplying by the reciprocal: 3/4 ÷ 1/2 = 3/4 × 2/1 = 6/4 = 1 1/2.",
+            incorrect:
+              "Remember, dividing fractions involves multiplying by the reciprocal of the divisor.",
+          },
+        },
+        {
+          question: "What is the greatest common factor (GCF) of 36 and 48?",
+          answer: "12",
+          choices: ["12", "6", "18", "24"],
+          feedback: {
+            correct:
+              "Good job! The factors of 36 and 48 share 12 as the greatest factor.",
+            incorrect:
+              "List the factors of both numbers and find the largest common factor.",
+          },
+        },
+        {
+          question: "What is the least common multiple (LCM) of 8 and 12?",
+          answer: "24",
+          choices: ["24", "16", "36", "48"],
+          feedback: {
+            correct:
+              "Well done! The smallest number divisible by both 8 and 12 is 24.",
+            incorrect:
+              "Find the multiples of each number and identify the smallest common multiple.",
+          },
+        },
+        {
+          question: "Which of the following numbers is a prime number?",
+          answer: "17",
+          choices: ["17", "15", "21", "9"],
+          feedback: {
+            correct: "Correct! 17 is only divisible by 1 and itself.",
+            incorrect: "A prime number has exactly two factors: 1 and itself.",
+          },
+        },
+        {
+          question: "What is the absolute value of -12?",
+          answer: "12",
+          choices: ["12", "-12", "0", "24"],
+          feedback: {
+            correct:
+              "Great! Absolute value represents the distance from zero, which is always positive.",
+            incorrect:
+              "Absolute value is the positive distance from zero, ignoring the sign.",
+          },
+        },
+        {
+          question: "Which of the following statements is true?",
+          answer: "-3 > -7",
+          choices: ["-3 > -7", "-7 > -3", "-3 = -7", "0 > -3 > -7"],
+          feedback: {
+            correct:
+              "Well done! -3 is closer to zero and therefore greater than -7.",
+            incorrect:
+              "The number closer to zero is greater when comparing two negative numbers.",
+          },
+        },
+        {
+          question: "How many 1/4-cup servings are in 2 cups of yogurt?",
+          answer: "8",
+          choices: ["8", "6", "10", "4"],
+          feedback: {
+            correct: "Good job! Divide 2 by 1/4: 2 ÷ 1/4 = 2 × 4 = 8.",
+            incorrect:
+              "Dividing by a fraction means multiplying by its reciprocal.",
+          },
+        },
+        {
+          question: "What is 24 ÷ 6?",
+          answer: "4",
+          choices: ["4", "6", "3", "5"],
+          feedback: {
+            correct: "Great! Divide 24 by 6 to get 4.",
+            incorrect: "Think of how many times 6 fits into 24.",
+          },
+        },
+        {
+          question: "Find the opposite of -9.",
+          answer: "9",
+          choices: ["9", "0", "-9", "-18"],
+          feedback: {
+            correct: "Well done! The opposite of -9 is 9.",
+            incorrect:
+              "The opposite of a number is the same value with the opposite sign.",
+          },
+        },
+        {
+          question:
+            "Write -4.5 on the number line. Which direction is it from zero?",
+          answer: "Left",
+          choices: ["Left", "Right", "Above", "Below"],
+          feedback: {
+            correct:
+              "Correct! Negative numbers are always to the left of zero.",
+            incorrect:
+              "Negative numbers are positioned to the left of zero on a number line.",
+          },
+        },
+        {
+          question:
+            "If -3 and 3 are plotted on a number line, what do they have in common?",
+          answer: "Same distance from zero",
+          choices: [
+            "Same distance from zero",
+            "Same direction",
+            "Same value",
+            "None of the above",
+          ],
+          feedback: {
+            correct:
+              "Good! -3 and 3 are equidistant from zero but on opposite sides.",
+            incorrect:
+              "Absolute value measures distance from zero, not direction.",
+          },
+        },
+        {
+          question: "Simplify: 8 ÷ 2 + 3 × 2.",
+          answer: "10",
+          choices: ["10", "12", "8", "9"],
+          feedback: {
+            correct:
+              "Well done! Use the order of operations: 8 ÷ 2 = 4, then 3 × 2 = 6, finally 4 + 6 = 10.",
+            incorrect:
+              "Follow the order of operations: Parentheses, Exponents, Multiplication/Division, Addition/Subtraction.",
+          },
+        },
+        {
+          question: "What is the product of 4.5 × 2?",
+          answer: "9",
+          choices: ["9", "8", "10", "7"],
+          feedback: {
+            correct: "Great! 4.5 × 2 equals 9.",
+            incorrect:
+              "Multiply normally, remembering to place the decimal correctly.",
+          },
+        },
+        {
+          question:
+            "Graph (3, -2) on a coordinate plane. In which quadrant is the point located?",
+          answer: "Quadrant IV",
+          choices: ["Quadrant IV", "Quadrant I", "Quadrant II", "Quadrant III"],
+          feedback: {
+            correct:
+              "Correct! Positive x and negative y coordinates place the point in Quadrant IV.",
+            incorrect:
+              "Recall the quadrant arrangement: Quadrant I (positive, positive), II (negative, positive), III (negative, negative), IV (positive, negative).",
+          },
+        },
+        {
+          question: "What is the least common multiple of 5 and 7?",
+          answer: "35",
+          choices: ["35", "70", "25", "14"],
+          feedback: {
+            correct:
+              "Good job! The smallest number divisible by both 5 and 7 is 35.",
+            incorrect:
+              "List multiples of both numbers and find the smallest one they share.",
+          },
+        },
+        {
+          question: "Compare: -5 and -2.",
+          answer: "-2 is greater",
+          choices: [
+            "-2 is greater",
+            "-5 is greater",
+            "They are equal",
+            "Cannot compare",
+          ],
+          feedback: {
+            correct: "Correct! -2 is closer to zero, so it is greater than -5.",
+            incorrect:
+              "Compare the values based on their positions on the number line.",
+          },
+        },
+        {
+          question: "Simplify: 3 × (4 + 2).",
+          answer: "18",
+          choices: ["18", "12", "14", "16"],
+          feedback: {
+            correct:
+              "Well done! First calculate inside the parentheses: 4 + 2 = 6, then multiply by 3.",
+            incorrect:
+              "Follow the order of operations: calculate inside the parentheses first.",
+          },
+        },
+        {
+          question: "Which number has an absolute value of 7?",
+          answer: "-7",
+          choices: ["-7", "7", "-14", "0"],
+          feedback: {
+            correct: "Correct! Both -7 and 7 have an absolute value of 7.",
+            incorrect:
+              "Absolute value is the distance from zero on a number line.",
+          },
+        },
+        {
+          question: "What is the prime factorization of 36?",
+          answer: "2² × 3²",
+          choices: ["2² × 3²", "2³ × 3", "6 × 6", "4 × 9"],
+          feedback: {
+            correct:
+              "Excellent! The prime factorization of 36 is 2 × 2 × 3 × 3, or 2² × 3².",
+            incorrect:
+              "Prime factorization means breaking the number into its prime factors.",
+          },
+        },
+        {
+          question: "What is the value of |-8|?",
+          answer: "8",
+          choices: ["8", "-8", "0", "16"],
+          feedback: {
+            correct: "Correct! Absolute value is always positive, so |-8| = 8.",
+            incorrect:
+              "Absolute value measures distance from zero, which is always positive.",
+          },
+        },
+      ];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G6_Units.cam.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

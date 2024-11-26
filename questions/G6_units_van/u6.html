@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 6 - Financial Literacy
+    </title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    const questionsDatabase= [
+  {
+    question: "If you earn $20 per week, how much will you save in 10 weeks?",
+    answer: "$200",
+    choices: ["$150", "$200", "$250", "$300"],
+    feedback: {
+      correct: "Correct! $20 × 10 weeks = $200.",
+      incorrect: "Not quite. Multiply your weekly earnings by the number of weeks."
+    }
+  },
+  {
+    question: "A t-shirt costs $15. If it is on sale for 20% off, what is the discount?",
+    answer: "$3",
+    choices: ["$2", "$3", "$4", "$5"],
+    feedback: {
+      correct: "Correct! 20% of $15 is $3.",
+      incorrect: "Not quite. Multiply $15 by 0.20 to find the discount."
+    }
+  },
+  {
+    question: "A jacket costs $80 and is discounted by 25%. What is the sale price?",
+    answer: "$60",
+    choices: ["$55", "$60", "$65", "$70"],
+    feedback: {
+      correct: "Correct! 25% of $80 is $20, so the sale price is $80 − $20 = $60.",
+      incorrect: "Not quite. Subtract the discount from the original price."
+    }
+  },
+  {
+    question: "You have a budget of $100 for a party. You spend $30 on food and $20 on decorations. How much is left?",
+    answer: "$50",
+    choices: ["$40", "$50", "$60", "$70"],
+    feedback: {
+      correct: "Correct! $100 − $30 − $20 = $50.",
+      incorrect: "Not quite. Subtract food and decoration costs from the budget."
+    }
+  },
+  {
+    question: "If you save $5 every day, how much will you save in 30 days?",
+    answer: "$150",
+    choices: ["$125", "$140", "$150", "$160"],
+    feedback: {
+      correct: "Correct! $5 × 30 days = $150.",
+      incorrect: "Not quite. Multiply daily savings by the number of days."
+    }
+  },
+  {
+    question: "What is the total cost of 3 books priced at $12.50 each?",
+    answer: "$37.50",
+    choices: ["$36.00", "$37.50", "$38.00", "$39.00"],
+    feedback: {
+      correct: "Correct! $12.50 × 3 = $37.50.",
+      incorrect: "Not quite. Multiply the price of one book by 3."
+    }
+  },
+  {
+    question: "If an item costs $200 and is paid over 4 monthly installments, how much is each installment?",
+    answer: "$50",
+    choices: ["$40", "$50", "$60", "$70"],
+    feedback: {
+      correct: "Correct! $200 ÷ 4 = $50.",
+      incorrect: "Not quite. Divide the total cost by the number of installments."
+    }
+  },
+  {
+    question: "If a laptop costs $1,200 and is on sale for 10% off, what is the discount amount?",
+    answer: "$120",
+    choices: ["$100", "$120", "$130", "$140"],
+    feedback: {
+      correct: "Correct! 10% of $1,200 is $120.",
+      incorrect: "Not quite. Multiply $1,200 by 0.10 to find the discount."
+    }
+  },
+  {
+    question: "If you buy 2 pizzas for $12 each and a drink for $4, what is the total cost?",
+    answer: "$28",
+    choices: ["$24", "$26", "$28", "$30"],
+    feedback: {
+      correct: "Correct! $12 × 2 + $4 = $28.",
+      incorrect: "Not quite. Add the cost of both pizzas and the drink."
+    }
+  },
+  {
+    question: "You save $50 each month. How much will you have saved after a year?",
+    answer: "$600",
+    choices: ["$500", "$600", "$700", "$800"],
+    feedback: {
+      correct: "Correct! $50 × 12 months = $600.",
+      incorrect: "Not quite. Multiply your monthly savings by 12."
+    }
+  },
+  {
+    question: "If you spend $7.25 on coffee and $10.50 on lunch, what is your total expense?",
+    answer: "$17.75",
+    choices: ["$17.25", "$17.50", "$17.75", "$18.00"],
+    feedback: {
+      correct: "Correct! $7.25 + $10.50 = $17.75.",
+      incorrect: "Not quite. Add the cost of coffee and lunch."
+    }
+  },
+  {
+    question: "A meal costs $40. If you tip 15%, how much is the tip?",
+    answer: "$6",
+    choices: ["$4", "$5", "$6", "$7"],
+    feedback: {
+      correct: "Correct! 15% of $40 is $6.",
+      incorrect: "Not quite. Multiply $40 by 0.15 to find the tip."
+    }
+  },
+  {
+    question: "A video game is marked down by 20% and costs $40. What was the original price?",
+    answer: "$50",
+    choices: ["$45", "$50", "$55", "$60"],
+    feedback: {
+      correct: "Correct! $40 is 80% of the original price, so the original price is $50.",
+      incorrect: "Not quite. Divide the sale price by 0.80."
+    }
+  },
+  {
+    question: "You have a $20 bill and buy a toy for $14.75. How much change will you receive?",
+    answer: "$5.25",
+    choices: ["$5.25", "$5.50", "$6.00", "$6.25"],
+    feedback: {
+      correct: "Correct! $20 − $14.75 = $5.25.",
+      incorrect: "Not quite. Subtract the cost of the toy from $20."
+    }
+  },
+  {
+    question: "If a pair of shoes costs $120 after a 25% discount, what was the original price?",
+    answer: "$160",
+    choices: ["$150", "$160", "$170", "$180"],
+    feedback: {
+      correct: "Correct! $120 is 75% of the original price, so the original price is $160.",
+      incorrect: "Not quite. Divide the sale price by 0.75."
+    }
+  },
+  {
+    question: "What is 5% of $500?",
+    answer: "$25",
+    choices: ["$20", "$25", "$30", "$35"],
+    feedback: {
+      correct: "Correct! 5% of $500 is $25.",
+      incorrect: "Not quite. Multiply $500 by 0.05 to find the percentage."
+    }
+  },
+  {
+    question: "You have a budget of $80 for shopping. If you spend $45, how much is left?",
+    answer: "$35",
+    choices: ["$30", "$35", "$40", "$45"],
+    feedback: {
+      correct: "Correct! $80 − $45 = $35.",
+      incorrect: "Not quite. Subtract your expense from the budget."
+    }
+  },
+  {
+    question: "A group of 5 friends shares a restaurant bill of $75 equally. How much does each person pay?",
+    answer: "$15",
+    choices: ["$12", "$13", "$14", "$15"],
+    feedback: {
+      correct: "Correct! $75 ÷ 5 = $15 per person.",
+      incorrect: "Not quite. Divide the total bill by the number of people."
+    }
+  },
+  {
+    question: "You deposit $200 into a savings account. If the account earns 5% interest annually, how much will you have after one year?",
+    answer: "$210",
+    choices: ["$205", "$210", "$215", "$220"],
+    feedback: {
+      correct: "Correct! 5% of $200 is $10, so the total is $200 + $10 = $210.",
+      incorrect: "Not quite. Add the interest earned to the initial deposit."
+    }
+  },
+  {
+    question: "A family spends $1,200 on rent each month. What is the total rent for a year?",
+    answer: "$14,400",
+    choices: ["$12,000", "$14,400", "$15,000", "$16,800"],
+    feedback: {
+      correct: "Correct! $1,200 × 12 months = $14,400.",
+      incorrect: "Not quite. Multiply the monthly rent by 12."
+    }
+  }
+];
+
+
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G6_Units.Van.html?unit6score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

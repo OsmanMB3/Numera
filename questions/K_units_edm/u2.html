@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Operations and Algebraic Thinking
+    </title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+
+const questionsDatabase= [
+  {
+    question: "You have 3 cookies 🍪🍪🍪, and your friend gives you 2 more cookies 🍪🍪. How many cookies do you have now?",
+    answer: "5",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! 3 + 2 = 5 cookies.",
+      incorrect: "Not quite. Add 3 and 2 to find the total."
+    }
+  },
+  {
+    question: "There are 7 balloons 🎈🎈🎈🎈🎈🎈🎈. If 3 balloons fly away, how many are left?",
+    answer: "4",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! 7 − 3 = 4 balloons.",
+      incorrect: "Not quite. Subtract 3 from 7 to find the answer."
+    }
+  },
+  {
+    question: "Which addition sentence is correct?\nA) 2 + 3 = 6\nB) 1 + 4 = 5",
+    answer: "B",
+    choices: ["A", "B", "Both are correct", "None are correct"],
+    feedback: {
+      correct: "Correct! 1 + 4 = 5 is correct.",
+      incorrect: "Not quite. Try solving both sentences to check."
+    }
+  },
+  {
+    question: "You have 6 toys. You give 2 toys to your friend. How many toys do you have left?",
+    answer: "4",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! 6 − 2 = 4 toys.",
+      incorrect: "Not quite. Subtract 2 from 6."
+    }
+  },
+  {
+    question: "What is 3 + 3?",
+    answer: "6",
+    choices: ["5", "6", "7", "8"],
+    feedback: {
+      correct: "Correct! 3 + 3 = 6.",
+      incorrect: "Not quite. Add 3 and 3 to find the total."
+    }
+  },
+  {
+    question: "If you have 5 candies and your friend has 4 candies, how many candies are there altogether?",
+    answer: "9",
+    choices: ["8", "9", "10", "11"],
+    feedback: {
+      correct: "Correct! 5 + 4 = 9 candies.",
+      incorrect: "Not quite. Add 5 and 4."
+    }
+  },
+  {
+    question: "You see 8 ducks in a pond. 3 ducks swim away. How many ducks are left?",
+    answer: "5",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! 8 − 3 = 5 ducks.",
+      incorrect: "Not quite. Subtract 3 from 8."
+    }
+  },
+  {
+    question: "Which subtraction sentence is correct?\nA) 5 − 2 = 3\nB) 6 − 3 = 4",
+    answer: "A",
+    choices: ["A", "B", "Both are correct", "None are correct"],
+    feedback: {
+      correct: "Correct! 5 − 2 = 3 is correct.",
+      incorrect: "Not quite. Try solving both sentences to check."
+    }
+  },
+  {
+    question: "You have 4 apples 🍎🍎🍎🍎. Your friend gives you 3 more apples 🍎🍎🍎. How many apples do you have now?",
+    answer: "7",
+    choices: ["6", "7", "8", "9"],
+    feedback: {
+      correct: "Correct! 4 + 3 = 7 apples.",
+      incorrect: "Not quite. Add 4 and 3 to find the total."
+    }
+  },
+  {
+    question: "What is 2 + 5?",
+    answer: "7",
+    choices: ["6", "7", "8", "9"],
+    feedback: {
+      correct: "Correct! 2 + 5 = 7.",
+      incorrect: "Not quite. Add 2 and 5 to find the total."
+    }
+  },
+  {
+    question: "There are 9 cars 🚗🚗🚗🚗🚗🚗🚗🚗🚗 in the parking lot. 4 cars drive away. How many cars are left?",
+    answer: "5",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! 9 − 4 = 5 cars.",
+      incorrect: "Not quite. Subtract 4 from 9."
+    }
+  },
+  {
+    question: "If you add 2 oranges 🍊 and 3 oranges 🍊🍊🍊, how many oranges do you have in total?",
+    answer: "5",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! 2 + 3 = 5 oranges.",
+      incorrect: "Not quite. Add 2 and 3."
+    }
+  },
+  {
+    question: "What is 10 − 7?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! 10 − 7 = 3.",
+      incorrect: "Not quite. Subtract 7 from 10."
+    }
+  },
+  {
+    question: "You pick 6 flowers 🌸🌸🌸🌸🌸🌸, but 2 petals fall off. How many flowers are left?",
+    answer: "4",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! 6 − 2 = 4 flowers.",
+      incorrect: "Not quite. Subtract 2 from 6."
+    }
+  },
+  {
+    question: "What is 4 + 4?",
+    answer: "8",
+    choices: ["7", "8", "9", "10"],
+    feedback: {
+      correct: "Correct! 4 + 4 = 8.",
+      incorrect: "Not quite. Add 4 and 4 to find the total."
+    }
+  },
+  {
+    question: "You have 7 crayons. Your friend gives you 3 more crayons. How many crayons do you have now?",
+    answer: "10",
+    choices: ["9", "10", "11", "12"],
+    feedback: {
+      correct: "Correct! 7 + 3 = 10 crayons.",
+      incorrect: "Not quite. Add 7 and 3 to find the total."
+    }
+  },
+  {
+    question: "There are 10 apples in a basket. 6 apples are eaten. How many apples are left?",
+    answer: "4",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! 10 − 6 = 4 apples.",
+      incorrect: "Not quite. Subtract 6 from 10."
+    }
+  },
+  {
+    question: "What is 1 + 1?",
+    answer: "2",
+    choices: ["1", "2", "3", "4"],
+    feedback: {
+      correct: "Correct! 1 + 1 = 2.",
+      incorrect: "Not quite. Add 1 and 1 to find the total."
+    }
+  },
+  {
+    question: "You have 8 marbles. You give away 5 marbles. How many marbles do you have left?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! 8 − 5 = 3 marbles.",
+      incorrect: "Not quite. Subtract 5 from 8."
+    }
+  },
+  {
+    question: "What is 6 − 4?",
+    answer: "2",
+    choices: ["1", "2", "3", "4"],
+    feedback: {
+      correct: "Correct! 6 − 4 = 2.",
+      incorrect: "Not quite. Subtract 4 from 6."
+    }
+  }
+];
+    
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../K_units.edm.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

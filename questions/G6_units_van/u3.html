@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Geometry and Measurement</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    
+    const questionsDatabase = [
+  {
+    question: "What is the area of a rectangle with a length of 12 cm and a width of 8 cm?",
+    answer: "96 cm²",
+    choices: ["80 cm²", "96 cm²", "100 cm²", "120 cm²"],
+    feedback: {
+      correct: "Correct! Area = length × width, so 12 × 8 = 96 cm².",
+      incorrect: "Not quite. Multiply the length and width to find the area."
+    }
+  },
+  {
+    question: "What is the perimeter of a square with side length 7 cm?",
+    answer: "28 cm",
+    choices: ["21 cm", "24 cm", "28 cm", "35 cm"],
+    feedback: {
+      correct: "Correct! Perimeter = 4 × side length, so 4 × 7 = 28 cm.",
+      incorrect: "Not quite. Multiply the side length by 4 to find the perimeter."
+    }
+  },
+  {
+    question: "A triangle has a base of 10 cm and a height of 6 cm. What is its area?",
+    answer: "30 cm²",
+    choices: ["20 cm²", "30 cm²", "40 cm²", "50 cm²"],
+    feedback: {
+      correct: "Correct! Area = ½ × base × height, so ½ × 10 × 6 = 30 cm².",
+      incorrect: "Not quite. Multiply the base and height, then divide by 2."
+    }
+  },
+  {
+    question: "What is the name of a 5-sided polygon?",
+    answer: "Pentagon",
+    choices: ["Hexagon", "Pentagon", "Heptagon", "Quadrilateral"],
+    feedback: {
+      correct: "Correct! A polygon with 5 sides is called a pentagon.",
+      incorrect: "Not quite. Review the names of polygons based on the number of sides."
+    }
+  },
+  {
+    question: "What is the volume of a rectangular prism with dimensions 5 cm × 4 cm × 3 cm?",
+    answer: "60 cm³",
+    choices: ["50 cm³", "60 cm³", "70 cm³", "80 cm³"],
+    feedback: {
+      correct: "Correct! Volume = length × width × height, so 5 × 4 × 3 = 60 cm³.",
+      incorrect: "Not quite. Multiply the three dimensions to find the volume."
+    }
+  },
+  {
+    question: "What is the measure of each interior angle of a regular triangle?",
+    answer: "60°",
+    choices: ["45°", "60°", "90°", "120°"],
+    feedback: {
+      correct: "Correct! Each interior angle of a regular triangle is 60°.",
+      incorrect: "Not quite. The sum of interior angles is 180°, divided equally among three angles."
+    }
+  },
+  {
+    question: "A rectangle has a perimeter of 48 cm. If the length is 14 cm, what is the width?",
+    answer: "10 cm",
+    choices: ["8 cm", "10 cm", "12 cm", "14 cm"],
+    feedback: {
+      correct: "Correct! Perimeter = 2(length + width), so 48 = 2(14 + width), width = 10 cm.",
+      incorrect: "Not quite. Use the formula for perimeter and solve for the width."
+    }
+  },
+  {
+    question: "What is the area of a parallelogram with a base of 15 cm and height of 10 cm?",
+    answer: "150 cm²",
+    choices: ["130 cm²", "140 cm²", "150 cm²", "160 cm²"],
+    feedback: {
+      correct: "Correct! Area = base × height, so 15 × 10 = 150 cm².",
+      incorrect: "Not quite. Multiply the base and height to find the area."
+    }
+  },
+  {
+    question: "What is the measure of a right angle?",
+    answer: "90°",
+    choices: ["45°", "60°", "90°", "120°"],
+    feedback: {
+      correct: "Correct! A right angle measures exactly 90°.",
+      incorrect: "Not quite. Review the definition of a right angle."
+    }
+  },
+  {
+    question: "What is the perimeter of a triangle with sides measuring 6 cm, 8 cm, and 10 cm?",
+    answer: "24 cm",
+    choices: ["20 cm", "22 cm", "24 cm", "26 cm"],
+    feedback: {
+      correct: "Correct! Perimeter = sum of all sides, so 6 + 8 + 10 = 24 cm.",
+      incorrect: "Not quite. Add the lengths of all three sides."
+    }
+  },
+  {
+    question: "What is the sum of the interior angles of a hexagon?",
+    answer: "720°",
+    choices: ["540°", "720°", "900°", "1080°"],
+    feedback: {
+      correct: "Correct! The sum of the interior angles of a hexagon is 720°.",
+      incorrect: "Not quite. Use the formula (n-2) × 180°, where n is the number of sides."
+    }
+  },
+  {
+    question: "What is the area of a trapezoid with bases 10 cm and 14 cm and a height of 6 cm?",
+    answer: "72 cm²",
+    choices: ["60 cm²", "66 cm²", "72 cm²", "78 cm²"],
+    feedback: {
+      correct: "Correct! Area = ½ × (base1 + base2) × height, so ½ × (10 + 14) × 6 = 72 cm².",
+      incorrect: "Not quite. Add the bases, multiply by the height, and divide by 2."
+    }
+  },
+  {
+    question: "What is the name of a triangle with all sides of different lengths?",
+    answer: "Scalene",
+    choices: ["Equilateral", "Isosceles", "Scalene", "Right"],
+    feedback: {
+      correct: "Correct! A triangle with all sides of different lengths is called scalene.",
+      incorrect: "Not quite. Review the types of triangles based on side lengths."
+    }
+  },
+  {
+    question: "What is the exterior angle of a regular pentagon?",
+    answer: "72°",
+    choices: ["60°", "72°", "90°", "108°"],
+    feedback: {
+      correct: "Correct! The exterior angle of a regular pentagon is 72°.",
+      incorrect: "Not quite. Use the formula 360° ÷ n, where n is the number of sides."
+    }
+  },
+  {
+    question: "A circle has a radius of 7 cm. What is its circumference? (Use π ≈ 3.14)",
+    answer: "43.96 cm",
+    choices: ["42.96 cm", "43.96 cm", "44.96 cm", "45.96 cm"],
+    feedback: {
+      correct: "Correct! Circumference = 2πr, so 2 × 3.14 × 7 = 43.96 cm.",
+      incorrect: "Not quite. Use the formula 2πr."
+    }
+  },
+  {
+    question: "How many faces does a rectangular prism have?",
+    answer: "6",
+    choices: ["4", "5", "6", "8"],
+    feedback: {
+      correct: "Correct! A rectangular prism has 6 faces.",
+      incorrect: "Not quite. Visualize the shape and count the faces."
+    }
+  },
+  {
+    question: "What is the volume of a cube with a side length of 4 cm?",
+    answer: "64 cm³",
+    choices: ["16 cm³", "32 cm³", "64 cm³", "128 cm³"],
+    feedback: {
+      correct: "Correct! Volume = side³, so 4³ = 64 cm³.",
+      incorrect: "Not quite. Cube the side length to find the volume."
+    }
+  },
+  {
+    question: "What is the area of a square with a diagonal of 10 cm?",
+    answer: "50 cm²",
+    choices: ["40 cm²", "45 cm²", "50 cm²", "55 cm²"],
+    feedback: {
+      correct: "Correct! The area of the square is (diagonal² ÷ 2) = 10² ÷ 2 = 50 cm².",
+      incorrect: "Not quite. Use the formula diagonal² ÷ 2."
+    }
+  },
+  {
+    question: "What is the sum of the exterior angles of any polygon?",
+    answer: "360°",
+    choices: ["180°", "360°", "540°", "720°"],
+    feedback: {
+      correct: "Correct! The sum of the exterior angles of any polygon is always 360°.",
+      incorrect: "Not quite. Recall that this is true for all polygons."
+    }
+  },
+  {
+    question: "What is the measure of the largest angle in a triangle with angles 40°, 60°, and 80°?",
+    answer: "80°",
+    choices: ["40°", "60°", "80°", "90°"],
+    feedback: {
+      correct: "Correct! The largest angle in the triangle is 80°.",
+      incorrect: "Not quite. Compare the given angles and identify the largest."
+    }
+  }
+];
+
+
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G6_Units.Van.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1 - Number Sense and Operations</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    
+const questionsDatabase = [
+  {
+    question: "What is the value of the digit 7 in the number 7,452?",
+    answer: "7,000",
+    choices: ["7", "70", "700", "7,000"],
+    feedback: {
+      correct: "Correct! The 7 is in the thousands place, so its value is 7,000.",
+      incorrect: "Not quite. Check the place value of 7 in 7,452."
+    }
+  },
+  {
+    question: "Which number is greater: 4,368 or 4,836?",
+    answer: "4,836",
+    choices: ["4,368", "4,836", "They are equal", "Cannot be determined"],
+    feedback: {
+      correct: "Correct! 4,836 is greater than 4,368.",
+      incorrect: "Not quite. Compare each digit starting from the left."
+    }
+  },
+  {
+    question: "Add: 2,341 + 1,678",
+    answer: "4,019",
+    choices: ["3,919", "4,019", "4,119", "4,219"],
+    feedback: {
+      correct: "Correct! Adding 2,341 and 1,678 equals 4,019.",
+      incorrect: "Not quite. Double-check your addition."
+    }
+  },
+  {
+    question: "Subtract: 5,027 - 2,814",
+    answer: "2,213",
+    choices: ["2,123", "2,213", "2,323", "2,413"],
+    feedback: {
+      correct: "Correct! Subtracting 5,027 and 2,814 equals 2,213.",
+      incorrect: "Not quite. Ensure you subtract each digit carefully."
+    }
+  },
+  {
+    question: "What is the product of 7 × 56?",
+    answer: "392",
+    choices: ["392", "348", "402", "448"],
+    feedback: {
+      correct: "Correct! 7 × 56 equals 392.",
+      incorrect: "Not quite. Multiply 7 by 56 step by step."
+    }
+  },
+  {
+    question: "Divide: 144 ÷ 12",
+    answer: "12",
+    choices: ["10", "12", "14", "16"],
+    feedback: {
+      correct: "Correct! 144 ÷ 12 equals 12.",
+      incorrect: "Not quite. Multiply 12 by the options to check your answer."
+    }
+  },
+  {
+    question: "Which number is closest to 4,263 when rounded to the nearest hundred?",
+    answer: "4,300",
+    choices: ["4,200", "4,300", "4,250", "4,400"],
+    feedback: {
+      correct: "Correct! 4,263 rounded to the nearest hundred is 4,300.",
+      incorrect: "Not quite. Focus on the hundreds place."
+    }
+  },
+  {
+    question: "Estimate the sum: 3,786 + 2,145",
+    answer: "6,000",
+    choices: ["5,900", "6,000", "6,100", "6,200"],
+    feedback: {
+      correct: "Correct! The sum is approximately 6,000 when rounded.",
+      incorrect: "Not quite. Round the numbers first, then add."
+    }
+  },
+  {
+    question: "What is the quotient of 36 ÷ 6?",
+    answer: "6",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! 36 ÷ 6 equals 6.",
+      incorrect: "Not quite. Divide 36 by 6 step by step."
+    }
+  },
+  {
+    question: "Choose two numbers with a sum of 15.",
+    answer: "8 and 7",
+    choices: ["6 and 6", "8 and 7", "10 and 4", "5 and 5"],
+    feedback: {
+      correct: "Correct! 8 + 7 equals 15.",
+      incorrect: "Not quite. Check if the numbers add up to 15."
+    }
+  },
+  {
+    question: "Which number has the digit 9 in the thousands place?",
+    answer: "9,345",
+    choices: ["3,945", "9,345", "9,045", "9,435"],
+    feedback: {
+      correct: "Correct! The 9 in 9,345 is in the thousands place.",
+      incorrect: "Not quite. Identify the thousands place."
+    }
+  },
+  {
+    question: "Complete the pattern: 1,000, 1,100, 1,200, __.",
+    answer: "1,300",
+    choices: ["1,250", "1,300", "1,400", "1,350"],
+    feedback: {
+      correct: "Correct! The pattern increases by 100 each step.",
+      incorrect: "Not quite. Add 100 to the previous number."
+    }
+  },
+  {
+    question: "What is the value of 5 × (10 + 2)?",
+    answer: "60",
+    choices: ["50", "60", "70", "80"],
+    feedback: {
+      correct: "Correct! Solve inside the parentheses first: 10 + 2 = 12, then multiply by 5.",
+      incorrect: "Not quite. Solve the parentheses first."
+    }
+  },
+  {
+    question: "Divide: 1,024 ÷ 8",
+    answer: "128",
+    choices: ["124", "126", "128", "130"],
+    feedback: {
+      correct: "Correct! 1,024 ÷ 8 equals 128.",
+      incorrect: "Not quite. Perform the division step by step."
+    }
+  },
+  {
+    question: "Estimate the product: 23 × 48",
+    answer: "1,200",
+    choices: ["1,000", "1,100", "1,200", "1,300"],
+    feedback: {
+      correct: "Correct! Round to 20 × 50 to estimate the product as 1,200.",
+      incorrect: "Not quite. Round the numbers and then multiply."
+    }
+  },
+  {
+    question: "Which number is closest to 8,245 when rounded to the nearest thousand?",
+    answer: "8,000",
+    choices: ["7,000", "8,000", "9,000", "8,500"],
+    feedback: {
+      correct: "Correct! 8,245 rounded to the nearest thousand is 8,000.",
+      incorrect: "Not quite. Look at the thousands place and round."
+    }
+  },
+  {
+    question: "Subtract: 6,432 - 1,245",
+    answer: "5,187",
+    choices: ["5,087", "5,187", "5,287", "5,387"],
+    feedback: {
+      correct: "Correct! Subtracting 6,432 and 1,245 equals 5,187.",
+      incorrect: "Not quite. Carefully subtract each digit."
+    }
+  },
+  {
+    question: "Multiply: 46 × 7",
+    answer: "322",
+    choices: ["322", "326", "336", "342"],
+    feedback: {
+      correct: "Correct! 46 × 7 equals 322.",
+      incorrect: "Not quite. Multiply step by step."
+    }
+  },
+  {
+    question: "What is the product of 72 × 5?",
+    answer: "360",
+    choices: ["340", "350", "360", "370"],
+    feedback: {
+      correct: "Correct! 72 × 5 equals 360.",
+      incorrect: "Not quite. Multiply step by step."
+    }
+  },
+  {
+    question: "Divide: 200 ÷ 4",
+    answer: "50",
+    choices: ["25", "50", "100", "75"],
+    feedback: {
+      correct: "Correct! 200 ÷ 4 equals 50.",
+      incorrect: "Not quite. Perform the division carefully."
+    }
+  }
+];
+
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_Units.Van.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

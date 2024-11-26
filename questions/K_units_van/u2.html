@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Patterning and Sorting</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+    
+    const questionsDatabase = [
+  {
+    question: "What comes next in the pattern: 🟡🔵🟡🔵🟡?",
+    answer: "🔵",
+    choices: ["🟡", "🔵", "🔴", "🟢"],
+    feedback: {
+      correct: "Correct! The pattern alternates between yellow and blue.",
+      incorrect: "Not quite. Look carefully at the sequence of colors."
+    }
+  },
+  {
+    question: "Complete the pattern: 🔺🔺🔵🔺🔺🔵🔺🔺?",
+    answer: "🔵",
+    choices: ["🔺", "🔵", "🟡", "🔴"],
+    feedback: {
+      correct: "Correct! The pattern repeats every 3 shapes: 🔺🔺🔵.",
+      incorrect: "Not quite. Count the sequence of shapes to identify the pattern."
+    }
+  },
+  {
+    question: "Sort these shapes by size: 🔵🔵🔴🔵🔴.",
+    answer: "🔵🔵🔵🔴🔴",
+    choices: ["🔴🔵🔵🔵🔴", "🔵🔵🔵🔴🔴", "🔵🔴🔴🔵🔵", "🔴🔴🔵🔵🔵"],
+    feedback: {
+      correct: "Correct! The smaller shapes (🔵) come before the larger shapes (🔴).",
+      incorrect: "Not quite. Sort by size, with smaller shapes first."
+    }
+  },
+  {
+    question: "What is the rule for this pattern: 🔴🟢🔴🔵🔴🟢🔴🔵?",
+    answer: "🔴, 🟢, 🔴, 🔵",
+    choices: ["🔴, 🟢, 🔴, 🔵", "🔴, 🔵, 🔴, 🟢", "🔴, 🟢, 🔵, 🔴", "🔴, 🔴, 🟢, 🔵"],
+    feedback: {
+      correct: "Correct! The pattern alternates between red, green, and blue with red repeating.",
+      incorrect: "Not quite. Look carefully at the sequence."
+    }
+  },
+  {
+    question: "What shape comes next in the pattern: 🔷🔶🔷🔶🔷?",
+    answer: "🔶",
+    choices: ["🔷", "🔶", "🔴", "🟢"],
+    feedback: {
+      correct: "Correct! The pattern alternates between blue diamonds and orange diamonds.",
+      incorrect: "Not quite. Look at the sequence of shapes carefully."
+    }
+  },
+  {
+    question: "Classify these shapes by color: 🔵🔴🟡🔵🔴.",
+    answer: "🔵🔵🔴🔴🟡",
+    choices: ["🔵🔴🔵🔴🟡", "🔵🔵🔴🔴🟡", "🔴🔴🔵🔵🟡", "🟡🔴🔴🔵🔵"],
+    feedback: {
+      correct: "Correct! Group all shapes with the same color together.",
+      incorrect: "Not quite. Arrange shapes by color."
+    }
+  },
+  {
+    question: "Which shape is missing in the pattern: 🔴🟡🔵🔴🟡?",
+    answer: "🔵",
+    choices: ["🔴", "🔵", "🟡", "🟢"],
+    feedback: {
+      correct: "Correct! The missing shape is blue.",
+      incorrect: "Not quite. Look carefully at the pattern and find the missing shape."
+    }
+  },
+  {
+    question: "Sort these objects by size: 🟡🔴🔵🟡🔵.",
+    answer: "🟡🟡🔵🔵🔴",
+    choices: ["🔴🟡🟡🔵🔵", "🟡🟡🔵🔵🔴", "🔵🔵🔴🟡🟡", "🟡🔴🔵🟡🔵"],
+    feedback: {
+      correct: "Correct! The smallest objects (🟡) come first, followed by medium (🔵) and large (🔴).",
+      incorrect: "Not quite. Sort by size, smallest to largest."
+    }
+  },
+  {
+    question: "What is the next shape in the pattern: 🟠🟠🟣🟠🟠?",
+    answer: "🟣",
+    choices: ["🟠", "🟣", "🔵", "🔴"],
+    feedback: {
+      correct: "Correct! The pattern alternates between two orange circles and one purple circle.",
+      incorrect: "Not quite. Look at how the sequence alternates."
+    }
+  },
+  {
+    question: "Classify these objects by shape: 🔷🔵🔷🔶🔶.",
+    answer: "🔷🔷🔶🔶🔵",
+    choices: ["🔷🔷🔶🔶🔵", "🔷🔵🔶🔶🔷", "🔶🔷🔵🔷🔶", "🔵🔷🔷🔶🔶"],
+    feedback: {
+      correct: "Correct! Group similar shapes together.",
+      incorrect: "Not quite. Arrange objects based on their shapes."
+    }
+  },
+  {
+    question: "Which rule describes this pattern: 🟥🟦🟥🟦🟥?",
+    answer: "Red, blue, repeat.",
+    choices: ["Red, blue, yellow, repeat.", "Red, blue, repeat.", "Blue, red, repeat.", "Red, red, blue, repeat."],
+    feedback: {
+      correct: "Correct! The pattern alternates between red and blue.",
+      incorrect: "Not quite. Look carefully at the sequence."
+    }
+  },
+  {
+    question: "Which shape comes next in the pattern: 🔺🔻🔺🔻🔺?",
+    answer: "🔻",
+    choices: ["🔺", "🔻", "🔵", "🟡"],
+    feedback: {
+      correct: "Correct! The pattern alternates between upward and downward triangles.",
+      incorrect: "Not quite. Look at how the triangles alternate."
+    }
+  },
+  {
+    question: "What comes after the pattern 🟢🟢🔴🟢🟢?",
+    answer: "🔴",
+    choices: ["🟢", "🔴", "🟡", "🔵"],
+    feedback: {
+      correct: "Correct! The pattern alternates with two greens followed by a red.",
+      incorrect: "Not quite. Look at the sequence carefully."
+    }
+  },
+  {
+    question: "What is missing in the pattern: 🔴🟠🟡🟢🔴🟠🟡?",
+    answer: "🟢",
+    choices: ["🔴", "🟢", "🟠", "🟡"],
+    feedback: {
+      correct: "Correct! The pattern cycles through red, orange, yellow, green.",
+      incorrect: "Not quite. Identify the repeating sequence."
+    }
+  },
+  {
+    question: "Sort these objects by color: 🔵🟠🔴🟠🔵.",
+    answer: "🔵🔵🟠🟠🔴",
+    choices: ["🔵🔵🟠🟠🔴", "🟠🔵🔵🔴🟠", "🔴🟠🟠🔵🔵", "🟠🔵🔴🔵🟠"],
+    feedback: {
+      correct: "Correct! Group the colors together.",
+      incorrect: "Not quite. Arrange the objects by color."
+    }
+  },
+  {
+    question: "What is the next color in the pattern: 🟡🔵🟡🔵🟡?",
+    answer: "🔵",
+    choices: ["🔵", "🟡", "🔴", "🟢"],
+    feedback: {
+      correct: "Correct! The pattern alternates between yellow and blue.",
+      incorrect: "Not quite. Look carefully at the sequence of colors."
+    }
+  },
+  {
+    question: "Which rule describes this pattern: 🔺🔺🔷🔺🔺?",
+    answer: "Two triangles, one diamond, repeat.",
+    choices: [
+      "Two diamonds, one triangle, repeat.",
+      "Two triangles, one diamond, repeat.",
+      "One triangle, two diamonds, repeat.",
+      "Two triangles, two diamonds, repeat."
+    ],
+    feedback: {
+      correct: "Correct! The pattern repeats with two triangles followed by one diamond.",
+      incorrect: "Not quite. Count the sequence and note the shapes."
+    }
+  },
+  {
+    question: "What shape is missing: 🔵🔴🔵🔵?",
+    answer: "🔴",
+    choices: ["🔴", "🔵", "🟠", "🟡"],
+    feedback: {
+      correct: "Correct! The pattern alternates with one blue, one red.",
+      incorrect: "Not quite. Look carefully at the sequence."
+    }
+  },
+  {
+    question: "What is the next shape in the pattern: 🔷🔷🔶🔷🔷?",
+    answer: "🔶",
+    choices: ["🔷", "🔶", "🔵", "🟡"],
+    feedback: {
+      correct: "Correct! The pattern alternates with two blue diamonds and one orange diamond.",
+      incorrect: "Not quite. Look at how the pattern repeats."
+    }
+  },
+  {
+    question: "Sort these shapes by size: 🔺🔺🔴🔵🔺🔵.",
+    answer: "🔺🔺🔺🔵🔵🔴",
+    choices: ["🔺🔺🔺🔵🔵🔴", "🔵🔵🔺🔺🔺🔴", "🔺🔴🔵🔵🔺🔺", "🔵🔺🔺🔺🔴🔵"],
+    feedback: {
+      correct: "Correct! Arrange the shapes from smallest to largest.",
+      incorrect: "Not quite. Sort the shapes based on size."
+    }
+  }
+];
+
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../K_Units.Van.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

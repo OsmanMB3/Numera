@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Number and Operations in Base Ten
+    </title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+      const questionsDatabase = [
+  {
+    question: "Which number is made up of 1 ten and 5 ones?",
+    answer: "15",
+    choices: ["5", "10", "15", "20"],
+    feedback: {
+      correct: "Correct! 1 ten and 5 ones make 15.",
+      incorrect: "Not quite. Think of how tens and ones add up."
+    }
+  },
+  {
+    question: "How many tens are in the number 19?",
+    answer: "1",
+    choices: ["0", "1", "2", "9"],
+    feedback: {
+      correct: "Correct! There is 1 ten in 19.",
+      incorrect: "Not quite. Look at the tens place in the number 19."
+    }
+  },
+  {
+    question: "What is the place value of the digit 2 in 12?",
+    answer: "Ones",
+    choices: ["Tens", "Ones", "Hundreds", "Thousands"],
+    feedback: {
+      correct: "Correct! The digit 2 is in the ones place.",
+      incorrect: "Not quite. Look at the position of 2 in 12."
+    }
+  },
+  {
+    question: "What is the place value of the digit 1 in 14?",
+    answer: "Tens",
+    choices: ["Tens", "Ones", "Hundreds", "Thousands"],
+    feedback: {
+      correct: "Correct! The digit 1 is in the tens place.",
+      incorrect: "Not quite. Look at the position of 1 in 14."
+    }
+  },
+  {
+    question: "Which number comes after 18?",
+    answer: "19",
+    choices: ["17", "18", "19", "20"],
+    feedback: {
+      correct: "Correct! 19 comes after 18.",
+      incorrect: "Not quite. Count forward to find the next number."
+    }
+  },
+  {
+    question: "Which number has 2 tens and 3 ones?",
+    answer: "23",
+    choices: ["20", "23", "32", "12"],
+    feedback: {
+      correct: "Correct! 2 tens and 3 ones make 23.",
+      incorrect: "Not quite. Add 20 and 3."
+    }
+  },
+  {
+    question: "What is 10 + 8?",
+    answer: "18",
+    choices: ["16", "17", "18", "19"],
+    feedback: {
+      correct: "Correct! 10 + 8 = 18.",
+      incorrect: "Not quite. Add 10 and 8 to find the total."
+    }
+  },
+  {
+    question: "What is 10 + 4?",
+    answer: "14",
+    choices: ["12", "13", "14", "15"],
+    feedback: {
+      correct: "Correct! 10 + 4 = 14.",
+      incorrect: "Not quite. Add 10 and 4 to find the total."
+    }
+  },
+  {
+    question: "Which number comes before 11?",
+    answer: "10",
+    choices: ["9", "10", "11", "12"],
+    feedback: {
+      correct: "Correct! 10 comes before 11.",
+      incorrect: "Not quite. Count backward from 11."
+    }
+  },
+  {
+    question: "What is 19 − 10?",
+    answer: "9",
+    choices: ["8", "9", "10", "11"],
+    feedback: {
+      correct: "Correct! 19 − 10 = 9.",
+      incorrect: "Not quite. Subtract 10 from 19."
+    }
+  },
+  {
+    question: "What number is made up of 1 ten and 8 ones?",
+    answer: "18",
+    choices: ["8", "10", "18", "28"],
+    feedback: {
+      correct: "Correct! 1 ten and 8 ones make 18.",
+      incorrect: "Not quite. Add the tens and ones together."
+    }
+  },
+  {
+    question: "Which number is larger: 12 or 21?",
+    answer: "21",
+    choices: ["12", "21", "They are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! 21 is larger than 12.",
+      incorrect: "Not quite. Compare the two numbers."
+    }
+  },
+  {
+    question: "How many tens are in the number 30?",
+    answer: "3",
+    choices: ["1", "2", "3", "4"],
+    feedback: {
+      correct: "Correct! There are 3 tens in 30.",
+      incorrect: "Not quite. Count the tens in 30."
+    }
+  },
+  {
+    question: "What is 15 − 5?",
+    answer: "10",
+    choices: ["9", "10", "11", "12"],
+    feedback: {
+      correct: "Correct! 15 − 5 = 10.",
+      incorrect: "Not quite. Subtract 5 from 15."
+    }
+  },
+  {
+    question: "Which number comes after 13?",
+    answer: "14",
+    choices: ["12", "13", "14", "15"],
+    feedback: {
+      correct: "Correct! 14 comes after 13.",
+      incorrect: "Not quite. Count forward from 13."
+    }
+  },
+  {
+    question: "What is the value of 2 tens and 0 ones?",
+    answer: "20",
+    choices: ["2", "10", "20", "22"],
+    feedback: {
+      correct: "Correct! 2 tens and 0 ones make 20.",
+      incorrect: "Not quite. Think of how tens and ones combine."
+    }
+  },
+  {
+    question: "What number is made up of 1 ten and 6 ones?",
+    answer: "16",
+    choices: ["6", "10", "16", "26"],
+    feedback: {
+      correct: "Correct! 1 ten and 6 ones make 16.",
+      incorrect: "Not quite. Add the tens and ones together."
+    }
+  },
+  {
+    question: "What is the place value of the 2 in 20?",
+    answer: "Tens",
+    choices: ["Tens", "Ones", "Hundreds", "Thousands"],
+    feedback: {
+      correct: "Correct! The 2 in 20 is in the tens place.",
+      incorrect: "Not quite. Think about the position of 2 in the number 20."
+    }
+  },
+  {
+    question: "Which number comes before 15?",
+    answer: "14",
+    choices: ["13", "14", "15", "16"],
+    feedback: {
+      correct: "Correct! 14 comes before 15.",
+      incorrect: "Not quite. Count backward from 15."
+    }
+  },
+  {
+    question: "How many ones are in the number 19?",
+    answer: "9",
+    choices: ["1", "9", "10", "19"],
+    feedback: {
+      correct: "Correct! There are 9 ones in 19.",
+      incorrect: "Not quite. Look at the ones place in 19."
+    }
+  }
+];
+    
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../K_units.edm.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>
