@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 5 - Geometry </title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+   
+   const questionsDatabase = [
+  {
+    question: "Which of these is a circle? 🔵 🟢 🔴 🟡",
+    answer: "🔵",
+    choices: ["🔵", "🟢", "🔴", "🟡"],
+    feedback: {
+      correct: "Correct! The circle is 🔵.",
+      incorrect: "Not quite. The circle is 🔵."
+    }
+  },
+  {
+    question: "Which shape has 4 equal sides? 🟦 🟩 🟥 ⬛",
+    answer: "⬛",
+    choices: ["🟦", "🟩", "🟥", "⬛"],
+    feedback: {
+      correct: "Correct! The square shape is ⬛.",
+      incorrect: "Not quite. The shape with 4 equal sides is a square (⬛)."
+    }
+  },
+  {
+    question: "Which shape is a triangle? 🔺 🟦 🟩 ⬛",
+    answer: "🔺",
+    choices: ["🔺", "🟦", "🟩", "⬛"],
+    feedback: {
+      correct: "Correct! The triangle shape is 🔺.",
+      incorrect: "Not quite. The shape with 3 sides is a triangle (🔺)."
+    }
+  },
+  {
+    question: "Which shape has no sides? 🟠 🔵 🟡 🔲",
+    answer: "🔵",
+    choices: ["🟠", "🔵", "🟡", "🔲"],
+    feedback: {
+      correct: "Correct! The circle (🔵) has no sides.",
+      incorrect: "Not quite. A circle has no sides."
+    }
+  },
+  {
+    question: "Which shape has 3 sides? 🔺 🟩 ⬛ 🟦",
+    answer: "🔺",
+    choices: ["🔺", "🟩", "⬛", "🟦"],
+    feedback: {
+      correct: "Correct! A triangle (🔺) has 3 sides.",
+      incorrect: "Not quite. A triangle has 3 sides."
+    }
+  },
+  {
+    question: "Which shape is a rectangle? ⬛ 🔲 🟩 🟦",
+    answer: "🔲",
+    choices: ["⬛", "🔲", "🟩", "🟦"],
+    feedback: {
+      correct: "Correct! The rectangle is 🔲.",
+      incorrect: "Not quite. A rectangle has opposite sides that are equal."
+    }
+  },
+  {
+    question: "Which shape is a hexagon? 🔶 🔺 🔵 🟨",
+    answer: "🟨",
+    choices: ["🔶", "🔺", "🔵", "🟨"],
+    feedback: {
+      correct: "Correct! A hexagon has 6 sides, and that is 🟨.",
+      incorrect: "Not quite. A hexagon has 6 sides."
+    }
+  },
+  {
+    question: "Which shape has 4 sides? 🟩 🟦 🔵 🔲",
+    answer: "🔲",
+    choices: ["🟩", "🟦", "🔵", "🔲"],
+    feedback: {
+      correct: "Correct! The shape with 4 sides is a square (🔲).",
+      incorrect: "Not quite. A square has 4 sides."
+    }
+  },
+  {
+    question: "Which shape is a diamond? 🔶 🟦 🟥 🟩",
+    answer: "🔶",
+    choices: ["🔶", "🟦", "🟥", "🟩"],
+    feedback: {
+      correct: "Correct! The diamond shape is 🔶.",
+      incorrect: "Not quite. A diamond looks like 🔶."
+    }
+  },
+  {
+    question: "Which of these shapes is round? 🔴 🟩 🟦 🔲",
+    answer: "🔴",
+    choices: ["🔴", "🟩", "🟦", "🔲"],
+    feedback: {
+      correct: "Correct! The round shape is 🔴.",
+      incorrect: "Not quite. The round shape is 🔴."
+    }
+  },
+  {
+    question: "Which shape has more sides? A triangle (🔺) or a square (⬛)?",
+    answer: "Square",
+    choices: ["Triangle", "Square", "Both have the same number of sides", "I don't know"],
+    feedback: {
+      correct: "Correct! A square has 4 sides, while a triangle has 3.",
+      incorrect: "Not quite. A square has more sides than a triangle."
+    }
+  },
+  {
+    question: "What is the name of this shape? 🔵",
+    answer: "Circle",
+    choices: ["Circle", "Square", "Triangle", "Rectangle"],
+    feedback: {
+      correct: "Correct! The shape is a circle.",
+      incorrect: "Not quite. The shape is a circle (🔵)."
+    }
+  },
+  {
+    question: "Which shape is a 3D object? ⬛ 🟩 🟦 🔲",
+    answer: "🟩",
+    choices: ["⬛", "🟩", "🟦", "🔲"],
+    feedback: {
+      correct: "Correct! The cube (🟩) is a 3D object.",
+      incorrect: "Not quite. A cube is a 3D object."
+    }
+  },
+  {
+    question: "How many sides does a square (⬛) have?",
+    answer: "4",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! A square has 4 sides.",
+      incorrect: "Not quite. A square has 4 sides."
+    }
+  },
+  {
+    question: "Which of the following shapes has 4 equal sides? 🔲 🟩 🟦 🟥",
+    answer: "🔲",
+    choices: ["🔲", "🟩", "🟦", "🟥"],
+    feedback: {
+      correct: "Correct! The square (🔲) has 4 equal sides.",
+      incorrect: "Not quite. A square has 4 equal sides."
+    }
+  },
+  {
+    question: "What shape is this? 🔺",
+    answer: "Triangle",
+    choices: ["Circle", "Square", "Triangle", "Rectangle"],
+    feedback: {
+      correct: "Correct! The shape is a triangle.",
+      incorrect: "Not quite. The shape is a triangle (🔺)."
+    }
+  },
+  {
+    question: "Which of the following shapes has no corners? 🔵 🟩 🟥 🔲",
+    answer: "🔵",
+    choices: ["🔵", "🟩", "🟥", "🔲"],
+    feedback: {
+      correct: "Correct! A circle (🔵) has no corners.",
+      incorrect: "Not quite. A circle has no corners."
+    }
+  },
+  {
+    question: "Which of these shapes is a 2D shape? 🔶 🔺 🟩 🟦",
+    answer: "🔶",
+    choices: ["🔶", "🔺", "🟩", "🟦"],
+    feedback: {
+      correct: "Correct! A diamond (🔶) is a 2D shape.",
+      incorrect: "Not quite. A 2D shape has only length and width, like a diamond (🔶)."
+    }
+  },
+  {
+    question: "Which shape has 5 sides? 🟥 🔶 🟩 🟦",
+    answer: "🔶",
+    choices: ["🟥", "🔶", "🟩", "🟦"],
+    feedback: {
+      correct: "Correct! The shape with 5 sides is a pentagon (🔶).",
+      incorrect: "Not quite. A pentagon has 5 sides."
+    }
+  }
+];
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../K_Units.NY.html?unit5score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 4 - Measurement and Data    </title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+   
+   const questionsDatabase = [
+  {
+    question: "Which is longer? A pencil or an eraser?",
+    answer: "Pencil",
+    choices: ["Pencil", "Eraser", "Both are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! A pencil is longer than an eraser.",
+      incorrect: "Not quite. Think about the length of both objects."
+    }
+  },
+  {
+    question: "Which object weighs more? A ball or a feather?",
+    answer: "Ball",
+    choices: ["Ball", "Feather", "Both weigh the same", "I don't know"],
+    feedback: {
+      correct: "Correct! A ball is heavier than a feather.",
+      incorrect: "Not quite. A ball is much heavier than a feather."
+    }
+  },
+  {
+    question: "Which is the smallest object? A pencil, a book, or a coin?",
+    answer: "Coin",
+    choices: ["Pencil", "Book", "Coin", "I don't know"],
+    feedback: {
+      correct: "Correct! A coin is the smallest object.",
+      incorrect: "Not quite. Think about the size of each item."
+    }
+  },
+  {
+    question: "Which is taller? A chair or a table?",
+    answer: "Table",
+    choices: ["Chair", "Table", "Both are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! A table is taller than a chair.",
+      incorrect: "Not quite. Think about the height of both objects."
+    }
+  },
+  {
+    question: "How many days are there in one week?",
+    answer: "7",
+    choices: ["5", "6", "7", "8"],
+    feedback: {
+      correct: "Correct! There are 7 days in a week.",
+      incorrect: "Not quite. Remember, a week has 7 days."
+    }
+  },
+  {
+    question: "Which is longer? A piece of string that is 5 cm or 10 cm?",
+    answer: "10 cm",
+    choices: ["5 cm", "10 cm", "Both are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! 10 cm is longer than 5 cm.",
+      incorrect: "Not quite. Compare the lengths: 10 cm is longer."
+    }
+  },
+  {
+    question: "Which of these is an example of a 3D shape? A square, a cube, or a circle?",
+    answer: "Cube",
+    choices: ["Square", "Cube", "Circle", "I don't know"],
+    feedback: {
+      correct: "Correct! A cube is a 3D shape.",
+      incorrect: "Not quite. A cube is a three-dimensional shape."
+    }
+  },
+  {
+    question: "How many months are there in a year?",
+    answer: "12",
+    choices: ["10", "11", "12", "13"],
+    feedback: {
+      correct: "Correct! There are 12 months in a year.",
+      incorrect: "Not quite. A year has 12 months."
+    }
+  },
+  {
+    question: "Which is heavier? A rock or a feather?",
+    answer: "Rock",
+    choices: ["Rock", "Feather", "Both weigh the same", "I don't know"],
+    feedback: {
+      correct: "Correct! A rock is heavier than a feather.",
+      incorrect: "Not quite. Rocks are heavier than feathers."
+    }
+  },
+  {
+    question: "How many hours are in a day?",
+    answer: "24",
+    choices: ["12", "18", "24", "30"],
+    feedback: {
+      correct: "Correct! There are 24 hours in a day.",
+      incorrect: "Not quite. A day has 24 hours."
+    }
+  },
+  {
+    question: "Which is the longer time? A minute or an hour?",
+    answer: "Hour",
+    choices: ["Minute", "Hour", "Both are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! An hour is longer than a minute.",
+      incorrect: "Not quite. An hour is longer than a minute."
+    }
+  },
+  {
+    question: "Which is wider? A door or a pencil?",
+    answer: "Door",
+    choices: ["Pencil", "Door", "Both are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! A door is wider than a pencil.",
+      incorrect: "Not quite. Think about the width of both objects."
+    }
+  },
+  {
+    question: "Which object is heavier? A car or a toy car?",
+    answer: "Car",
+    choices: ["Car", "Toy car", "Both weigh the same", "I don't know"],
+    feedback: {
+      correct: "Correct! A car is heavier than a toy car.",
+      incorrect: "Not quite. A real car is much heavier than a toy car."
+    }
+  },
+  {
+    question: "How many minutes are there in an hour?",
+    answer: "60",
+    choices: ["30", "60", "90", "120"],
+    feedback: {
+      correct: "Correct! There are 60 minutes in an hour.",
+      incorrect: "Not quite. Remember, an hour has 60 minutes."
+    }
+  },
+  {
+    question: "Which is smaller? A marble or a basketball?",
+    answer: "Marble",
+    choices: ["Marble", "Basketball", "Both are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! A marble is smaller than a basketball.",
+      incorrect: "Not quite. A marble is smaller than a basketball."
+    }
+  },
+  {
+    question: "Which is taller? A pencil or a bottle?",
+    answer: "Bottle",
+    choices: ["Pencil", "Bottle", "Both are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! A bottle is taller than a pencil.",
+      incorrect: "Not quite. A bottle is taller than a pencil."
+    }
+  },
+  {
+    question: "How many weeks are in a year?",
+    answer: "52",
+    choices: ["50", "51", "52", "53"],
+    feedback: {
+      correct: "Correct! There are 52 weeks in a year.",
+      incorrect: "Not quite. A year has 52 weeks."
+    }
+  },
+  {
+    question: "Which is heavier? A bag of flour or a feather?",
+    answer: "Bag of flour",
+    choices: ["Bag of flour", "Feather", "Both weigh the same", "I don't know"],
+    feedback: {
+      correct: "Correct! A bag of flour is heavier than a feather.",
+      incorrect: "Not quite. A bag of flour weighs more than a feather."
+    }
+  },
+  {
+    question: "Which is longer? A giraffe or a rabbit?",
+    answer: "Giraffe",
+    choices: ["Giraffe", "Rabbit", "Both are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! A giraffe is longer than a rabbit.",
+      incorrect: "Not quite. A giraffe is much longer than a rabbit."
+    }
+  },
+  {
+    question: "What is the smallest unit of time? A minute, a second, or an hour?",
+    answer: "Second",
+    choices: ["Minute", "Second", "Hour", "Day"],
+    feedback: {
+      correct: "Correct! A second is the smallest unit of time.",
+      incorrect: "Not quite. A second is smaller than a minute or hour."
+    }
+  }
+];
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../K_Units.NY.html?unit4score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>
