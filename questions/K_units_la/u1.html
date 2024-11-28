@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1 - Counting and Cardinality</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ const questionsDatabase = [
+  {
+    question: "What comes after 4?",
+    answer: "5",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! 5 comes after 4.",
+      incorrect: "Not quite. Try counting from 1 to see what comes after 4."
+    }
+  },
+  {
+    question: "Which number comes before 8?",
+    answer: "7",
+    choices: ["6", "7", "8", "9"],
+    feedback: {
+      correct: "Correct! 7 comes before 8.",
+      incorrect: "Not quite. Think about counting backwards from 8."
+    }
+  },
+  {
+    question: "How many fingers do you have on one hand?",
+    answer: "5",
+    choices: ["4", "5", "6", "3"],
+    feedback: {
+      correct: "Correct! You have 5 fingers on one hand.",
+      incorrect: "Not quite. Try counting your fingers!"
+    }
+  },
+  {
+    question: "If you have 3 apples and you get 2 more, how many apples do you have?",
+    answer: "5",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! 3 apples plus 2 more gives you 5 apples.",
+      incorrect: "Not quite. Try counting the apples one by one."
+    }
+  },
+  {
+    question: "What number comes after 2?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! 3 comes right after 2.",
+      incorrect: "Not quite. Try counting to see which number follows 2."
+    }
+  },
+  {
+    question: "How many objects are in this set: 🍎 🍎 🍎?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! There are 3 apples.",
+      incorrect: "Not quite. Try counting the apples again."
+    }
+  },
+  {
+    question: "Which group has more objects: 5 apples or 4 apples?",
+    answer: "5 apples",
+    choices: ["5 apples", "4 apples", "Both are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! 5 apples is more than 4 apples.",
+      incorrect: "Not quite. Think about which number is larger."
+    }
+  },
+  {
+    question: "Which number is greater: 6 or 3?",
+    answer: "6",
+    choices: ["3", "6", "Both are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! 6 is greater than 3.",
+      incorrect: "Not quite. Compare the numbers to see which is larger."
+    }
+  },
+  {
+    question: "Which of these numbers is smaller: 4 or 7?",
+    answer: "4",
+    choices: ["4", "7", "Both are the same", "I don't know"],
+    feedback: {
+      correct: "Correct! 4 is smaller than 7.",
+      incorrect: "Not quite. Try comparing the two numbers."
+    }
+  },
+  {
+    question: "How many shapes are in this group: 🔵 🔵 🔵?",
+    answer: "3",
+    choices: ["1", "2", "3", "4"],
+    feedback: {
+      correct: "Correct! There are 3 shapes in the group.",
+      incorrect: "Not quite. Count the shapes carefully."
+    }
+  },
+  {
+    question: "Which number is the smallest: 8, 5, or 10?",
+    answer: "5",
+    choices: ["5", "8", "10", "All are the same"],
+    feedback: {
+      correct: "Correct! 5 is the smallest number.",
+      incorrect: "Not quite. Look at all the numbers to find the smallest one."
+    }
+  },
+  {
+    question: "How many sides does a triangle have?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! A triangle has 3 sides.",
+      incorrect: "Not quite. A triangle has 3 sides."
+    }
+  },
+  {
+    question: "Which shape has 4 straight sides?",
+    answer: "Square",
+    choices: ["Square", "Circle", "Triangle", "Rectangle"],
+    feedback: {
+      correct: "Correct! A square has 4 straight sides.",
+      incorrect: "Not quite. A square has 4 straight sides, unlike a circle."
+    }
+  },
+  {
+    question: "Which shape is round?",
+    answer: "Circle",
+    choices: ["Circle", "Square", "Triangle", "Rectangle"],
+    feedback: {
+      correct: "Correct! A circle is round.",
+      incorrect: "Not quite. A circle is round, unlike the square or triangle."
+    }
+  },
+  {
+    question: "Which of these shapes has 4 sides?",
+    answer: "Rectangle",
+    choices: ["Circle", "Square", "Rectangle", "Triangle"],
+    feedback: {
+      correct: "Correct! A rectangle has 4 sides.",
+      incorrect: "Not quite. A rectangle has 4 sides."
+    }
+  },
+  {
+    question: "Which shape is a cone?",
+    answer: "Cone",
+    choices: ["Cube", "Cone", "Cylinder", "Sphere"],
+    feedback: {
+      correct: "Correct! A cone has a pointed top.",
+      incorrect: "Not quite. A cone has a pointed top, unlike the cube or cylinder."
+    }
+  },
+  {
+    question: "Which shape has 6 corners?",
+    answer: "Hexagon",
+    choices: ["Pentagon", "Hexagon", "Octagon", "Triangle"],
+    feedback: {
+      correct: "Correct! A hexagon has 6 corners.",
+      incorrect: "Not quite. A hexagon has 6 corners."
+    }
+  },
+  {
+    question: "How many straight sides does a square have?",
+    answer: "4",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! A square has 4 straight sides.",
+      incorrect: "Not quite. A square has 4 straight sides."
+    }
+  },
+  {
+    question: "Which of these shapes is a 3D object?",
+    answer: "Sphere",
+    choices: ["Cube", "Cylinder", "Sphere", "Square"],
+    feedback: {
+      correct: "Correct! A sphere is a 3D object.",
+      incorrect: "Not quite. A sphere is a 3D object."
+    }
+  },
+  {
+    question: "How many corners does a circle have?",
+    answer: "0",
+    choices: ["1", "2", "3", "0"],
+    feedback: {
+      correct: "Correct! A circle has no corners.",
+      incorrect: "Not quite. A circle has no corners."
+    }
+  },
+  {
+    question: "Which shape has 5 corners?",
+    answer: "Pentagon",
+    choices: ["Square", "Pentagon", "Triangle", "Circle"],
+    feedback: {
+      correct: "Correct! A pentagon has 5 corners.",
+      incorrect: "Not quite. A pentagon has 5 corners."
+    }
+  }
+];
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../K_Units.LA.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

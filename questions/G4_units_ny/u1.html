@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1 - Operations and Algebraic Thinking</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+
+const questionsDatabase = [
+  {
+    question: "What is 589 + 342?",
+    answer: "931",
+    choices: ["931", "912", "933", "932"],
+    feedback: {
+      correct: "Correct! 589 + 342 equals 931.",
+      incorrect: "Not quite. Try adding 589 and 342 again."
+    }
+  },
+  {
+    question: "What is 634 - 215?",
+    answer: "419",
+    choices: ["419", "423", "405", "432"],
+    feedback: {
+      correct: "Correct! 634 - 215 equals 419.",
+      incorrect: "Not quite. Try subtracting 215 from 634 again."
+    }
+  },
+  {
+    question: "What is 48 x 6?",
+    answer: "288",
+    choices: ["288", "296", "284", "278"],
+    feedback: {
+      correct: "Correct! 48 x 6 equals 288.",
+      incorrect: "Not quite. Try multiplying 48 by 6 again."
+    }
+  },
+  {
+    question: "What is 144 ÷ 12?",
+    answer: "12",
+    choices: ["12", "10", "11", "13"],
+    feedback: {
+      correct: "Correct! 144 ÷ 12 equals 12.",
+      incorrect: "Not quite. Try dividing 144 by 12 again."
+    }
+  },
+  {
+    question: "If you have 3 bags with 12 apples in each, how many apples do you have in total?",
+    answer: "36",
+    choices: ["36", "34", "32", "30"],
+    feedback: {
+      correct: "Correct! 3 bags with 12 apples in each give you a total of 36 apples.",
+      incorrect: "Not quite. Multiply 3 by 12 to find the total."
+    }
+  },
+  {
+    question: "What is the sum of 289 and 742?",
+    answer: "1031",
+    choices: ["1031", "1011", "1021", "1001"],
+    feedback: {
+      correct: "Correct! 289 + 742 equals 1031.",
+      incorrect: "Not quite. Try adding 289 and 742 again."
+    }
+  },
+  {
+    question: "You have 450 marbles. You give away 175. How many marbles do you have left?",
+    answer: "275",
+    choices: ["275", "300", "250", "280"],
+    feedback: {
+      correct: "Correct! 450 - 175 equals 275.",
+      incorrect: "Not quite. Subtract 175 from 450 to find the remaining marbles."
+    }
+  },
+  {
+    question: "What is 120 x 3?",
+    answer: "360",
+    choices: ["360", "340", "330", "350"],
+    feedback: {
+      correct: "Correct! 120 x 3 equals 360.",
+      incorrect: "Not quite. Try multiplying 120 by 3 again."
+    }
+  },
+  {
+    question: "A rectangle has a length of 8 cm and a width of 5 cm. What is its perimeter?",
+    answer: "26 cm",
+    choices: ["26 cm", "30 cm", "25 cm", "28 cm"],
+    feedback: {
+      correct: "Correct! The perimeter of the rectangle is 26 cm.",
+      incorrect: "Not quite. Remember, perimeter is calculated by adding all sides together."
+    }
+  },
+  {
+    question: "Which is the correct equation for adding 349 and 217?",
+    answer: "349 + 217 = 566",
+    choices: ["349 + 217 = 566", "349 + 217 = 576", "349 + 217 = 586", "349 + 217 = 560"],
+    feedback: {
+      correct: "Correct! 349 + 217 equals 566.",
+      incorrect: "Not quite. Try adding 349 and 217 again."
+    }
+  },
+  {
+    question: "What is the product of 15 and 9?",
+    answer: "135",
+    choices: ["135", "125", "145", "140"],
+    feedback: {
+      correct: "Correct! 15 x 9 equals 135.",
+      incorrect: "Not quite. Try multiplying 15 by 9 again."
+    }
+  },
+  {
+    question: "What is 500 ÷ 25?",
+    answer: "20",
+    choices: ["20", "25", "30", "35"],
+    feedback: {
+      correct: "Correct! 500 ÷ 25 equals 20.",
+      incorrect: "Not quite. Try dividing 500 by 25 again."
+    }
+  },
+  {
+    question: "What is the difference between 900 and 470?",
+    answer: "430",
+    choices: ["430", "420", "440", "450"],
+    feedback: {
+      correct: "Correct! 900 - 470 equals 430.",
+      incorrect: "Not quite. Subtract 470 from 900 to find the difference."
+    }
+  },
+  {
+    question: "If you have 12 baskets with 8 apples in each basket, how many apples do you have in total?",
+    answer: "96",
+    choices: ["96", "98", "92", "90"],
+    feedback: {
+      correct: "Correct! 12 baskets with 8 apples each give you a total of 96 apples.",
+      incorrect: "Not quite. Multiply 12 by 8 to find the total number of apples."
+    }
+  },
+  {
+    question: "What is 432 + 278?",
+    answer: "710",
+    choices: ["710", "700", "720", "730"],
+    feedback: {
+      correct: "Correct! 432 + 278 equals 710.",
+      incorrect: "Not quite. Try adding 432 and 278 again."
+    }
+  },
+  {
+    question: "What is 640 ÷ 8?",
+    answer: "80",
+    choices: ["80", "90", "85", "70"],
+    feedback: {
+      correct: "Correct! 640 ÷ 8 equals 80.",
+      incorrect: "Not quite. Try dividing 640 by 8 again."
+    }
+  },
+  {
+    question: "A rectangle has a length of 10 cm and a width of 6 cm. What is its area?",
+    answer: "60 cm²",
+    choices: ["60 cm²", "56 cm²", "64 cm²", "70 cm²"],
+    feedback: {
+      correct: "Correct! The area of the rectangle is 60 cm².",
+      incorrect: "Not quite. The area is length x width, so 10 x 6 = 60."
+    }
+  },
+  {
+    question: "What is the product of 11 and 11?",
+    answer: "121",
+    choices: ["121", "112", "115", "110"],
+    feedback: {
+      correct: "Correct! 11 x 11 equals 121.",
+      incorrect: "Not quite. Try multiplying 11 by 11 again."
+    }
+  },
+  {
+    question: "Which of these is the sum of 458 and 167?",
+    answer: "625",
+    choices: ["625", "620", "615", "630"],
+    feedback: {
+      correct: "Correct! 458 + 167 equals 625.",
+      incorrect: "Not quite. Try adding 458 and 167 again."
+    }
+  },
+  {
+    question: "What is the quotient of 256 ÷ 16?",
+    answer: "16",
+    choices: ["16", "15", "17", "14"],
+    feedback: {
+      correct: "Correct! 256 ÷ 16 equals 16.",
+      incorrect: "Not quite. Try dividing 256 by 16 again."
+    }
+  },
+  {
+    question: "What is 670 - 435?",
+    answer: "235",
+    choices: ["235", "230", "240", "225"],
+    feedback: {
+      correct: "Correct! 670 - 435 equals 235.",
+      incorrect: "Not quite. Try subtracting 435 from 670 again."
+    }
+  },
+  {
+    question: "If a book costs $15 and you buy 4 books, how much will you pay in total?",
+    answer: "$60",
+    choices: ["$60", "$55", "$65", "$70"],
+    feedback: {
+      correct: "Correct! 4 books at $15 each cost $60.",
+      incorrect: "Not quite. Multiply 15 by 4 to find the total."
+    }
+  },
+  {
+    question: "What is 825 ÷ 5?",
+    answer: "165",
+    choices: ["165", "160", "170", "175"],
+    feedback: {
+      correct: "Correct! 825 ÷ 5 equals 165.",
+      incorrect: "Not quite. Try dividing 825 by 5 again."
+    }
+  }
+];
+
+  
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_Units.NY.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

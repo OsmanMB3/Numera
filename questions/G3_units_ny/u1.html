@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1 - Operations and Algebraic Thinking</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+
+const questionsDatabase = [
+  {
+    question: "What is 6 × 8?",
+    answer: "48",
+    choices: ["48", "42", "38", "50"],
+    feedback: {
+      correct: "Correct! 6 × 8 = 48.",
+      incorrect: "Not quite. Try multiplying 6 by 8."
+    }
+  },
+  {
+    question: "If you have 9 boxes with 7 apples in each, how many apples do you have in total?",
+    answer: "63",
+    choices: ["63", "72", "56", "49"],
+    feedback: {
+      correct: "Correct! 9 boxes with 7 apples in each gives you 9 × 7 = 63 apples.",
+      incorrect: "Not quite. Multiply 9 by 7 to find the total."
+    }
+  },
+  {
+    question: "What is 56 ÷ 7?",
+    answer: "8",
+    choices: ["8", "7", "9", "6"],
+    feedback: {
+      correct: "Correct! 56 ÷ 7 = 8.",
+      incorrect: "Not quite. Try dividing 56 by 7."
+    }
+  },
+  {
+    question: "Which number sentence shows the relationship between multiplication and division?",
+    answer: "8 × 5 = 40 and 40 ÷ 5 = 8",
+    choices: ["8 × 5 = 40 and 40 ÷ 5 = 8", "7 × 4 = 28 and 28 ÷ 7 = 4", "5 × 6 = 30 and 30 ÷ 5 = 6", "9 × 3 = 27 and 27 ÷ 3 = 9"],
+    feedback: {
+      correct: "Correct! 8 × 5 = 40, and 40 ÷ 5 = 8.",
+      incorrect: "Not quite. This shows how multiplication and division are related."
+    }
+  },
+  {
+    question: "What is the sum of 24 and 39?",
+    answer: "63",
+    choices: ["63", "60", "70", "50"],
+    feedback: {
+      correct: "Correct! 24 + 39 = 63.",
+      incorrect: "Not quite. Add 24 and 39 together."
+    }
+  },
+  {
+    question: "What is 72 ÷ 9?",
+    answer: "8",
+    choices: ["7", "8", "9", "6"],
+    feedback: {
+      correct: "Correct! 72 ÷ 9 = 8.",
+      incorrect: "Not quite. Try dividing 72 by 9."
+    }
+  },
+  {
+    question: "If you have 8 packs of stickers, and each pack contains 6 stickers, how many stickers do you have?",
+    answer: "48",
+    choices: ["48", "40", "52", "44"],
+    feedback: {
+      correct: "Correct! 8 packs of 6 stickers gives you 8 × 6 = 48 stickers.",
+      incorrect: "Not quite. Multiply 8 by 6 to get the total number of stickers."
+    }
+  },
+  {
+    question: "Which of these shows the correct multiplication fact for 3 groups of 10?",
+    answer: "3 × 10 = 30",
+    choices: ["3 × 10 = 30", "10 × 3 = 30", "30 ÷ 3 = 10", "3 + 10 = 13"],
+    feedback: {
+      correct: "Correct! 3 × 10 = 30.",
+      incorrect: "Not quite. Try multiplying 3 by 10."
+    }
+  },
+  {
+    question: "What is 15 × 2?",
+    answer: "30",
+    choices: ["30", "32", "28", "35"],
+    feedback: {
+      correct: "Correct! 15 × 2 = 30.",
+      incorrect: "Not quite. Try multiplying 15 by 2."
+    }
+  },
+  {
+    question: "Which of these number sentences is true?",
+    answer: "9 × 4 = 36",
+    choices: ["9 × 4 = 36", "8 × 5 = 38", "7 × 6 = 42", "6 × 6 = 35"],
+    feedback: {
+      correct: "Correct! 9 × 4 = 36.",
+      incorrect: "Not quite. Check the multiplication facts carefully."
+    }
+  },
+  {
+    question: "How many groups of 6 are in 54?",
+    answer: "9",
+    choices: ["9", "10", "8", "7"],
+    feedback: {
+      correct: "Correct! 54 ÷ 6 = 9 groups.",
+      incorrect: "Not quite. Try dividing 54 by 6."
+    }
+  },
+  {
+    question: "What is the product of 5 × 6?",
+    answer: "30",
+    choices: ["30", "35", "36", "40"],
+    feedback: {
+      correct: "Correct! 5 × 6 = 30.",
+      incorrect: "Not quite. Multiply 5 by 6."
+    }
+  },
+  {
+    question: "What is the difference between 60 and 19?",
+    answer: "41",
+    choices: ["41", "39", "45", "43"],
+    feedback: {
+      correct: "Correct! 60 - 19 = 41.",
+      incorrect: "Not quite. Try subtracting 19 from 60."
+    }
+  },
+  {
+    question: "How many tens are in 450?",
+    answer: "45",
+    choices: ["45", "40", "50", "55"],
+    feedback: {
+      correct: "Correct! 450 has 45 tens.",
+      incorrect: "Not quite. Divide 450 by 10 to find the number of tens."
+    }
+  },
+  {
+    question: "What is 40 + 56?",
+    answer: "96",
+    choices: ["96", "92", "90", "100"],
+    feedback: {
+      correct: "Correct! 40 + 56 = 96.",
+      incorrect: "Not quite. Add 40 and 56 together."
+    }
+  },
+  {
+    question: "Which number sentence represents a relationship between multiplication and division?",
+    answer: "12 ÷ 4 = 3, and 4 × 3 = 12",
+    choices: ["12 ÷ 4 = 3, and 4 × 3 = 12", "6 × 3 = 18, and 18 ÷ 6 = 2", "7 × 2 = 14, and 14 ÷ 7 = 3", "9 × 2 = 18, and 18 ÷ 3 = 6"],
+    feedback: {
+      correct: "Correct! These equations show the relationship between multiplication and division.",
+      incorrect: "Not quite. This shows how multiplication and division are related."
+    }
+  },
+  {
+    question: "How much is 27 + 38?",
+    answer: "65",
+    choices: ["65", "66", "60", "55"],
+    feedback: {
+      correct: "Correct! 27 + 38 = 65.",
+      incorrect: "Not quite. Add 27 and 38 together."
+    }
+  },
+  {
+    question: "What is 100 ÷ 4?",
+    answer: "25",
+    choices: ["25", "30", "35", "40"],
+    feedback: {
+      correct: "Correct! 100 ÷ 4 = 25.",
+      incorrect: "Not quite. Try dividing 100 by 4."
+    }
+  },
+  {
+    question: "Which equation shows how multiplication and division are connected?",
+    answer: "5 × 6 = 30 and 30 ÷ 5 = 6",
+    choices: ["5 × 6 = 30 and 30 ÷ 5 = 6", "6 × 5 = 30 and 30 ÷ 6 = 5", "7 × 4 = 28 and 28 ÷ 7 = 4", "4 × 7 = 28 and 28 ÷ 7 = 4"],
+    feedback: {
+      correct: "Correct! These equations show how multiplication and division are related.",
+      incorrect: "Not quite. Look at how multiplication and division are connected."
+    }
+  },
+  {
+    question: "What is the sum of 23, 15, and 32?",
+    answer: "70",
+    choices: ["70", "75", "80", "72"],
+    feedback: {
+      correct: "Correct! 23 + 15 + 32 = 70.",
+      incorrect: "Not quite. Add 23, 15, and 32 together."
+    }
+  }
+];
+
+  
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G3_Units.NY.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Number and Operations in Base Ten</title>
+    <link rel="stylesheet" href="../styles.css" />
+  </head>
+  <body>
+    <div class="question-container">
+      <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+      </div>
+      <div class="score-display">Score: <span id="score">0</span>/20</div>
+      <div class="question-box">
+        <h3>Question <span id="question-number">1</span>/20:</h3>
+        <p id="question-text">Loading question...</p>
+        <div id="answer-options-container"></div>
+      </div>
+    </div>
+
+    <div id="feedback-modal" class="feedback-modal">
+      <h2 id="feedback-title"></h2>
+      <p id="feedback-message"></p>
+      <button
+        class="choice-button"
+        id="continue-button"
+        onclick="closeFeedback()"
+      >
+        Continue
+      </button>
+    </div>
+    <script>
+      const questionsDatabase = [
+        {
+          question: "What is the place value of the digit 6 in the number 567?",
+          answer: "Tens",
+          choices: ["Tens", "Hundreds", "Ones", "Thousands"],
+          feedback: {
+            correct: "Correct! The digit 6 is in the tens place.",
+            incorrect: "Not quite. The digit 6 is in the tens place in 567.",
+          },
+        },
+        {
+          question: "What is the value of the digit 4 in the number 423?",
+          answer: "40",
+          choices: ["4", "40", "400", "4,000"],
+          feedback: {
+            correct: "Correct! The value of the digit 4 is 40.",
+            incorrect:
+              "Not quite. The digit 4 represents 40 in the number 423.",
+          },
+        },
+        {
+          question: "Round 758 to the nearest ten.",
+          answer: "760",
+          choices: ["750", "760", "770", "800"],
+          feedback: {
+            correct: "Correct! 758 rounded to the nearest ten is 760.",
+            incorrect: "Not quite. Try rounding 758 to the nearest ten.",
+          },
+        },
+        {
+          question: "Which number is greater: 347 or 374?",
+          answer: "374",
+          choices: ["347", "374", "They are equal", "None of the above"],
+          feedback: {
+            correct: "Correct! 374 is greater than 347.",
+            incorrect: "Not quite. 374 is greater than 347.",
+          },
+        },
+        {
+          question: "What is 498 plus 32?",
+          answer: "530",
+          choices: ["530", "512", "528", "510"],
+          feedback: {
+            correct: "Correct! 498 plus 32 equals 530.",
+            incorrect: "Not quite. Try adding 498 and 32 together.",
+          },
+        },
+        {
+          question: "What is 100 less than 647?",
+          answer: "547",
+          choices: ["537", "547", "557", "557"],
+          feedback: {
+            correct: "Correct! 100 less than 647 is 547.",
+            incorrect: "Not quite. Try subtracting 100 from 647.",
+          },
+        },
+        {
+          question: "Which of these numbers is the smallest: 903, 678, or 756?",
+          answer: "678",
+          choices: ["903", "678", "756", "None of the above"],
+          feedback: {
+            correct: "Correct! 678 is the smallest number.",
+            incorrect: "Not quite. 678 is the smallest number of the three.",
+          },
+        },
+        {
+          question: "What is the value of the digit 3 in the number 3,462?",
+          answer: "Three thousand",
+          choices: [
+            "Three",
+            "Three hundred",
+            "Three thousand",
+            "Three thousand four hundred",
+          ],
+          feedback: {
+            correct: "Correct! The digit 3 represents three thousand.",
+            incorrect:
+              "Not quite. The digit 3 represents three thousand in 3,462.",
+          },
+        },
+        {
+          question: "What is 6 times 10?",
+          answer: "60",
+          choices: ["60", "600", "6", "100"],
+          feedback: {
+            correct: "Correct! 6 times 10 equals 60.",
+            incorrect: "Not quite. Try multiplying 6 by 10.",
+          },
+        },
+        {
+          question: "Round 482 to the nearest hundred.",
+          answer: "500",
+          choices: ["400", "500", "600", "450"],
+          feedback: {
+            correct: "Correct! 482 rounded to the nearest hundred is 500.",
+            incorrect: "Not quite. Try rounding 482 to the nearest hundred.",
+          },
+        },
+        {
+          question:
+            "What is the place value of the digit 9 in the number 9,218?",
+          answer: "Thousands",
+          choices: ["Thousands", "Hundreds", "Tens", "Ones"],
+          feedback: {
+            correct: "Correct! The digit 9 is in the thousands place.",
+            incorrect:
+              "Not quite. The digit 9 is in the thousands place in 9,218.",
+          },
+        },
+        {
+          question: "What is 456 minus 89?",
+          answer: "367",
+          choices: ["367", "375", "368", "359"],
+          feedback: {
+            correct: "Correct! 456 minus 89 equals 367.",
+            incorrect: "Not quite. Try subtracting 89 from 456.",
+          },
+        },
+        {
+          question: "What is the value of 70 in the number 3,712?",
+          answer: "Seventy",
+          choices: ["Ten", "Seventy", "Seven hundred", "Seven"],
+          feedback: {
+            correct: "Correct! The value of 70 is seventy in 3,712.",
+            incorrect: "Not quite. The value of 70 is seventy in 3,712.",
+          },
+        },
+        {
+          question: "What is 234 plus 112?",
+          answer: "346",
+          choices: ["346", "344", "356", "330"],
+          feedback: {
+            correct: "Correct! 234 plus 112 equals 346.",
+            incorrect: "Not quite. Try adding 234 and 112 together.",
+          },
+        },
+        {
+          question: "What is the difference between 625 and 275?",
+          answer: "350",
+          choices: ["350", "375", "300", "500"],
+          feedback: {
+            correct: "Correct! 625 minus 275 equals 350.",
+            incorrect: "Not quite. Try subtracting 275 from 625.",
+          },
+        },
+        {
+          question: "What is the sum of 88 and 59?",
+          answer: "147",
+          choices: ["147", "148", "149", "150"],
+          feedback: {
+            correct: "Correct! 88 plus 59 equals 147.",
+            incorrect: "Not quite. Try adding 88 and 59 together.",
+          },
+        },
+        {
+          question:
+            "Which of these numbers is rounded to the nearest hundred: 367, 425, 485?",
+          answer: "400",
+          choices: ["300", "400", "500", "450"],
+          feedback: {
+            correct: "Correct! 425 rounded to the nearest hundred is 400.",
+            incorrect: "Not quite. Try rounding 425 to the nearest hundred.",
+          },
+        },
+        {
+          question: "What is the result of 900 divided by 3?",
+          answer: "300",
+          choices: ["300", "350", "250", "200"],
+          feedback: {
+            correct: "Correct! 900 divided by 3 equals 300.",
+            incorrect: "Not quite. Try dividing 900 by 3.",
+          },
+        },
+        {
+          question: "What is the value of the digit 3 in 3,782?",
+          answer: "Three thousand",
+          choices: ["Three", "Thirty", "Three hundred", "Three thousand"],
+          feedback: {
+            correct:
+              "Correct! The value of the digit 3 in 3,782 is three thousand.",
+            incorrect: "Not quite. The value of 3 is three thousand.",
+          },
+        },
+        {
+          question: "What is 100 more than 576?",
+          answer: "676",
+          choices: ["679", "657", "676", "699"],
+          feedback: {
+            correct: "Correct! 100 more than 435 is 535.",
+            incorrect: "Not quite. Try adding 100 to 435.",
+          },
+        }
+      ];
+
+      let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G3_Units.LA.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

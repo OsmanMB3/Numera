@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Measurement and Data</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ const questionsDatabase = [
+  {
+    question: "Which unit of measurement is used to measure length?",
+    answer: "Inches",
+    choices: ["Inches", "Pounds", "Ounces", "Liters"],
+    feedback: {
+      correct: "Correct! Inches are used to measure length.",
+      incorrect: "Not quite. Inches are used to measure length."
+    }
+  },
+  {
+    question: "How many feet are in 3 yards?",
+    answer: "9",
+    choices: ["6", "8", "9", "12"],
+    feedback: {
+      correct: "Correct! There are 9 feet in 3 yards.",
+      incorrect: "Not quite. 1 yard equals 3 feet, so 3 yards equal 9 feet."
+    }
+  },
+  {
+    question: "Which of these is the best unit to measure the length of a pencil?",
+    answer: "Inches",
+    choices: ["Inches", "Feet", "Yards", "Miles"],
+    feedback: {
+      correct: "Correct! Inches are the best unit to measure the length of a pencil.",
+      incorrect: "Not quite. A pencil is short, so we use inches."
+    }
+  },
+  {
+    question: "Which unit would you use to measure the weight of an apple?",
+    answer: "Pounds",
+    choices: ["Ounces", "Pounds", "Liters", "Yards"],
+    feedback: {
+      correct: "Correct! Pounds are used to measure weight.",
+      incorrect: "Not quite. Pounds are the best unit to measure weight."
+    }
+  },
+  {
+    question: "Which of the following is the shortest length?",
+    answer: "4 inches",
+    choices: ["4 inches", "1 foot", "2 yards", "3 feet"],
+    feedback: {
+      correct: "Correct! 4 inches is shorter than 1 foot or 2 yards.",
+      incorrect: "Not quite. 4 inches is shorter than the other options."
+    }
+  },
+  {
+    question: "If you have 3 feet, how many inches do you have?",
+    answer: "36",
+    choices: ["30", "35", "36", "40"],
+    feedback: {
+      correct: "Correct! 1 foot equals 12 inches, so 3 feet equals 36 inches.",
+      incorrect: "Not quite. Remember, 1 foot equals 12 inches."
+    }
+  },
+  {
+    question: "Which of these is a way to measure the temperature of water?",
+    answer: "Degrees Fahrenheit",
+    choices: ["Miles", "Inches", "Degrees Fahrenheit", "Cups"],
+    feedback: {
+      correct: "Correct! Temperature is measured in degrees Fahrenheit or Celsius.",
+      incorrect: "Not quite. Temperature is measured in degrees."
+    }
+  },
+  {
+    question: "If you have 50 cents and buy a toy for 30 cents, how much change do you get?",
+    answer: "20 cents",
+    choices: ["10 cents", "15 cents", "20 cents", "25 cents"],
+    feedback: {
+      correct: "Correct! 50 cents minus 30 cents leaves you with 20 cents.",
+      incorrect: "Not quite. Subtract 30 from 50 to find the change."
+    }
+  },
+  {
+    question: "If a clock shows 3:00, what time is it?",
+    answer: "3:00",
+    choices: ["2:00", "3:00", "4:00", "5:00"],
+    feedback: {
+      correct: "Correct! The time is 3:00.",
+      incorrect: "Not quite. Look at the hour hand pointing to 3."
+    }
+  },
+  {
+    question: "Which of these units would you use to measure the volume of water in a bottle?",
+    answer: "Liters",
+    choices: ["Liters", "Pounds", "Miles", "Inches"],
+    feedback: {
+      correct: "Correct! Liters are used to measure the volume of liquids.",
+      incorrect: "Not quite. Liters are the standard unit for measuring liquids."
+    }
+  },
+  {
+    question: "If you have 5 dimes, how much money do you have?",
+    answer: "50 cents",
+    choices: ["45 cents", "50 cents", "55 cents", "60 cents"],
+    feedback: {
+      correct: "Correct! 5 dimes is worth 50 cents.",
+      incorrect: "Not quite. 1 dime equals 10 cents."
+    }
+  },
+  {
+    question: "Which is the correct way to write 7 hours and 30 minutes?",
+    answer: "7:30",
+    choices: ["7:30", "7:70", "7:00", "8:30"],
+    feedback: {
+      correct: "Correct! 7 hours and 30 minutes is written as 7:30.",
+      incorrect: "Not quite. 7:30 is the correct way to write this time."
+    }
+  },
+  {
+    question: "If a pencil costs 10 cents and you buy 3 pencils, how much will you pay?",
+    answer: "30 cents",
+    choices: ["20 cents", "25 cents", "30 cents", "35 cents"],
+    feedback: {
+      correct: "Correct! 10 cents times 3 equals 30 cents.",
+      incorrect: "Not quite. Try multiplying 10 cents by 3."
+    }
+  },
+  {
+    question: "What is the next time after 5:00?",
+    answer: "5:30",
+    choices: ["5:15", "5:30", "6:00", "5:45"],
+    feedback: {
+      correct: "Correct! The next time after 5:00 is 5:30.",
+      incorrect: "Not quite. 30 minutes after 5:00 is 5:30."
+    }
+  },
+  {
+    question: "What is the unit used to measure the length of a table?",
+    answer: "Inches",
+    choices: ["Inches", "Pounds", "Cups", "Ounces"],
+    feedback: {
+      correct: "Correct! Inches are used to measure length.",
+      incorrect: "Not quite. Use inches to measure length."
+    }
+  },
+  {
+    question: "If you have 3 quarters, how much money do you have?",
+    answer: "75 cents",
+    choices: ["50 cents", "60 cents", "75 cents", "100 cents"],
+    feedback: {
+      correct: "Correct! 3 quarters equals 75 cents.",
+      incorrect: "Not quite. A quarter is worth 25 cents."
+    }
+  },
+  {
+    question: "Which shape has 4 sides of equal length?",
+    answer: "Square",
+    choices: ["Square", "Rectangle", "Circle", "Triangle"],
+    feedback: {
+      correct: "Correct! A square has 4 equal sides.",
+      incorrect: "Not quite. A square has 4 equal sides, unlike the other shapes."
+    }
+  },
+  {
+    question: "Which of the following shows 1/4 of a dollar?",
+    answer: "25 cents",
+    choices: ["10 cents", "25 cents", "50 cents", "75 cents"],
+    feedback: {
+      correct: "Correct! 1/4 of a dollar is 25 cents.",
+      incorrect: "Not quite. 1/4 of a dollar is equal to 25 cents."
+    }
+  },
+  {
+    question: "How many minutes are in 1 hour?",
+    answer: "60 minutes",
+    choices: ["30 minutes", "60 minutes", "120 minutes", "100 minutes"],
+    feedback: {
+      correct: "Correct! There are 60 minutes in 1 hour.",
+      incorrect: "Not quite. There are 60 minutes in 1 hour."
+    }
+  }
+];
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G2_Units.NY.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

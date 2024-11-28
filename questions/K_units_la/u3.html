@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Number and Operations in Base Ten</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ const questionsDatabase = [
+  {
+    question: "What is the number after 12?",
+    answer: "13",
+    choices: ["12", "13", "14", "15"],
+    feedback: {
+      correct: "Correct! The number after 12 is 13.",
+      incorrect: "Not quite. The number after 12 is 13."
+    }
+  },
+  {
+    question: "What is the number before 20?",
+    answer: "19",
+    choices: ["18", "19", "20", "21"],
+    feedback: {
+      correct: "Correct! The number before 20 is 19.",
+      incorrect: "Not quite. The number before 20 is 19."
+    }
+  },
+  {
+    question: "How many tens are in 30?",
+    answer: "3 tens",
+    choices: ["1 ten", "2 tens", "3 tens", "4 tens"],
+    feedback: {
+      correct: "Correct! There are 3 tens in 30.",
+      incorrect: "Not quite. 30 can be broken down into 3 tens."
+    }
+  },
+  {
+    question: "What number is represented by 4 tens and 2 ones?",
+    answer: "42",
+    choices: ["42", "24", "4", "2"],
+    feedback: {
+      correct: "Correct! 4 tens and 2 ones represent 42.",
+      incorrect: "Not quite. 4 tens and 2 ones make 42."
+    }
+  },
+  {
+    question: "What is the number represented by 5 tens and 7 ones?",
+    answer: "57",
+    choices: ["57", "75", "52", "50"],
+    feedback: {
+      correct: "Correct! 5 tens and 7 ones represent 57.",
+      incorrect: "Not quite. 5 tens and 7 ones make 57."
+    }
+  },
+  {
+    question: "Which number is written as 'eleven'?",
+    answer: "11",
+    choices: ["11", "10", "12", "13"],
+    feedback: {
+      correct: "Correct! 'Eleven' is the number 11.",
+      incorrect: "Not quite. 'Eleven' represents the number 11."
+    }
+  },
+  {
+    question: "How many ones are in the number 45?",
+    answer: "5 ones",
+    choices: ["4 ones", "5 ones", "6 ones", "10 ones"],
+    feedback: {
+      correct: "Correct! The number 45 has 5 ones.",
+      incorrect: "Not quite. The number 45 has 5 ones."
+    }
+  },
+  {
+    question: "What is 9 tens and 3 ones written as a number?",
+    answer: "93",
+    choices: ["93", "39", "33", "9"],
+    feedback: {
+      correct: "Correct! 9 tens and 3 ones is 93.",
+      incorrect: "Not quite. 9 tens and 3 ones make 93."
+    }
+  },
+  {
+    question: "Which number comes after 49?",
+    answer: "50",
+    choices: ["49", "50", "51", "52"],
+    feedback: {
+      correct: "Correct! The number after 49 is 50.",
+      incorrect: "Not quite. The number after 49 is 50."
+    }
+  },
+  {
+    question: "What is the number that comes before 100?",
+    answer: "99",
+    choices: ["99", "100", "98", "97"],
+    feedback: {
+      correct: "Correct! The number before 100 is 99.",
+      incorrect: "Not quite. The number before 100 is 99."
+    }
+  },
+  {
+    question: "How many tens are in 80?",
+    answer: "8 tens",
+    choices: ["6 tens", "7 tens", "8 tens", "9 tens"],
+    feedback: {
+      correct: "Correct! There are 8 tens in 80.",
+      incorrect: "Not quite. 80 can be broken down into 8 tens."
+    }
+  },
+  {
+    question: "What number comes after 19?",
+    answer: "20",
+    choices: ["18", "19", "20", "21"],
+    feedback: {
+      correct: "Correct! The number after 19 is 20.",
+      incorrect: "Not quite. The number after 19 is 20."
+    }
+  },
+  {
+    question: "Which number is represented by 2 tens and 9 ones?",
+    answer: "29",
+    choices: ["29", "92", "25", "20"],
+    feedback: {
+      correct: "Correct! 2 tens and 9 ones represent 29.",
+      incorrect: "Not quite. 2 tens and 9 ones make 29."
+    }
+  },
+  {
+    question: "What number is written as 'seventeen'?",
+    answer: "17",
+    choices: ["17", "16", "18", "19"],
+    feedback: {
+      correct: "Correct! 'Seventeen' is the number 17.",
+      incorrect: "Not quite. 'Seventeen' represents the number 17."
+    }
+  },
+  {
+    question: "What number is represented by 6 tens and 5 ones?",
+    answer: "65",
+    choices: ["65", "56", "66", "60"],
+    feedback: {
+      correct: "Correct! 6 tens and 5 ones represent 65.",
+      incorrect: "Not quite. 6 tens and 5 ones make 65."
+    }
+  },
+  {
+    question: "Which number comes after 72?",
+    answer: "73",
+    choices: ["72", "73", "74", "75"],
+    feedback: {
+      correct: "Correct! The number after 72 is 73.",
+      incorrect: "Not quite. The number after 72 is 73."
+    }
+  },
+  {
+    question: "How many tens are in 55?",
+    answer: "5 tens",
+    choices: ["5 tens", "4 tens", "6 tens", "7 tens"],
+    feedback: {
+      correct: "Correct! There are 5 tens in 55.",
+      incorrect: "Not quite. 55 can be broken down into 5 tens."
+    }
+  },
+  {
+    question: "What is the number represented by 3 tens and 4 ones?",
+    answer: "34",
+    choices: ["34", "43", "44", "40"],
+    feedback: {
+      correct: "Correct! 3 tens and 4 ones make 34.",
+      incorrect: "Not quite. 3 tens and 4 ones represent 34."
+    }
+  },
+  {
+    question: "What is 8 tens and 2 ones written as a number?",
+    answer: "82",
+    choices: ["82", "28", "83", "80"],
+    feedback: {
+      correct: "Correct! 8 tens and 2 ones is 82.",
+      incorrect: "Not quite. 8 tens and 2 ones make 82."
+    }
+  },
+  {
+    question: "Which number comes before 80?",
+    answer: "79",
+    choices: ["80", "79", "81", "78"],
+    feedback: {
+      correct: "Correct! The number before 80 is 79.",
+      incorrect: "Not quite. The number before 80 is 79."
+    }
+  }
+];
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../K_Units.LA.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

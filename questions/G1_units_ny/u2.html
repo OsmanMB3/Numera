@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Number and Operations in Base Ten</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+      const questionsDatabase = [
+  {
+    question: "What is the number that comes after 29?",
+    answer: "30",
+    choices: ["29", "30", "31", "32"],
+    feedback: {
+      correct: "Correct! 30 comes after 29.",
+      incorrect: "Not quite. The number that comes after 29 is 30."
+    }
+  },
+  {
+    question: "What is the number that comes before 17?",
+    answer: "16",
+    choices: ["15", "16", "17", "18"],
+    feedback: {
+      correct: "Correct! 16 comes before 17.",
+      incorrect: "Not quite. The number that comes before 17 is 16."
+    }
+  },
+  {
+    question: "What is 10 more than 15?",
+    answer: "25",
+    choices: ["20", "25", "30", "35"],
+    feedback: {
+      correct: "Correct! 10 more than 15 is 25.",
+      incorrect: "Not quite. Add 10 to 15 to get 25."
+    }
+  },
+  {
+    question: "What is 10 less than 18?",
+    answer: "8",
+    choices: ["7", "8", "9", "10"],
+    feedback: {
+      correct: "Correct! 10 less than 18 is 8.",
+      incorrect: "Not quite. Subtract 10 from 18 to get 8."
+    }
+  },
+  {
+    question: "Which number is between 12 and 14?",
+    answer: "13",
+    choices: ["12", "13", "14", "15"],
+    feedback: {
+      correct: "Correct! 13 is between 12 and 14.",
+      incorrect: "Not quite. 13 comes between 12 and 14."
+    }
+  },
+  {
+    question: "How many tens are in the number 34?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! There are 3 tens in 34.",
+      incorrect: "Not quite. The number 34 has 3 tens."
+    }
+  },
+  {
+    question: "What is the value of the digit 7 in the number 74?",
+    answer: "70",
+    choices: ["7", "17", "70", "700"],
+    feedback: {
+      correct: "Correct! The digit 7 in the number 74 represents 70.",
+      incorrect: "Not quite. The digit 7 represents 70 in the number 74."
+    }
+  },
+  {
+    question: "What is the value of the digit 5 in the number 52?",
+    answer: "50",
+    choices: ["5", "50", "5 tens", "500"],
+    feedback: {
+      correct: "Correct! The digit 5 in the number 52 represents 50.",
+      incorrect: "Not quite. The digit 5 represents 50 in the number 52."
+    }
+  },
+  {
+    question: "What is 7 tens and 3 ones written as a number?",
+    answer: "73",
+    choices: ["73", "37", "33", "7"],
+    feedback: {
+      correct: "Correct! 7 tens and 3 ones is written as 73.",
+      incorrect: "Not quite. Try writing 7 tens and 3 ones as 73."
+    }
+  },
+  {
+    question: "What is 2 tens and 5 ones written as a number?",
+    answer: "25",
+    choices: ["20", "25", "52", "50"],
+    feedback: {
+      correct: "Correct! 2 tens and 5 ones is written as 25.",
+      incorrect: "Not quite. Try writing 2 tens and 5 ones as 25."
+    }
+  },
+  {
+    question: "Which of these is a two-digit number?",
+    answer: "34",
+    choices: ["9", "12", "34", "100"],
+    feedback: {
+      correct: "Correct! 34 is a two-digit number.",
+      incorrect: "Not quite. A two-digit number has two digits, like 34."
+    }
+  },
+  {
+    question: "Which number has 3 tens and 2 ones?",
+    answer: "32",
+    choices: ["23", "32", "33", "22"],
+    feedback: {
+      correct: "Correct! 3 tens and 2 ones is written as 32.",
+      incorrect: "Not quite. Try writing 3 tens and 2 ones as 32."
+    }
+  },
+  {
+    question: "What is 30 + 5?",
+    answer: "35",
+    choices: ["30", "35", "40", "45"],
+    feedback: {
+      correct: "Correct! 30 plus 5 equals 35.",
+      incorrect: "Not quite. Try adding 30 and 5 together."
+    }
+  },
+  {
+    question: "What is 15 + 10?",
+    answer: "25",
+    choices: ["20", "25", "30", "35"],
+    feedback: {
+      correct: "Correct! 15 plus 10 equals 25.",
+      incorrect: "Not quite. Try adding 15 and 10 together."
+    }
+  },
+  {
+    question: "What is 40 - 10?",
+    answer: "30",
+    choices: ["25", "30", "35", "40"],
+    feedback: {
+      correct: "Correct! 40 minus 10 equals 30.",
+      incorrect: "Not quite. Try subtracting 10 from 40."
+    }
+  },
+  {
+    question: "What is 27 - 7?",
+    answer: "20",
+    choices: ["19", "20", "21", "22"],
+    feedback: {
+      correct: "Correct! 27 minus 7 equals 20.",
+      incorrect: "Not quite. Try subtracting 7 from 27."
+    }
+  },
+  {
+    question: "What is 10 + 7?",
+    answer: "17",
+    choices: ["16", "17", "18", "19"],
+    feedback: {
+      correct: "Correct! 10 plus 7 equals 17.",
+      incorrect: "Not quite. Try adding 10 and 7 together."
+    }
+  },
+  {
+    question: "What is 50 - 30?",
+    answer: "20",
+    choices: ["10", "15", "20", "25"],
+    feedback: {
+      correct: "Correct! 50 minus 30 equals 20.",
+      incorrect: "Not quite. Try subtracting 30 from 50."
+    }
+  },
+  {
+    question: "What is 18 + 12?",
+    answer: "30",
+    choices: ["28", "29", "30", "31"],
+    feedback: {
+      correct: "Correct! 18 plus 12 equals 30.",
+      incorrect: "Not quite. Try adding 18 and 12 together."
+    }
+  },
+  {
+    question: "What is 7 + 6?",
+    answer: "13",
+    choices: ["11", "12", "13", "14"],
+    feedback: {
+      correct: "Correct! 7 plus 6 equals 13.",
+      incorrect: "Not quite. Try adding 7 and 6 together."
+    }
+  }
+];
+
+   
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G1_Units.NY.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

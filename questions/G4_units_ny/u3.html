@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Number and Operations—Fractions</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+
+const questionsDatabase = [
+  {
+    question: "What is the fraction for 2 out of 4 parts?",
+    answer: "2/4",
+    choices: ["2/4", "1/2", "4/2", "1/4"],
+    feedback: {
+      correct: "Correct! 2 out of 4 parts is represented by the fraction 2/4.",
+      incorrect: "Not quite. The correct fraction is 2/4."
+    }
+  },
+  {
+    question: "Which fraction is equivalent to 1/2?",
+    answer: "2/4",
+    choices: ["1/2", "2/4", "3/4", "4/5"],
+    feedback: {
+      correct: "Correct! 1/2 is equivalent to 2/4.",
+      incorrect: "Not quite. Try simplifying 2/4 and you will see it equals 1/2."
+    }
+  },
+  {
+    question: "If you have 3 out of 8 parts, what fraction do you have?",
+    answer: "3/8",
+    choices: ["3/8", "1/3", "1/8", "5/8"],
+    feedback: {
+      correct: "Correct! 3 out of 8 parts is represented by the fraction 3/8.",
+      incorrect: "Not quite. The correct fraction is 3/8."
+    }
+  },
+  {
+    question: "What is the fraction that represents one whole?",
+    answer: "1/1",
+    choices: ["1/2", "1/3", "1/1", "2/2"],
+    feedback: {
+      correct: "Correct! 1/1 represents one whole.",
+      incorrect: "Not quite. 1/1 represents a whole."
+    }
+  },
+  {
+    question: "Which fraction is greater: 3/4 or 1/2?",
+    answer: "3/4",
+    choices: ["3/4", "1/2", "Both are the same", "None"],
+    feedback: {
+      correct: "Correct! 3/4 is greater than 1/2.",
+      incorrect: "Not quite. 3/4 is greater than 1/2."
+    }
+  },
+  {
+    question: "What is 1/2 of 8?",
+    answer: "4",
+    choices: ["4", "8", "2", "6"],
+    feedback: {
+      correct: "Correct! 1/2 of 8 is 4.",
+      incorrect: "Not quite. Try dividing 8 into two equal parts."
+    }
+  },
+  {
+    question: "Which is greater: 3/8 or 2/4?",
+    answer: "2/4",
+    choices: ["3/8", "2/4", "Both are the same", "None"],
+    feedback: {
+      correct: "Correct! 2/4 is greater than 3/8.",
+      incorrect: "Not quite. Try comparing the fractions again."
+    }
+  },
+  {
+    question: "What is the equivalent of 4/8 in its simplest form?",
+    answer: "1/2",
+    choices: ["1/2", "2/4", "1/4", "4/4"],
+    feedback: {
+      correct: "Correct! 4/8 simplifies to 1/2.",
+      incorrect: "Not quite. Simplify 4/8 to find the equivalent fraction."
+    }
+  },
+  {
+    question: "If you divide 6 apples into 3 equal parts, how much does each part represent?",
+    answer: "2/6",
+    choices: ["1/6", "2/6", "3/6", "6/6"],
+    feedback: {
+      correct: "Correct! Each part represents 2/6.",
+      incorrect: "Not quite. Divide 6 apples into 3 equal parts to get 2/6."
+    }
+  },
+  {
+    question: "Which is the correct decimal for 1/4?",
+    answer: "0.25",
+    choices: ["0.25", "0.5", "0.75", "1.00"],
+    feedback: {
+      correct: "Correct! 1/4 is equivalent to 0.25.",
+      incorrect: "Not quite. Try converting 1/4 to a decimal."
+    }
+  },
+  {
+    question: "Which fraction is equivalent to 0.5?",
+    answer: "1/2",
+    choices: ["1/2", "1/4", "3/4", "2/3"],
+    feedback: {
+      correct: "Correct! 0.5 is equivalent to 1/2.",
+      incorrect: "Not quite. 0.5 equals 1/2."
+    }
+  },
+  {
+    question: "Which fraction is greater than 1/2?",
+    answer: "3/4",
+    choices: ["1/3", "1/2", "3/4", "5/8"],
+    feedback: {
+      correct: "Correct! 3/4 is greater than 1/2.",
+      incorrect: "Not quite. 3/4 is greater than 1/2."
+    }
+  },
+  {
+    question: "What is the sum of 1/2 and 1/4?",
+    answer: "3/4",
+    choices: ["3/4", "2/4", "1/2", "1"],
+    feedback: {
+      correct: "Correct! The sum of 1/2 and 1/4 is 3/4.",
+      incorrect: "Not quite. Try adding 1/2 and 1/4 together."
+    }
+  },
+  {
+    question: "What is the fraction for one third?",
+    answer: "1/3",
+    choices: ["1/2", "1/3", "2/3", "3/3"],
+    feedback: {
+      correct: "Correct! One third is represented by 1/3.",
+      incorrect: "Not quite. One third is 1/3."
+    }
+  },
+  {
+    question: "What is 1/5 of 25?",
+    answer: "5",
+    choices: ["5", "10", "15", "20"],
+    feedback: {
+      correct: "Correct! 1/5 of 25 is 5.",
+      incorrect: "Not quite. Try dividing 25 into 5 equal parts."
+    }
+  },
+  {
+    question: "What is the decimal equivalent of 3/10?",
+    answer: "0.3",
+    choices: ["0.3", "0.5", "0.25", "0.75"],
+    feedback: {
+      correct: "Correct! 3/10 is equivalent to 0.3.",
+      incorrect: "Not quite. Try converting 3/10 to a decimal."
+    }
+  },
+  {
+    question: "Which of these is a fraction?",
+    answer: "1/3",
+    choices: ["1/3", "2", "3", "4"],
+    feedback: {
+      correct: "Correct! 1/3 is a fraction.",
+      incorrect: "Not quite. 1/3 is a fraction."
+    }
+  },
+  {
+    question: "Which of these fractions is equivalent to 1/2?",
+    answer: "2/4",
+    choices: ["2/4", "1/3", "3/5", "5/6"],
+    feedback: {
+      correct: "Correct! 2/4 is equivalent to 1/2.",
+      incorrect: "Not quite. 2/4 simplifies to 1/2."
+    }
+  },
+  {
+    question: "What is 3/8 + 2/8?",
+    answer: "5/8",
+    choices: ["5/8", "1/2", "6/8", "1"],
+    feedback: {
+      correct: "Correct! The sum of 3/8 and 2/8 is 5/8.",
+      incorrect: "Not quite. Try adding 3/8 and 2/8 together."
+    }
+  },
+  {
+    question: "Which of these fractions is less than 1/2?",
+    answer: "1/3",
+    choices: ["1/2", "1/3", "2/4", "3/5"],
+    feedback: {
+      correct: "Correct! 1/3 is less than 1/2.",
+      incorrect: "Not quite. 1/3 is less than 1/2."
+    }
+  }
+];
+
+  
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_Units.NY.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

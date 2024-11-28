@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Measurement and Data</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ 
+ const questionsDatabase = [
+  {
+    question: "What is the time on the clock if the hour hand is pointing to 3 and the minute hand is pointing to 12?",
+    answer: "3:00",
+    choices: ["3:00", "12:30", "6:00", "9:00"],
+    feedback: {
+      correct: "Correct! The time is 3:00.",
+      incorrect: "Not quite. The hour hand is pointing to 3 and the minute hand is pointing to 12."
+    }
+  },
+  {
+    question: "How many minutes are in 1 hour?",
+    answer: "60",
+    choices: ["30", "60", "120", "15"],
+    feedback: {
+      correct: "Correct! There are 60 minutes in 1 hour.",
+      incorrect: "Not quite. 1 hour equals 60 minutes."
+    }
+  },
+  {
+    question: "Which of the following units would you use to measure the weight of a book?",
+    answer: "Grams",
+    choices: ["Liters", "Grams", "Meters", "Cups"],
+    feedback: {
+      correct: "Correct! Grams are used to measure weight.",
+      incorrect: "Not quite. Weight is measured in grams, not liters or meters."
+    }
+  },
+  {
+    question: "What is the perimeter of a rectangle with a length of 5 cm and a width of 3 cm?",
+    answer: "16 cm",
+    choices: ["15 cm", "16 cm", "14 cm", "18 cm"],
+    feedback: {
+      correct: "Correct! The perimeter of a rectangle is calculated as 2 * (length + width).",
+      incorrect: "Not quite. Try using the perimeter formula: 2 * (length + width)."
+    }
+  },
+  {
+    question: "If you have 3 quarters, how much money do you have?",
+    answer: "75 cents",
+    choices: ["25 cents", "75 cents", "1 dollar", "50 cents"],
+    feedback: {
+      correct: "Correct! 3 quarters equal 75 cents.",
+      incorrect: "Not quite. 3 quarters make 75 cents."
+    }
+  },
+  {
+    question: "What is the unit of measurement for liquid volume?",
+    answer: "Liters",
+    choices: ["Grams", "Liters", "Inches", "Cups"],
+    feedback: {
+      correct: "Correct! Liquid volume is measured in liters.",
+      incorrect: "Not quite. Liquid volume is measured in liters."
+    }
+  },
+  {
+    question: "How many days are in a week?",
+    answer: "7",
+    choices: ["5", "7", "10", "14"],
+    feedback: {
+      correct: "Correct! There are 7 days in a week.",
+      incorrect: "Not quite. A week has 7 days."
+    }
+  },
+  {
+    question: "What is the perimeter of a square with each side measuring 4 cm?",
+    answer: "16 cm",
+    choices: ["12 cm", "16 cm", "8 cm", "20 cm"],
+    feedback: {
+      correct: "Correct! The perimeter of a square is 4 * side length.",
+      incorrect: "Not quite. The perimeter of a square is 4 times the length of one side."
+    }
+  },
+  {
+    question: "How many seconds are in 1 minute?",
+    answer: "60",
+    choices: ["60", "30", "100", "120"],
+    feedback: {
+      correct: "Correct! There are 60 seconds in 1 minute.",
+      incorrect: "Not quite. There are 60 seconds in 1 minute."
+    }
+  },
+  {
+    question: "What is the weight of an apple likely to be measured in?",
+    answer: "Grams",
+    choices: ["Kilograms", "Liters", "Grams", "Meters"],
+    feedback: {
+      correct: "Correct! The weight of an apple is measured in grams.",
+      incorrect: "Not quite. Weight is measured in grams for small items like apples."
+    }
+  },
+  {
+    question: "What is the area of a rectangle with a length of 7 cm and a width of 3 cm?",
+    answer: "21 cm²",
+    choices: ["21 cm²", "10 cm²", "20 cm²", "30 cm²"],
+    feedback: {
+      correct: "Correct! The area of a rectangle is length * width.",
+      incorrect: "Not quite. Use the formula: area = length * width."
+    }
+  },
+  {
+    question: "If you are measuring the length of a pencil, which unit would be most appropriate?",
+    answer: "Centimeters",
+    choices: ["Meters", "Centimeters", "Kilometers", "Grams"],
+    feedback: {
+      correct: "Correct! Centimeters are used to measure small lengths, like a pencil.",
+      incorrect: "Not quite. Centimeters are the most appropriate unit for small lengths."
+    }
+  },
+  {
+    question: "How many hours are in 2 days?",
+    answer: "48",
+    choices: ["24", "48", "36", "72"],
+    feedback: {
+      correct: "Correct! 2 days equals 48 hours.",
+      incorrect: "Not quite. 1 day equals 24 hours, so 2 days equals 48 hours."
+    }
+  },
+  {
+    question: "What is the area of a square with side lengths of 4 cm?",
+    answer: "16 cm²",
+    choices: ["16 cm²", "12 cm²", "8 cm²", "20 cm²"],
+    feedback: {
+      correct: "Correct! The area of a square is side * side.",
+      incorrect: "Not quite. Use the formula: area = side * side."
+    }
+  },
+  {
+    question: "How much money is 4 dimes worth?",
+    answer: "40 cents",
+    choices: ["30 cents", "40 cents", "50 cents", "10 cents"],
+    feedback: {
+      correct: "Correct! 4 dimes equal 40 cents.",
+      incorrect: "Not quite. 1 dime is worth 10 cents, so 4 dimes are 40 cents."
+    }
+  },
+  {
+    question: "How much time is left if it is currently 2:30 and you need to wait until 4:00?",
+    answer: "1 hour 30 minutes",
+    choices: ["1 hour 30 minutes", "1 hour", "2 hours", "30 minutes"],
+    feedback: {
+      correct: "Correct! From 2:30 to 4:00 is 1 hour and 30 minutes.",
+      incorrect: "Not quite. Calculate the difference between 2:30 and 4:00."
+    }
+  },
+  {
+    question: "What is the weight of a small pencil most likely measured in?",
+    answer: "Grams",
+    choices: ["Kilograms", "Grams", "Meters", "Centimeters"],
+    feedback: {
+      correct: "Correct! A small pencil is typically measured in grams.",
+      incorrect: "Not quite. Weight is measured in grams for smaller objects."
+    }
+  },
+  {
+    question: "What is the perimeter of a rectangle with a length of 10 cm and a width of 2 cm?",
+    answer: "24 cm",
+    choices: ["24 cm", "20 cm", "30 cm", "28 cm"],
+    feedback: {
+      correct: "Correct! The perimeter of a rectangle is calculated as 2 * (length + width).",
+      incorrect: "Not quite. Use the perimeter formula: 2 * (length + width)."
+    }
+  },
+  {
+    question: "What is the volume of a cube with side length 2 cm?",
+    answer: "8 cm³",
+    choices: ["4 cm³", "8 cm³", "10 cm³", "12 cm³"],
+    feedback: {
+      correct: "Correct! The volume of a cube is side³.",
+      incorrect: "Not quite. The volume of a cube is calculated by cubing the side length."
+    }
+  },
+  {
+    question: "How much time is there between 3:15 and 4:45?",
+    answer: "1 hour 30 minutes",
+    choices: ["1 hour", "1 hour 30 minutes", "2 hours", "45 minutes"],
+    feedback: {
+      correct: "Correct! From 3:15 to 4:45 is 1 hour and 30 minutes.",
+      incorrect: "Not quite. Calculate the difference between 3:15 and 4:45."
+    }
+  }
+];
+
+
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G3_Units.LA.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Number and Operations in Base Ten</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ 
+ const questionsDatabase = [
+  // Unit 2: Number and Operations in Base Ten
+  {
+    question: "Which number represents 4 tens and 5 ones?",
+    answer: "45",
+    choices: ["54", "45", "15", "55"],
+    feedback: {
+      correct: "Correct! 4 tens and 5 ones is 45.",
+      incorrect: "Not quite. 4 tens and 5 ones equals 45."
+    }
+  },
+  {
+    question: "What is the value of the digit 7 in 473?",
+    answer: "70",
+    choices: ["700", "70", "7", "4"],
+    feedback: {
+      correct: "Correct! The digit 7 is in the tens place, so it represents 70.",
+      incorrect: "Not quite. The digit 7 represents 70 because it's in the tens place."
+    }
+  },
+  {
+    question: "What is the expanded form of 357?",
+    answer: "300 + 50 + 7",
+    choices: ["300 + 50 + 7", "300 + 5 + 70", "30 + 50 + 7", "300 + 70 + 5"],
+    feedback: {
+      correct: "Correct! 357 is the same as 300 + 50 + 7 in expanded form.",
+      incorrect: "Not quite. Break 357 into hundreds, tens, and ones."
+    }
+  },
+  {
+    question: "What is the value of the digit 9 in 987?",
+    answer: "90",
+    choices: ["900", "90", "9", "7"],
+    feedback: {
+      correct: "Correct! The digit 9 represents 90 because it's in the tens place.",
+      incorrect: "Not quite. The digit 9 is in the tens place, so it represents 90."
+    }
+  },
+  {
+    question: "Which number is 100 more than 347?",
+    answer: "447",
+    choices: ["437", "447", "357", "337"],
+    feedback: {
+      correct: "Correct! Adding 100 to 347 gives you 447.",
+      incorrect: "Not quite. Try adding 100 to 347 again."
+    }
+  },
+  {
+    question: "Which number is 10 less than 512?",
+    answer: "502",
+    choices: ["512", "502", "503", "510"],
+    feedback: {
+      correct: "Correct! Subtracting 10 from 512 gives you 502.",
+      incorrect: "Not quite. Try subtracting 10 from 512."
+    }
+  },
+  {
+    question: "What is the value of the digit 5 in 523?",
+    answer: "500",
+    choices: ["500", "50", "5", "100"],
+    feedback: {
+      correct: "Correct! The digit 5 represents 500 because it's in the hundreds place.",
+      incorrect: "Not quite. The digit 5 represents 500 because it's in the hundreds place."
+    }
+  },
+  {
+    question: "How do you represent 426 in expanded form?",
+    answer: "400 + 20 + 6",
+    choices: ["400 + 20 + 6", "400 + 2 + 6", "4 + 20 + 6", "400 + 200 + 6"],
+    feedback: {
+      correct: "Correct! 426 in expanded form is 400 + 20 + 6.",
+      incorrect: "Not quite. Break the number into hundreds, tens, and ones."
+    }
+  },
+  {
+    question: "What is the place value of the 2 in 652?",
+    answer: "Tens",
+    choices: ["Ones", "Tens", "Hundreds", "Thousands"],
+    feedback: {
+      correct: "Correct! The 2 is in the tens place in 652.",
+      incorrect: "Not quite. The 2 is in the tens place."
+    }
+  },
+  {
+    question: "Which number is 100 more than 586?",
+    answer: "686",
+    choices: ["786", "686", "686", "596"],
+    feedback: {
+      correct: "Correct! 100 more than 586 is 686.",
+      incorrect: "Not quite. Try adding 100 to 586."
+    }
+  },
+  {
+    question: "How do you represent 784 in expanded form?",
+    answer: "700 + 80 + 4",
+    choices: ["700 + 80 + 4", "700 + 8 + 4", "70 + 80 + 4", "70 + 7 + 4"],
+    feedback: {
+      correct: "Correct! 784 in expanded form is 700 + 80 + 4.",
+      incorrect: "Not quite. Break 784 into hundreds, tens, and ones."
+    }
+  },
+  {
+    question: "Which number is 10 times 40?",
+    answer: "400",
+    choices: ["40", "400", "4", "10"],
+    feedback: {
+      correct: "Correct! 10 times 40 is 400.",
+      incorrect: "Not quite. Try multiplying 40 by 10 again."
+    }
+  },
+  {
+    question: "What is the sum of 500 and 60?",
+    answer: "560",
+    choices: ["540", "550", "560", "570"],
+    feedback: {
+      correct: "Correct! 500 + 60 equals 560.",
+      incorrect: "Not quite. Try adding 500 and 60 again."
+    }
+  },
+  {
+    question: "Which number is 100 less than 800?",
+    answer: "700",
+    choices: ["600", "700", "800", "900"],
+    feedback: {
+      correct: "Correct! 100 less than 800 is 700.",
+      incorrect: "Not quite. Try subtracting 100 from 800."
+    }
+  },
+  {
+    question: "What is the place value of the digit 3 in 326?",
+    answer: "Hundreds",
+    choices: ["Ones", "Tens", "Hundreds", "Thousands"],
+    feedback: {
+      correct: "Correct! The 3 is in the hundreds place.",
+      incorrect: "Not quite. The 3 is in the hundreds place."
+    }
+  },
+  {
+    question: "How do you represent 591 in expanded form?",
+    answer: "500 + 90 + 1",
+    choices: ["500 + 90 + 1", "500 + 9 + 1", "50 + 90 + 1", "50 + 9 + 1"],
+    feedback: {
+      correct: "Correct! 591 in expanded form is 500 + 90 + 1.",
+      incorrect: "Not quite. Break 591 into hundreds, tens, and ones."
+    }
+  },
+  {
+    question: "What is the value of the digit 8 in 823?",
+    answer: "80",
+    choices: ["800", "80", "8", "18"],
+    feedback: {
+      correct: "Correct! The 8 is in the tens place, so it represents 80.",
+      incorrect: "Not quite. The 8 represents 80 because it's in the tens place."
+    }
+  },
+  {
+    question: "What number is 100 less than 550?",
+    answer: "450",
+    choices: ["400", "450", "500", "550"],
+    feedback: {
+      correct: "Correct! 100 less than 550 is 450.",
+      incorrect: "Not quite. Try subtracting 100 from 550."
+    }
+  },
+  {
+    question: "Which of these numbers has the digit 6 in the tens place?",
+    answer: "563",
+    choices: ["563", "663", "736", "602"],
+    feedback: {
+      correct: "Correct! The digit 6 is in the tens place in 563.",
+      incorrect: "Not quite. Check the digit in the tens place."
+    }
+  },
+  {
+    question: "How many hundreds are in 724?",
+    answer: "7",
+    choices: ["6", "7", "8", "9"],
+    feedback: {
+      correct: "Correct! There are 7 hundreds in 724.",
+      incorrect: "Not quite. 724 has 7 hundreds."
+    }
+  }
+];
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G5_Units.NY.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

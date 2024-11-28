@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 5 - Geometry </title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+
+const questionsDatabase = [
+  {
+    question: "What is the name of the angle that is less than 90 degrees?",
+    answer: "Acute angle",
+    choices: ["Right angle", "Acute angle", "Obtuse angle", "Straight angle"],
+    feedback: {
+      correct: "Correct! An acute angle is less than 90 degrees.",
+      incorrect: "Not quite. An acute angle is always smaller than 90 degrees."
+    }
+  },
+  {
+    question: "Which shape has 4 right angles?",
+    answer: "Rectangle",
+    choices: ["Circle", "Rectangle", "Triangle", "Pentagon"],
+    feedback: {
+      correct: "Correct! A rectangle has 4 right angles.",
+      incorrect: "Not quite. A rectangle has 4 right angles."
+    }
+  },
+  {
+    question: "Which of the following shapes has no straight sides?",
+    answer: "Circle",
+    choices: ["Square", "Triangle", "Rectangle", "Circle"],
+    feedback: {
+      correct: "Correct! A circle has no straight sides, only curves.",
+      incorrect: "Not quite. A circle has no straight sides, unlike the other shapes."
+    }
+  },
+  {
+    question: "How many sides does a hexagon have?",
+    answer: "6",
+    choices: ["4", "5", "6", "7"],
+    feedback: {
+      correct: "Correct! A hexagon has 6 sides.",
+      incorrect: "Not quite. A hexagon has 6 sides."
+    }
+  },
+  {
+    question: "Which shape has 3 sides?",
+    answer: "Triangle",
+    choices: ["Square", "Circle", "Triangle", "Hexagon"],
+    feedback: {
+      correct: "Correct! A triangle has 3 sides.",
+      incorrect: "Not quite. A triangle has 3 sides."
+    }
+  },
+  {
+    question: "What do we call a line that goes on forever in both directions?",
+    answer: "Line",
+    choices: ["Ray", "Line", "Segment", "Curve"],
+    feedback: {
+      correct: "Correct! A line extends infinitely in both directions.",
+      incorrect: "Not quite. A line has no end points and extends forever."
+    }
+  },
+  {
+    question: "Which of these shapes has exactly two pairs of parallel sides?",
+    answer: "Rectangle",
+    choices: ["Circle", "Rectangle", "Square", "Triangle"],
+    feedback: {
+      correct: "Correct! A rectangle has two pairs of parallel sides.",
+      incorrect: "Not quite. A rectangle has two pairs of parallel sides."
+    }
+  },
+  {
+    question: "What is the name of the shape that has 4 sides and opposite sides of equal length?",
+    answer: "Parallelogram",
+    choices: ["Square", "Rectangle", "Parallelogram", "Rhombus"],
+    feedback: {
+      correct: "Correct! A parallelogram has opposite sides of equal length.",
+      incorrect: "Not quite. A parallelogram has opposite sides of equal length."
+    }
+  },
+  {
+    question: "Which shape has 5 sides?",
+    answer: "Pentagon",
+    choices: ["Hexagon", "Pentagon", "Octagon", "Triangle"],
+    feedback: {
+      correct: "Correct! A pentagon has 5 sides.",
+      incorrect: "Not quite. A pentagon has 5 sides."
+    }
+  },
+  {
+    question: "Which shape has all sides of equal length?",
+    answer: "Square",
+    choices: ["Rectangle", "Triangle", "Square", "Circle"],
+    feedback: {
+      correct: "Correct! A square has all sides of equal length.",
+      incorrect: "Not quite. A square has 4 equal sides."
+    }
+  },
+  {
+    question: "Which angle is greater than 90 degrees but less than 180 degrees?",
+    answer: "Obtuse angle",
+    choices: ["Right angle", "Acute angle", "Obtuse angle", "Straight angle"],
+    feedback: {
+      correct: "Correct! An obtuse angle is greater than 90 degrees but less than 180 degrees.",
+      incorrect: "Not quite. An obtuse angle is between 90 and 180 degrees."
+    }
+  },
+  {
+    question: "Which of the following is a characteristic of a rhombus?",
+    answer: "Opposite angles are equal",
+    choices: ["All sides are equal", "Opposite angles are equal", "It has 4 right angles", "It has no parallel sides"],
+    feedback: {
+      correct: "Correct! A rhombus has opposite angles that are equal.",
+      incorrect: "Not quite. A rhombus has opposite angles that are equal."
+    }
+  },
+  {
+    question: "What is the name of a shape that has 4 sides and 4 right angles, but no sides of equal length?",
+    answer: "Rectangle",
+    choices: ["Square", "Rectangle", "Rhombus", "Trapezoid"],
+    feedback: {
+      correct: "Correct! A rectangle has 4 right angles and opposite sides of equal length.",
+      incorrect: "Not quite. A rectangle has opposite sides of equal length, and 4 right angles."
+    }
+  },
+  {
+    question: "What do we call the distance around a shape?",
+    answer: "Perimeter",
+    choices: ["Area", "Circumference", "Perimeter", "Radius"],
+    feedback: {
+      correct: "Correct! The perimeter is the distance around a shape.",
+      incorrect: "Not quite. The perimeter is the distance around a shape."
+    }
+  },
+  {
+    question: "Which shape has all equal sides but no right angles?",
+    answer: "Rhombus",
+    choices: ["Square", "Rhombus", "Rectangle", "Circle"],
+    feedback: {
+      correct: "Correct! A rhombus has all equal sides but no right angles.",
+      incorrect: "Not quite. A rhombus has equal sides, but no right angles."
+    }
+  },
+  {
+    question: "What type of line connects two points on a circle?",
+    answer: "Chord",
+    choices: ["Diameter", "Radius", "Chord", "Circumference"],
+    feedback: {
+      correct: "Correct! A chord connects two points on a circle.",
+      incorrect: "Not quite. A chord connects two points on a circle."
+    }
+  },
+  {
+    question: "What do we call the longest side of a right triangle?",
+    answer: "Hypotenuse",
+    choices: ["Base", "Height", "Hypotenuse", "Leg"],
+    feedback: {
+      correct: "Correct! The longest side of a right triangle is the hypotenuse.",
+      incorrect: "Not quite. The hypotenuse is the longest side of a right triangle."
+    }
+  },
+  {
+    question: "Which of these shapes has 4 sides and 2 sets of equal opposite sides?",
+    answer: "Rectangle",
+    choices: ["Square", "Rectangle", "Parallelogram", "Circle"],
+    feedback: {
+      correct: "Correct! A rectangle has 4 sides and 2 sets of equal opposite sides.",
+      incorrect: "Not quite. A rectangle has 2 sets of equal opposite sides."
+    }
+  },
+  {
+    question: "Which of the following is a shape with 3 straight sides?",
+    answer: "Triangle",
+    choices: ["Square", "Triangle", "Circle", "Hexagon"],
+    feedback: {
+      correct: "Correct! A triangle has 3 straight sides.",
+      incorrect: "Not quite. A triangle has 3 straight sides."
+    }
+  },
+  {
+    question: "Which shape has exactly 4 sides and no right angles?",
+    answer: "Rhombus",
+    choices: ["Rectangle", "Square", "Rhombus", "Circle"],
+    feedback: {
+      correct: "Correct! A rhombus has 4 equal sides and no right angles.",
+      incorrect: "Not quite. A rhombus has 4 equal sides but no right angles."
+    }
+  }
+];
+
+  
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_Units.NY.html?unit5score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

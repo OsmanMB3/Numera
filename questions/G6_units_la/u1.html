@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1 - Ratios and Proportional Relationships</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ 
+ const questionsDatabase = [
+  {
+    question: "If the ratio of apples to oranges is 2:3, how many apples are there if there are 12 oranges?",
+    answer: "8 apples",
+    choices: ["6 apples", "8 apples", "10 apples", "12 apples"],
+    feedback: {
+      correct: "Correct! If the ratio is 2:3, then for every 3 oranges, there are 2 apples. 12 oranges would have 8 apples.",
+      incorrect: "Not quite. Try dividing 12 oranges by the ratio factor (3), then multiplying by the apples ratio (2)."
+    }
+  },
+  {
+    question: "The ratio of boys to girls in a class is 4:5. If there are 36 boys, how many girls are there?",
+    answer: "45 girls",
+    choices: ["45 girls", "50 girls", "40 girls", "48 girls"],
+    feedback: {
+      correct: "Correct! The ratio is 4:5, so if there are 36 boys (9 times 4), there will be 45 girls (9 times 5).",
+      incorrect: "Not quite. Multiply the number of boys by the ratio to find the number of girls."
+    }
+  },
+  {
+    question: "Which of the following is an equivalent ratio to 6:8?",
+    answer: "3:4",
+    choices: ["3:4", "2:3", "4:5", "6:10"],
+    feedback: {
+      correct: "Correct! Dividing both numbers in the ratio 6:8 by 2 gives the equivalent ratio 3:4.",
+      incorrect: "Not quite. Try simplifying the ratio by dividing both numbers by their greatest common factor."
+    }
+  },
+  {
+    question: "If a recipe calls for 4 cups of flour and 6 cups of sugar, what is the ratio of flour to sugar?",
+    answer: "2:3",
+    choices: ["1:1", "2:3", "3:4", "4:6"],
+    feedback: {
+      correct: "Correct! The ratio of flour to sugar is 4:6, which simplifies to 2:3.",
+      incorrect: "Not quite. Simplify the ratio by dividing both numbers by 2."
+    }
+  },
+  {
+    question: "A train travels 120 miles in 2 hours. What is the ratio of miles to hours?",
+    answer: "60 miles per hour",
+    choices: ["120 miles per hour", "60 miles per hour", "100 miles per hour", "30 miles per hour"],
+    feedback: {
+      correct: "Correct! 120 miles divided by 2 hours equals 60 miles per hour.",
+      incorrect: "Not quite. Divide the distance by the time to find the rate."
+    }
+  },
+  {
+    question: "What is the ratio of 15 apples to 30 apples?",
+    answer: "1:2",
+    choices: ["1:2", "2:1", "1:1", "3:2"],
+    feedback: {
+      correct: "Correct! 15 apples to 30 apples simplifies to the ratio 1:2.",
+      incorrect: "Not quite. Simplify the ratio by dividing both numbers by 15."
+    }
+  },
+  {
+    question: "In a race, the ratio of the time it takes for John to the time it takes for Anna is 3:4. If John takes 12 minutes, how long does Anna take?",
+    answer: "16 minutes",
+    choices: ["12 minutes", "14 minutes", "16 minutes", "18 minutes"],
+    feedback: {
+      correct: "Correct! If the ratio is 3:4, multiply 12 minutes by 4/3 to find Anna's time, which is 16 minutes.",
+      incorrect: "Not quite. Try using the ratio to scale up John's time to Anna's time."
+    }
+  },
+  {
+    question: "If the ratio of dogs to cats is 5:2, how many cats are there if there are 50 dogs?",
+    answer: "20 cats",
+    choices: ["15 cats", "20 cats", "25 cats", "30 cats"],
+    feedback: {
+      correct: "Correct! If the ratio is 5:2, for every 5 dogs, there are 2 cats. Multiply 50 dogs by 2/5 to get 20 cats.",
+      incorrect: "Not quite. Use the ratio to calculate how many cats match the 50 dogs."
+    }
+  },
+  {
+    question: "A recipe requires a ratio of 3 parts water to 5 parts juice. If you have 15 parts juice, how many parts water do you need?",
+    answer: "9 parts water",
+    choices: ["9 parts water", "10 parts water", "12 parts water", "15 parts water"],
+    feedback: {
+      correct: "Correct! If the ratio is 3:5, then for 15 parts juice, you need 9 parts water.",
+      incorrect: "Not quite. Use the ratio to find the correct amount of water."
+    }
+  },
+  {
+    question: "Which of these ratios is equivalent to 4:6?",
+    answer: "2:3",
+    choices: ["1:2", "2:3", "4:5", "3:4"],
+    feedback: {
+      correct: "Correct! Dividing both numbers of 4:6 by 2 gives the equivalent ratio 2:3.",
+      incorrect: "Not quite. Try simplifying 4:6."
+    }
+  },
+  {
+    question: "If the ratio of girls to boys in a class is 5:6, and there are 30 girls, how many boys are in the class?",
+    answer: "36 boys",
+    choices: ["30 boys", "36 boys", "40 boys", "50 boys"],
+    feedback: {
+      correct: "Correct! If the ratio is 5:6, for every 5 girls, there are 6 boys. Multiply 30 girls by 6/5 to get 36 boys.",
+      incorrect: "Not quite. Use the ratio to calculate the number of boys."
+    }
+  },
+  {
+    question: "What is the ratio of red marbles to blue marbles if there are 10 red marbles and 15 blue marbles?",
+    answer: "2:3",
+    choices: ["1:1", "2:3", "3:2", "1:2"],
+    feedback: {
+      correct: "Correct! The ratio of red to blue marbles is 2:3.",
+      incorrect: "Not quite. Simplify the ratio of 10 red marbles to 15 blue marbles."
+    }
+  },
+  {
+    question: "If a class has 24 students and the ratio of boys to girls is 3:5, how many girls are there?",
+    answer: "15 girls",
+    choices: ["12 girls", "14 girls", "15 girls", "18 girls"],
+    feedback: {
+      correct: "Correct! 24 students, with a ratio of 3:5, means there are 15 girls.",
+      incorrect: "Not quite. Use the ratio to calculate the number of girls."
+    }
+  },
+  {
+    question: "What is the equivalent ratio of 12:18?",
+    answer: "2:3",
+    choices: ["2:3", "3:2", "4:6", "6:8"],
+    feedback: {
+      correct: "Correct! Simplifying the ratio 12:18 gives the equivalent ratio 2:3.",
+      incorrect: "Not quite. Try dividing both numbers by 6."
+    }
+  },
+  {
+    question: "In a recipe, the ratio of flour to sugar is 2:3. If you have 6 cups of sugar, how many cups of flour do you need?",
+    answer: "4 cups of flour",
+    choices: ["3 cups of flour", "4 cups of flour", "5 cups of flour", "6 cups of flour"],
+    feedback: {
+      correct: "Correct! If the ratio is 2:3, for every 3 cups of sugar, you need 2 cups of flour. So, 6 cups of sugar requires 4 cups of flour.",
+      incorrect: "Not quite. Use the ratio to calculate the amount of flour needed."
+    }
+  },
+  {
+    question: "A car travels 60 miles in 2 hours. What is the ratio of miles to hours?",
+    answer: "30 miles per hour",
+    choices: ["30 miles per hour", "40 miles per hour", "50 miles per hour", "60 miles per hour"],
+    feedback: {
+      correct: "Correct! 60 miles divided by 2 hours gives a rate of 30 miles per hour.",
+      incorrect: "Not quite. Divide the distance by the time to find the rate."
+    }
+  },
+  {
+    question: "The ratio of girls to boys in a class is 5:7. If there are 35 boys, how many girls are there?",
+    answer: "25 girls",
+    choices: ["20 girls", "25 girls", "30 girls", "35 girls"],
+    feedback: {
+      correct: "Correct! The ratio is 5:7, so for every 7 boys, there are 5 girls. 35 boys means 25 girls.",
+      incorrect: "Not quite. Use the ratio to find the number of girls."
+    }
+  },
+  {
+    question: "A team won 4 out of 5 games. What is the ratio of wins to games played?",
+    answer: "4:5",
+    choices: ["3:5", "4:5", "5:5", "5:6"],
+    feedback: {
+      correct: "Correct! The ratio of wins to games played is 4:5.",
+      incorrect: "Not quite. The ratio is based on the number of wins and total games played."
+    }
+  },
+  {
+    question: "What is the simplified ratio of 18:24?",
+    answer: "3:4",
+    choices: ["2:3", "3:4", "4:5", "6:8"],
+    feedback: {
+      correct: "Correct! Simplifying the ratio 18:24 gives the ratio 3:4.",
+      incorrect: "Not quite. Try dividing both numbers by 6."
+    }
+  },
+  {
+    question: "A box contains 12 red balls and 18 green balls. What is the ratio of red balls to green balls?",
+    answer: "2:3",
+    choices: ["2:3", "1:1", "3:2", "4:5"],
+    feedback: {
+      correct: "Correct! The ratio of red balls to green balls is 2:3.",
+      incorrect: "Not quite. Simplify the ratio 12 red balls to 18 green balls."
+    }
+  }
+];
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G6_Units.LA.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

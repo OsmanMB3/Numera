@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 4 - Measurement and Data</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+
+const questionsDatabase = [
+  {
+    question: "Which unit would you use to measure the length of a pencil?",
+    answer: "Centimeters",
+    choices: ["Centimeters", "Kilometers", "Liters", "Kilograms"],
+    feedback: {
+      correct: "Correct! A pencil is typically measured in centimeters.",
+      incorrect: "Not quite. A pencil is measured in centimeters."
+    }
+  },
+  {
+    question: "What is the best tool to measure the weight of a watermelon?",
+    answer: "Scale",
+    choices: ["Thermometer", "Scale", "Measuring cup", "Ruler"],
+    feedback: {
+      correct: "Correct! A scale is used to measure weight.",
+      incorrect: "Not quite. A scale is the correct tool for measuring weight."
+    }
+  },
+  {
+    question: "How many minutes are there in 1 hour?",
+    answer: "60",
+    choices: ["60", "100", "45", "30"],
+    feedback: {
+      correct: "Correct! There are 60 minutes in 1 hour.",
+      incorrect: "Not quite. 1 hour has 60 minutes."
+    }
+  },
+  {
+    question: "If you have 3 quarters, how much money do you have?",
+    answer: "$0.75",
+    choices: ["$0.50", "$1.00", "$0.75", "$1.50"],
+    feedback: {
+      correct: "Correct! 3 quarters equal $0.75.",
+      incorrect: "Not quite. 3 quarters equal $0.75."
+    }
+  },
+  {
+  question: "If the hour hand is on the 3 and the minute hand is on the 3, what time is it?",
+  answer: "3:15",
+  choices: ["3:15", "3:30", "2:15", "4:15"],
+  feedback: {
+    correct: "Correct! The hour hand on 3 and the minute hand on 3 represents 3:15.",
+    incorrect: "Not quite. The hour hand on 3 and the minute hand on 3 represents 3:15."
+  }
+},
+
+  {
+    question: "How do you measure the height of a tree?",
+    answer: "In meters",
+    choices: ["In meters", "In grams", "In liters", "In kilograms"],
+    feedback: {
+      correct: "Correct! Height is typically measured in meters.",
+      incorrect: "Not quite. The height of a tree is measured in meters."
+    }
+  },
+  {
+    question: "Which tool would you use to measure how much liquid is in a bottle?",
+    answer: "Measuring cup",
+    choices: ["Ruler", "Thermometer", "Measuring cup", "Scale"],
+    feedback: {
+      correct: "Correct! A measuring cup is used for measuring liquids.",
+      incorrect: "Not quite. A measuring cup is used to measure liquid volume."
+    }
+  },
+  {
+    question: "Which unit is used to measure liquid volume?",
+    answer: "Liter",
+    choices: ["Meter", "Liter", "Kilogram", "Gram"],
+    feedback: {
+      correct: "Correct! Liquid volume is measured in liters.",
+      incorrect: "Not quite. Liquid volume is measured in liters."
+    }
+  },
+  {
+    question: "What is the perimeter of a rectangle with a length of 4 units and width of 3 units?",
+    answer: "14 units",
+    choices: ["12 units", "14 units", "16 units", "10 units"],
+    feedback: {
+      correct: "Correct! The perimeter is 14 units. (4 + 4 + 3 + 3 = 14)",
+      incorrect: "Not quite. To calculate perimeter, add all the sides of the rectangle."
+    }
+  },
+  {
+    question: "How many days are in a week?",
+    answer: "7",
+    choices: ["5", "6", "7", "10"],
+    feedback: {
+      correct: "Correct! There are 7 days in a week.",
+      incorrect: "Not quite. A week has 7 days."
+    }
+  },
+  {
+    question: "Which of the following would you measure using a ruler?",
+    answer: "Length of a book",
+    choices: ["Length of a book", "Weight of a book", "Temperature of a book", "Volume of a book"],
+    feedback: {
+      correct: "Correct! A ruler is used to measure length.",
+      incorrect: "Not quite. You use a ruler to measure the length of an object."
+    }
+  },
+  {
+    question: "What is the area of a square with sides of length 4 units?",
+    answer: "16 square units",
+    choices: ["8 square units", "16 square units", "12 square units", "20 square units"],
+    feedback: {
+      correct: "Correct! The area of a square is calculated by multiplying the length of a side by itself (4 x 4 = 16).",
+      incorrect: "Not quite. The area of a square is the length of one side squared."
+    }
+  },
+  {
+    question: "Which unit is used to measure the mass of an object?",
+    answer: "Kilogram",
+    choices: ["Kilogram", "Liter", "Meter", "Hour"],
+    feedback: {
+      correct: "Correct! Mass is measured in kilograms.",
+      incorrect: "Not quite. Mass is measured in kilograms."
+    }
+  },
+  {
+    question: "How many seconds are in a minute?",
+    answer: "60",
+    choices: ["30", "60", "90", "120"],
+    feedback: {
+      correct: "Correct! There are 60 seconds in a minute.",
+      incorrect: "Not quite. A minute has 60 seconds."
+    }
+  },
+  {
+    question: "Which of these objects would be measured in kilograms?",
+    answer: "A watermelon",
+    choices: ["A pencil", "A watermelon", "A coin", "A paperclip"],
+    feedback: {
+      correct: "Correct! A watermelon is measured in kilograms.",
+      incorrect: "Not quite. A watermelon would be measured in kilograms."
+    }
+  },
+  {
+    question: "Which measurement is used to measure the length of a table?",
+    answer: "Meters",
+    choices: ["Liters", "Grams", "Meters", "Hours"],
+    feedback: {
+      correct: "Correct! The length of a table is measured in meters.",
+      incorrect: "Not quite. Length is measured in meters."
+    }
+  },
+  {
+    question: "How do you calculate the area of a rectangle?",
+    answer: "Length × Width",
+    choices: ["Length + Width", "Length × Width", "Width ÷ Length", "Length - Width"],
+    feedback: {
+      correct: "Correct! To calculate area, multiply the length and width.",
+      incorrect: "Not quite. The area of a rectangle is length times width."
+    }
+  },
+  {
+    question: "Which tool is best to measure the volume of water in a bottle?",
+    answer: "Measuring cup",
+    choices: ["Measuring cup", "Scale", "Ruler", "Thermometer"],
+    feedback: {
+      correct: "Correct! A measuring cup is used to measure liquid volume.",
+      incorrect: "Not quite. You use a measuring cup to measure liquids."
+    }
+  },
+  {
+    question: "Which of these units is used to measure time?",
+    answer: "Seconds",
+    choices: ["Grams", "Seconds", "Meters", "Liters"],
+    feedback: {
+      correct: "Correct! Time is measured in seconds.",
+      incorrect: "Not quite. Time is measured in seconds."
+    }
+  }
+];
+
+  
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G3_Units.NY.html?unit4score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

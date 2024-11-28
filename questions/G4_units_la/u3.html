@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Measurement and Data</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ 
+ const questionsDatabase = [
+  {
+    question: "What is the unit of measurement used for angles?",
+    answer: "Degrees",
+    choices: ["Meters", "Degrees", "Inches", "Centimeters"],
+    feedback: {
+      correct: "Correct! Angles are measured in degrees.",
+      incorrect: "Not quite. Angles are measured in degrees."
+    }
+  },
+  {
+    question: "What is the measure of a right angle?",
+    answer: "90 degrees",
+    choices: ["45 degrees", "90 degrees", "180 degrees", "360 degrees"],
+    feedback: {
+      correct: "Correct! A right angle measures 90 degrees.",
+      incorrect: "Not quite. A right angle measures 90 degrees."
+    }
+  },
+  {
+    question: "Which angle is smaller than a right angle?",
+    answer: "Acute angle",
+    choices: ["Acute angle", "Obtuse angle", "Right angle", "Straight angle"],
+    feedback: {
+      correct: "Correct! An acute angle is smaller than a right angle.",
+      incorrect: "Not quite. An acute angle is smaller than a right angle."
+    }
+  },
+  {
+    question: "Which angle is larger than a right angle?",
+    answer: "Obtuse angle",
+    choices: ["Acute angle", "Obtuse angle", "Right angle", "Straight angle"],
+    feedback: {
+      correct: "Correct! An obtuse angle is larger than a right angle.",
+      incorrect: "Not quite. An obtuse angle is larger than a right angle."
+    }
+  },
+  {
+    question: "How many degrees are in a full circle?",
+    answer: "360 degrees",
+    choices: ["180 degrees", "90 degrees", "360 degrees", "270 degrees"],
+    feedback: {
+      correct: "Correct! A full circle has 360 degrees.",
+      incorrect: "Not quite. A full circle has 360 degrees."
+    }
+  },
+  {
+    question: "What is the measure of a straight angle?",
+    answer: "180 degrees",
+    choices: ["90 degrees", "180 degrees", "360 degrees", "270 degrees"],
+    feedback: {
+      correct: "Correct! A straight angle measures 180 degrees.",
+      incorrect: "Not quite. A straight angle measures 180 degrees."
+    }
+  },
+  {
+    question: "What do we call an angle that measures exactly 90 degrees?",
+    answer: "Right angle",
+    choices: ["Right angle", "Acute angle", "Obtuse angle", "Reflex angle"],
+    feedback: {
+      correct: "Correct! An angle that measures 90 degrees is a right angle.",
+      incorrect: "Not quite. An angle measuring 90 degrees is a right angle."
+    }
+  },
+  {
+    question: "Which of the following is a type of angle?",
+    answer: "Right angle",
+    choices: ["Circle", "Square", "Right angle", "Rectangle"],
+    feedback: {
+      correct: "Correct! A right angle is a type of angle.",
+      incorrect: "Not quite. A right angle is a specific type of angle."
+    }
+  },
+  {
+    question: "If you have a 45-degree angle, what type of angle is it?",
+    answer: "Acute angle",
+    choices: ["Acute angle", "Obtuse angle", "Right angle", "Straight angle"],
+    feedback: {
+      correct: "Correct! A 45-degree angle is an acute angle.",
+      incorrect: "Not quite. A 45-degree angle is an acute angle."
+    }
+  },
+  {
+    question: "How many right angles are in a rectangle?",
+    answer: "4",
+    choices: ["2", "3", "4", "6"],
+    feedback: {
+      correct: "Correct! A rectangle has 4 right angles.",
+      incorrect: "Not quite. A rectangle has 4 right angles."
+    }
+  },
+  {
+    question: "What is the sum of the interior angles of a triangle?",
+    answer: "180 degrees",
+    choices: ["90 degrees", "180 degrees", "360 degrees", "270 degrees"],
+    feedback: {
+      correct: "Correct! The sum of the interior angles of a triangle is 180 degrees.",
+      incorrect: "Not quite. The sum of the angles of a triangle is 180 degrees."
+    }
+  },
+  
+  {
+    question: "Which of the following angles is an acute angle?",
+    answer: "45 degrees",
+    choices: ["45 degrees", "90 degrees", "120 degrees", "180 degrees"],
+    feedback: {
+      correct: "Correct! 45 degrees is an acute angle.",
+      incorrect: "Not quite. 45 degrees is an acute angle."
+    }
+  },
+  {
+    question: "Which of these shapes does not have right angles?",
+    answer: "Circle",
+    choices: ["Square", "Rectangle", "Triangle", "Circle"],
+    feedback: {
+      correct: "Correct! A circle does not have any right angles.",
+      incorrect: "Not quite. A circle does not have right angles."
+    }
+  },
+  {
+    question: "How many right angles are there in a square?",
+    answer: "4",
+    choices: ["2", "3", "4", "6"],
+    feedback: {
+      correct: "Correct! A square has 4 right angles.",
+      incorrect: "Not quite. A square has 4 right angles."
+    }
+  },
+  {
+    question: "What is the measure of a reflex angle?",
+    answer: "Greater than 180 degrees",
+    choices: ["Less than 90 degrees", "Exactly 90 degrees", "Greater than 180 degrees", "Exactly 180 degrees"],
+    feedback: {
+      correct: "Correct! A reflex angle measures greater than 180 degrees.",
+      incorrect: "Not quite. A reflex angle is greater than 180 degrees."
+    }
+  },
+  {
+    question: "What is the measure of an acute angle?",
+    answer: "Less than 90 degrees",
+    choices: ["Less than 90 degrees", "Exactly 90 degrees", "More than 90 degrees", "Exactly 180 degrees"],
+    feedback: {
+      correct: "Correct! An acute angle measures less than 90 degrees.",
+      incorrect: "Not quite. An acute angle is less than 90 degrees."
+    }
+  },
+  {
+    question: "How many degrees are in a half turn of a circle?",
+    answer: "180 degrees",
+    choices: ["90 degrees", "180 degrees", "270 degrees", "360 degrees"],
+    feedback: {
+      correct: "Correct! A half turn of a circle measures 180 degrees.",
+      incorrect: "Not quite. A half turn of a circle is 180 degrees."
+    }
+  },
+  {
+    question: "What is the measure of a straight angle?",
+    answer: "180 degrees",
+    choices: ["90 degrees", "180 degrees", "360 degrees", "270 degrees"],
+    feedback: {
+      correct: "Correct! A straight angle measures 180 degrees.",
+      incorrect: "Not quite. A straight angle measures 180 degrees."
+    }
+  },
+  {
+    question: "Which angle is greater than 90 degrees but less than 180 degrees?",
+    answer: "Obtuse angle",
+    choices: ["Acute angle", "Obtuse angle", "Right angle", "Reflex angle"],
+    feedback: {
+      correct: "Correct! An obtuse angle is greater than 90 degrees but less than 180 degrees.",
+      incorrect: "Not quite. An obtuse angle is between 90 and 180 degrees."
+    }
+  },
+  {
+    question: "Which shape has only two lines of symmetry?",
+    answer: "Rectangle",
+    choices: ["Square", "Rectangle", "Triangle", "Circle"],
+    feedback: {
+      correct: "Correct! A rectangle has two lines of symmetry.",
+      incorrect: "Not quite. A rectangle has two lines of symmetry."
+    }
+  }
+];
+
+  
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_Units.LA.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

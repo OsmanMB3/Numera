@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Number and Operations in Base Ten</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+
+const questionsDatabase = [
+  {
+    question: "What is the place value of the digit 6 in the number 462?",
+    answer: "60",
+    choices: ["6", "60", "600", "6000"],
+    feedback: {
+      correct: "Correct! The digit 6 is in the tens place, so its value is 60.",
+      incorrect: "Not quite. The digit 6 is in the tens place, so its value is 60."
+    }
+  },
+  {
+    question: "What is the value of the digit 3 in the number 1,347?",
+    answer: "300",
+    choices: ["3", "30", "300", "3000"],
+    feedback: {
+      correct: "Correct! The digit 3 is in the hundreds place, so its value is 300.",
+      incorrect: "Not quite. The digit 3 is in the hundreds place, so its value is 300."
+    }
+  },
+  {
+    question: "Which number is represented by the digits 4, 2, and 5 in that order?",
+    answer: "425",
+    choices: ["425", "452", "245", "254"],
+    feedback: {
+      correct: "Correct! The number represented is 425.",
+      incorrect: "Not quite. The digits 4, 2, and 5 represent the number 425."
+    }
+  },
+  {
+    question: "Which of these numbers is greater than 1,000?",
+    answer: "1,235",
+    choices: ["995", "1,200", "1,235", "900"],
+    feedback: {
+      correct: "Correct! 1,235 is greater than 1,000.",
+      incorrect: "Not quite. 1,235 is greater than 1,000."
+    }
+  },
+  {
+    question: "What is the sum of 237 and 461?",
+    answer: "698",
+    choices: ["698", "700", "800", "660"],
+    feedback: {
+      correct: "Correct! 237 + 461 = 698.",
+      incorrect: "Not quite. Try adding 237 and 461 together."
+    }
+  },
+  {
+    question: "Which of the following represents the number 1,432 in expanded form?",
+    answer: "1,000 + 400 + 30 + 2",
+    choices: ["1,000 + 400 + 30 + 2", "1,000 + 40 + 30 + 2", "1000 + 400 + 30 + 2", "1,000 + 40 + 400 + 32"],
+    feedback: {
+      correct: "Correct! 1,432 in expanded form is 1,000 + 400 + 30 + 2.",
+      incorrect: "Not quite. Try breaking down the number 1,432 by its place value."
+    }
+  },
+  {
+    question: "What is 623 + 89?",
+    answer: "712",
+    choices: ["712", "800", "700", "710"],
+    feedback: {
+      correct: "Correct! 623 + 89 = 712.",
+      incorrect: "Not quite. Try adding 623 and 89."
+    }
+  },
+  {
+    question: "Which of these numbers is equal to 500 + 60 + 7?",
+    answer: "567",
+    choices: ["567", "507", "675", "650"],
+    feedback: {
+      correct: "Correct! 500 + 60 + 7 = 567.",
+      incorrect: "Not quite. Try adding 500, 60, and 7 together."
+    }
+  },
+  {
+    question: "What is the difference between 1,000 and 345?",
+    answer: "655",
+    choices: ["655", "600", "500", "700"],
+    feedback: {
+      correct: "Correct! 1,000 - 345 = 655.",
+      incorrect: "Not quite. Try subtracting 345 from 1,000."
+    }
+  },
+  {
+    question: "What number is represented by 3 hundreds, 5 tens, and 7 ones?",
+    answer: "357",
+    choices: ["357", "375", "573", "3570"],
+    feedback: {
+      correct: "Correct! 3 hundreds, 5 tens, and 7 ones make 357.",
+      incorrect: "Not quite. 3 hundreds, 5 tens, and 7 ones make 357."
+    }
+  },
+  {
+    question: "Which number is written in expanded form: 800 + 50 + 7?",
+    answer: "857",
+    choices: ["875", "857", "8750", "580"],
+    feedback: {
+      correct: "Correct! 800 + 50 + 7 = 857.",
+      incorrect: "Not quite. Try adding 800, 50, and 7 together."
+    }
+  },
+  {
+    question: "What is the value of the number 5 in 4,567?",
+    answer: "500",
+    choices: ["500", "50", "5", "5000"],
+    feedback: {
+      correct: "Correct! The value of 5 in 4,567 is 500.",
+      incorrect: "Not quite. The value of 5 in 4,567 is 500, as it's in the hundreds place."
+    }
+  },
+  {
+    question: "What is 687 - 235?",
+    answer: "452",
+    choices: ["452", "440", "460", "500"],
+    feedback: {
+      correct: "Correct! 687 - 235 = 452.",
+      incorrect: "Not quite. Try subtracting 235 from 687."
+    }
+  },
+  {
+    question: "Which of these numbers is the greatest?",
+    answer: "2,345",
+    choices: ["2,100", "2,345", "2,500", "2,199"],
+    feedback: {
+      correct: "Correct! 2,345 is the greatest number.",
+      incorrect: "Not quite. 2,345 is the greatest number."
+    }
+  },
+  {
+    question: "Which number represents 700 + 50 + 4?",
+    answer: "754",
+    choices: ["745", "754", "775", "704"],
+    feedback: {
+      correct: "Correct! 700 + 50 + 4 = 754.",
+      incorrect: "Not quite. Try adding 700, 50, and 4 together."
+    }
+  },
+  {
+    question: "Which number is equal to 500 + 10 + 3?",
+    answer: "513",
+    choices: ["513", "503", "530", "510"],
+    feedback: {
+      correct: "Correct! 500 + 10 + 3 = 513.",
+      incorrect: "Not quite. Try adding 500, 10, and 3 together."
+    }
+  },
+  {
+    question: "How much is 1,200 + 199?",
+    answer: "1,399",
+    choices: ["1,399", "1,499", "1,389", "1,309"],
+    feedback: {
+      correct: "Correct! 1,200 + 199 = 1,399.",
+      incorrect: "Not quite. Try adding 1,200 and 199."
+    }
+  },
+  {
+    question: "Which number is greater: 346 or 434?",
+    answer: "434",
+    choices: ["346", "434", "Both are equal", "Neither"],
+    feedback: {
+      correct: "Correct! 434 is greater than 346.",
+      incorrect: "Not quite. 434 is greater than 346."
+    }
+  }
+];
+
+  
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G3_Units.NY.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

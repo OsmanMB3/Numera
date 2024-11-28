@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Number and Operations in Base Ten</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+
+const questionsDatabase = [
+  {
+    question: "What is the value of the digit 7 in the number 572?",
+    answer: "70",
+    choices: ["70", "700", "7", "7000"],
+    feedback: {
+      correct: "Correct! The digit 7 is in the tens place, so its value is 70.",
+      incorrect: "Not quite. The digit 7 is in the tens place, so it represents 70."
+    }
+  },
+  {
+    question: "What is the sum of 431 and 298?",
+    answer: "729",
+    choices: ["729", "728", "738", "718"],
+    feedback: {
+      correct: "Correct! 431 + 298 equals 729.",
+      incorrect: "Not quite. Try adding 431 and 298 again."
+    }
+  },
+  {
+    question: "Which of these numbers is in the thousands place: 3, 7, 2, or 6 in the number 6724?",
+    answer: "6",
+    choices: ["3", "7", "2", "6"],
+    feedback: {
+      correct: "Correct! The digit 6 is in the thousands place.",
+      incorrect: "Not quite. The digit 6 is in the thousands place."
+    }
+  },
+  {
+    question: "What is 456 rounded to the nearest hundred?",
+    answer: "500",
+    choices: ["500", "400", "450", "460"],
+    feedback: {
+      correct: "Correct! 456 rounded to the nearest hundred is 500.",
+      incorrect: "Not quite. Try rounding 456 to the nearest hundred again."
+    }
+  },
+  {
+    question: "What is the difference between 809 and 287?",
+    answer: "522",
+    choices: ["522", "520", "530", "500"],
+    feedback: {
+      correct: "Correct! 809 - 287 equals 522.",
+      incorrect: "Not quite. Try subtracting 287 from 809 again."
+    }
+  },
+  {
+    question: "What is the sum of 653 and 747?",
+    answer: "1400",
+    choices: ["1400", "1500", "1300", "1200"],
+    feedback: {
+      correct: "Correct! 653 + 747 equals 1400.",
+      incorrect: "Not quite. Try adding 653 and 747 again."
+    }
+  },
+  {
+    question: "What is the place value of the digit 5 in the number 8549?",
+    answer: "500",
+    choices: ["500", "50", "5", "5000"],
+    feedback: {
+      correct: "Correct! The digit 5 is in the hundreds place, so its value is 500.",
+      incorrect: "Not quite. The digit 5 is in the hundreds place, so its value is 500."
+    }
+  },
+  {
+    question: "What is 543 rounded to the nearest ten?",
+    answer: "540",
+    choices: ["540", "550", "530", "500"],
+    feedback: {
+      correct: "Correct! 543 rounded to the nearest ten is 540.",
+      incorrect: "Not quite. Try rounding 543 to the nearest ten again."
+    }
+  },
+  {
+    question: "Which of the following is equal to 6 tens and 4 ones?",
+    answer: "64",
+    choices: ["64", "46", "54", "34"],
+    feedback: {
+      correct: "Correct! 6 tens and 4 ones equals 64.",
+      incorrect: "Not quite. 6 tens and 4 ones is the same as 64."
+    }
+  },
+  {
+    question: "What is the value of 4 in the number 487?",
+    answer: "400",
+    choices: ["400", "40", "4", "100"],
+    feedback: {
+      correct: "Correct! The digit 4 is in the hundreds place, so its value is 400.",
+      incorrect: "Not quite. The digit 4 is in the hundreds place, so it represents 400."
+    }
+  },
+  {
+    question: "What is 560 + 239?",
+    answer: "799",
+    choices: ["799", "809", "729", "7990"],
+    feedback: {
+      correct: "Correct! 560 + 239 equals 799.",
+      incorrect: "Not quite. Try adding 560 and 239 again."
+    }
+  },
+  {
+    question: "What is 600 - 235?",
+    answer: "365",
+    choices: ["365", "375", "355", "370"],
+    feedback: {
+      correct: "Correct! 600 - 235 equals 365.",
+      incorrect: "Not quite. Try subtracting 235 from 600 again."
+    }
+  },
+  {
+    question: "What is the sum of 281 and 193?",
+    answer: "474",
+    choices: ["474", "473", "475", "480"],
+    feedback: {
+      correct: "Correct! 281 + 193 equals 474.",
+      incorrect: "Not quite. Try adding 281 and 193 again."
+    }
+  },
+  {
+    question: "What is the product of 9 and 8?",
+    answer: "72",
+    choices: ["72", "71", "73", "75"],
+    feedback: {
+      correct: "Correct! 9 x 8 equals 72.",
+      incorrect: "Not quite. Try multiplying 9 and 8 again."
+    }
+  },
+  {
+    question: "What is 476 rounded to the nearest hundred?",
+    answer: "500",
+    choices: ["500", "400", "450", "460"],
+    feedback: {
+      correct: "Correct! 476 rounded to the nearest hundred is 500.",
+      incorrect: "Not quite. Try rounding 476 to the nearest hundred again."
+    }
+  },
+  {
+    question: "What is the value of the digit 2 in the number 725?",
+    answer: "20",
+    choices: ["20", "200", "2", "2,000"],
+    feedback: {
+      correct: "Correct! The digit 2 is in the tens place, so its value is 20.",
+      incorrect: "Not quite. The digit 2 is in the tens place, so it represents 20."
+    }
+  },
+  {
+    question: "What is 784 + 215?",
+    answer: "999",
+    choices: ["999", "1000", "995", "998"],
+    feedback: {
+      correct: "Correct! 784 + 215 equals 999.",
+      incorrect: "Not quite. Try adding 784 and 215 again."
+    }
+  },
+  {
+    question: "What is 500 ÷ 10?",
+    answer: "50",
+    choices: ["50", "60", "40", "30"],
+    feedback: {
+      correct: "Correct! 500 ÷ 10 equals 50.",
+      incorrect: "Not quite. Try dividing 500 by 10 again."
+    }
+  },
+  {
+    question: "Which of the following is equal to 30 tens?",
+    answer: "300",
+    choices: ["300", "30", "3000", "30000"],
+    feedback: {
+      correct: "Correct! 30 tens is equal to 300.",
+      incorrect: "Not quite. 30 tens equals 300."
+    }
+  },
+  {
+    question: "What is 1,000 + 225?",
+    answer: "1,225",
+    choices: ["1,225", "1,215", "1,230", "1,250"],
+    feedback: {
+      correct: "Correct! 1,000 + 225 equals 1,225.",
+      incorrect: "Not quite. Try adding 1,000 and 225 again."
+    }
+  },
+  {
+    question: "What is 900 ÷ 100?",
+    answer: "9",
+    choices: ["9", "90", "10", "99"],
+    feedback: {
+      correct: "Correct! 900 ÷ 100 equals 9.",
+      incorrect: "Not quite. Try dividing 900 by 100 again."
+    }
+  }
+];
+
+  
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_Units.NY.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

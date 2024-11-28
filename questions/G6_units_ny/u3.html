@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Expressions and Equations</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ const questionsDatabase = [
+  {
+    question: "What is the value of the expression 4 × (3 + 2)?",
+    answer: "20",
+    choices: ["20", "10", "15", "12"],
+    feedback: {
+      correct: "Correct! The value of 4 × (3 + 2) is 20.",
+      incorrect: "Not quite. Remember to solve the parentheses first."
+    }
+  },
+  {
+    question: "Which of these represents the equation: 'The sum of 7 and x equals 12'?",
+    answer: "7 + x = 12",
+    choices: ["7 + x = 12", "7 × x = 12", "7 - x = 12", "7 ÷ x = 12"],
+    feedback: {
+      correct: "Correct! The equation for the sum of 7 and x is 7 + x = 12.",
+      incorrect: "Not quite. The equation for the sum of 7 and x is 7 + x = 12."
+    }
+  },
+  {
+    question: "What is the solution to the equation 3x = 15?",
+    answer: "5",
+    choices: ["5", "3", "15", "10"],
+    feedback: {
+      correct: "Correct! The solution to 3x = 15 is x = 5.",
+      incorrect: "Not quite. Try dividing 15 by 3 to find x."
+    }
+  },
+  {
+    question: "If x = 3, what is the value of 2x + 4?",
+    answer: "10",
+    choices: ["8", "10", "6", "12"],
+    feedback: {
+      correct: "Correct! If x = 3, then 2(3) + 4 = 10.",
+      incorrect: "Not quite. Substitute x = 3 into the expression and solve."
+    }
+  },
+  {
+    question: "Which equation represents the phrase: 'Five times a number, y, is 25'?",
+    answer: "5y = 25",
+    choices: ["5y = 25", "y + 5 = 25", "5 + y = 25", "y × 5 = 25"],
+    feedback: {
+      correct: "Correct! 5y = 25 represents 'five times a number, y'.",
+      incorrect: "Not quite. The equation for 'five times a number, y' is 5y = 25."
+    }
+  },
+  {
+    question: "What is the solution to the equation x + 8 = 12?",
+    answer: "4",
+    choices: ["4", "12", "8", "16"],
+    feedback: {
+      correct: "Correct! The solution is x = 4.",
+      incorrect: "Not quite. Subtract 8 from both sides to solve for x."
+    }
+  },
+  {
+    question: "If the expression is 2x - 3 and x = 4, what is the value of the expression?",
+    answer: "5",
+    choices: ["5", "6", "7", "8"],
+    feedback: {
+      correct: "Correct! If x = 4, then 2(4) - 3 = 5.",
+      incorrect: "Not quite. Substitute x = 4 into the expression and solve."
+    }
+  },
+  {
+    question: "What does the equation 4y = 20 represent?",
+    answer: "Four times a number is 20.",
+    choices: ["Four times a number is 20.", "A number added to itself is 20.", "Four divided by a number is 20.", "A number minus 4 is 20."],
+    feedback: {
+      correct: "Correct! 4y = 20 represents 'Four times a number is 20'.",
+      incorrect: "Not quite. 4y = 20 means 'Four times a number is 20'."
+    }
+  },
+  {
+    question: "What is the value of the expression 5 × 4 + 2?",
+    answer: "22",
+    choices: ["22", "24", "18", "20"],
+    feedback: {
+      correct: "Correct! 5 × 4 + 2 equals 22.",
+      incorrect: "Not quite. Remember to follow the order of operations."
+    }
+  },
+  {
+    question: "Which of the following is the correct way to express the phrase: 'The difference between a number, n, and 7'?",
+    answer: "n - 7",
+    choices: ["n + 7", "n - 7", "n × 7", "7 - n"],
+    feedback: {
+      correct: "Correct! The difference between a number and 7 is n - 7.",
+      incorrect: "Not quite. The difference is found by subtracting 7 from n."
+    }
+  },
+  {
+    question: "What is the value of 6 + 4x when x = 3?",
+    answer: "18",
+    choices: ["18", "14", "16", "12"],
+    feedback: {
+      correct: "Correct! 6 + 4(3) = 18.",
+      incorrect: "Not quite. Substitute x = 3 into the expression and solve."
+    }
+  },
+  {
+    question: "Which equation represents the phrase: 'The sum of 7 and a number, p, is 10'?",
+    answer: "7 + p = 10",
+    choices: ["7 + p = 10", "p + 7 = 10", "10 + p = 7", "7 = p + 10"],
+    feedback: {
+      correct: "Correct! The sum of 7 and p is 10.",
+      incorrect: "Not quite. The equation for the sum of 7 and p is 7 + p = 10."
+    }
+  },
+  {
+    question: "Which of these is an algebraic expression?",
+    answer: "2x + 5",
+    choices: ["2x + 5", "5 + 2", "7 = x", "4 - 3"],
+    feedback: {
+      correct: "Correct! 2x + 5 is an algebraic expression.",
+      incorrect: "Not quite. An algebraic expression contains variables and constants."
+    }
+  },
+  {
+    question: "What is the value of x in the equation 3x = 15?",
+    answer: "5",
+    choices: ["5", "3", "15", "10"],
+    feedback: {
+      correct: "Correct! x = 5 in the equation 3x = 15.",
+      incorrect: "Not quite. Try dividing 15 by 3 to find x."
+    }
+  },
+  {
+    question: "Which expression represents the phrase: 'Seven more than a number, z'?",
+    answer: "z + 7",
+    choices: ["z - 7", "7 + z", "z + 7", "7 = z"],
+    feedback: {
+      correct: "Correct! Seven more than a number is z + 7.",
+      incorrect: "Not quite. The expression for 'seven more than a number' is z + 7."
+    }
+  },
+  {
+    question: "What is the value of 3 × (2 + 4)?",
+    answer: "18",
+    choices: ["18", "12", "6", "14"],
+    feedback: {
+      correct: "Correct! 3 × (2 + 4) equals 18.",
+      incorrect: "Not quite. Solve the parentheses first."
+    }
+  },
+  {
+    question: "What is the solution to the equation x - 5 = 8?",
+    answer: "13",
+    choices: ["13", "3", "8", "5"],
+    feedback: {
+      correct: "Correct! x = 13 in the equation x - 5 = 8.",
+      incorrect: "Not quite. Add 5 to both sides to solve for x."
+    }
+  },
+  {
+    question: "What does the equation 3x + 2 = 11 represent?",
+    answer: "Three times a number, plus 2, equals 11.",
+    choices: ["Three times a number, plus 2, equals 11.", "A number added to itself, plus 2, equals 11.", "Three times a number is 11.", "A number is subtracted by 2 to make 11."],
+    feedback: {
+      correct: "Correct! The equation represents 'Three times a number, plus 2, equals 11'.",
+      incorrect: "Not quite. 3x + 2 = 11 means 'Three times a number, plus 2, equals 11'."
+    }
+  },
+  {
+    question: "What is the solution to the equation 4x = 16?",
+    answer: "4",
+    choices: ["4", "8", "6", "2"],
+    feedback: {
+      correct: "Correct! x = 4 in the equation 4x = 16.",
+      incorrect: "Not quite. Try dividing 16 by 4 to find x."
+    }
+  }
+];
+
+  
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G6_Units.NY.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

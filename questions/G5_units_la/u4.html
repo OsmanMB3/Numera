@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 4 - Measurement and Data</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ const questionsDatabase = [
+  {
+    question: "How many inches are in 1 foot?",
+    answer: "12",
+    choices: ["10", "12", "14", "16"],
+    feedback: {
+      correct: "Correct! There are 12 inches in 1 foot.",
+      incorrect: "Not quite. There are 12 inches in 1 foot."
+    }
+  },
+  {
+    question: "How many cups are in a pint?",
+    answer: "2",
+    choices: ["1", "2", "4", "8"],
+    feedback: {
+      correct: "Correct! There are 2 cups in a pint.",
+      incorrect: "Not quite. There are 2 cups in a pint."
+    }
+  },
+  {
+    question: "What is the unit of measurement for liquid volume?",
+    answer: "Liters",
+    choices: ["Grams", "Liters", "Inches", "Cups"],
+    feedback: {
+      correct: "Correct! Liquid volume is measured in liters.",
+      incorrect: "Not quite. Liquid volume is measured in liters."
+    }
+  },
+  {
+    question: "How many pounds are in 1 ton?",
+    answer: "2000",
+    choices: ["1000", "1500", "2000", "2500"],
+    feedback: {
+      correct: "Correct! There are 2000 pounds in 1 ton.",
+      incorrect: "Not quite. There are 2000 pounds in 1 ton."
+    }
+  },
+  {
+    question: "Which of the following would you use to measure the height of a building?",
+    answer: "Meters",
+    choices: ["Centimeters", "Meters", "Kilometers", "Millimeters"],
+    feedback: {
+      correct: "Correct! The height of a building is typically measured in meters.",
+      incorrect: "Not quite. Meters are used for measuring height."
+    }
+  },
+  {
+    question: "If a jug holds 3 liters of water, how many milliliters is that?",
+    answer: "3000",
+    choices: ["300", "1000", "3000", "5000"],
+    feedback: {
+      correct: "Correct! 3 liters is equal to 3000 milliliters.",
+      incorrect: "Not quite. 3 liters is 3000 milliliters."
+    }
+  },
+  {
+    question: "How many days are there in 3 weeks?",
+    answer: "21",
+    choices: ["18", "21", "24", "30"],
+    feedback: {
+      correct: "Correct! There are 21 days in 3 weeks.",
+      incorrect: "Not quite. 3 weeks is 21 days."
+    }
+  },
+  {
+    question: "If you have a 2 liter bottle, how many milliliters is it?",
+    answer: "2000",
+    choices: ["500", "1000", "2000", "2500"],
+    feedback: {
+      correct: "Correct! 2 liters equals 2000 milliliters.",
+      incorrect: "Not quite. 2 liters equals 2000 milliliters."
+    }
+  },
+  {
+    question: "What is the perimeter of a rectangle with a length of 7 cm and a width of 4 cm?",
+    answer: "22 cm",
+    choices: ["18 cm", "20 cm", "22 cm", "24 cm"],
+    feedback: {
+      correct: "Correct! The perimeter is 2 * (length + width).",
+      incorrect: "Not quite. Use the perimeter formula: 2 * (length + width)."
+    }
+  },
+  {
+    question: "How many seconds are in 2 minutes?",
+    answer: "120",
+    choices: ["60", "120", "150", "200"],
+    feedback: {
+      correct: "Correct! 2 minutes is 120 seconds.",
+      incorrect: "Not quite. 1 minute is 60 seconds, so 2 minutes is 120 seconds."
+    }
+  },
+  {
+    question: "What is the unit of measurement for the weight of an object?",
+    answer: "Kilograms",
+    choices: ["Kilograms", "Meters", "Grams", "Centimeters"],
+    feedback: {
+      correct: "Correct! Weight is measured in kilograms.",
+      incorrect: "Not quite. Kilograms are used to measure weight."
+    }
+  },
+  {
+    question: "What is the area of a rectangle with a length of 8 cm and a width of 5 cm?",
+    answer: "40 cm²",
+    choices: ["35 cm²", "40 cm²", "45 cm²", "50 cm²"],
+    feedback: {
+      correct: "Correct! The area of a rectangle is length * width.",
+      incorrect: "Not quite. Use the formula: area = length * width."
+    }
+  },
+  {
+    question: "How many hours are in 3 days?",
+    answer: "72",
+    choices: ["48", "72", "96", "120"],
+    feedback: {
+      correct: "Correct! 3 days equals 72 hours.",
+      incorrect: "Not quite. 1 day equals 24 hours, so 3 days is 72 hours."
+    }
+  },
+  {
+    question: "Which of the following is the best unit to measure the mass of a large watermelon?",
+    answer: "Kilograms",
+    choices: ["Grams", "Milliliters", "Kilograms", "Centimeters"],
+    feedback: {
+      correct: "Correct! Mass is best measured in kilograms for large items.",
+      incorrect: "Not quite. Kilograms are used to measure mass."
+    }
+  },
+  {
+    question: "How many weeks are in 1 year?",
+    answer: "52",
+    choices: ["50", "52", "54", "60"],
+    feedback: {
+      correct: "Correct! There are 52 weeks in a year.",
+      incorrect: "Not quite. A year has 52 weeks."
+    }
+  },
+  {
+    question: "How many cups are in a gallon?",
+    answer: "16",
+    choices: ["8", "12", "16", "20"],
+    feedback: {
+      correct: "Correct! There are 16 cups in a gallon.",
+      incorrect: "Not quite. There are 16 cups in a gallon."
+    }
+  },
+  {
+    question: "How many meters are in 1 kilometer?",
+    answer: "1000",
+    choices: ["100", "500", "1000", "2000"],
+    feedback: {
+      correct: "Correct! 1 kilometer equals 1000 meters.",
+      incorrect: "Not quite. 1 kilometer equals 1000 meters."
+    }
+  },
+  {
+    question: "What is the volume of a cube with side lengths of 3 cm?",
+    answer: "27 cm³",
+    choices: ["18 cm³", "24 cm³", "27 cm³", "30 cm³"],
+    feedback: {
+      correct: "Correct! The volume of a cube is side³.",
+      incorrect: "Not quite. Use the formula: volume = side³."
+    }
+  },
+  {
+    question: "How many feet are in a yard?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! There are 3 feet in a yard.",
+      incorrect: "Not quite. A yard is 3 feet."
+    }
+  },
+  {
+    question: "What is the area of a square with a side length of 6 cm?",
+    answer: "36 cm²",
+    choices: ["30 cm²", "36 cm²", "42 cm²", "50 cm²"],
+    feedback: {
+      correct: "Correct! The area of a square is side * side.",
+      incorrect: "Not quite. Use the formula: area = side * side."
+    }
+  }
+];
+
+  
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G5_Units.LA.html?unit4score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

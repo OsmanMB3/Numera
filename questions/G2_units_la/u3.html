@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Measurement and Data</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ const questionsDatabase = [
+  {
+    question: "What is the best unit to measure the length of a pencil?",
+    answer: "Centimeters",
+    choices: ["Centimeters", "Kilometers", "Inches", "Liters"],
+    feedback: {
+      correct: "Correct! A pencil is best measured in centimeters.",
+      incorrect: "Not quite. A pencil is small, so it is measured in centimeters."
+    }
+  },
+  {
+    question: "If you have 3 dimes, how much money do you have?",
+    answer: "30 cents",
+    choices: ["30 cents", "10 cents", "50 cents", "15 cents"],
+    feedback: {
+      correct: "Correct! 3 dimes equals 30 cents.",
+      incorrect: "Not quite. A dime is worth 10 cents."
+    }
+  },
+  {
+    question: "What time does the clock show if the hour hand is on 4 and the minute hand is on 12?",
+    answer: "4:00",
+    choices: ["4:00", "12:00", "3:30", "5:00"],
+    feedback: {
+      correct: "Correct! The time is 4:00.",
+      incorrect: "Not quite. The hour hand is on 4, and the minute hand is on 12."
+    }
+  },
+  {
+    question: "Which object would you use to measure the height of a door?",
+    answer: "A ruler",
+    choices: ["A ruler", "A thermometer", "A clock", "A scale"],
+    feedback: {
+      correct: "Correct! A ruler is used to measure the height of objects.",
+      incorrect: "Not quite. A ruler is used to measure length or height."
+    }
+  },
+  {
+    question: "Which of the following units is used to measure weight?",
+    answer: "Pounds",
+    choices: ["Pounds", "Liters", "Inches", "Feet"],
+    feedback: {
+      correct: "Correct! Pounds are used to measure weight.",
+      incorrect: "Not quite. Pounds measure weight, not length or volume."
+    }
+  },
+  {
+    question: "How many minutes are in one hour?",
+    answer: "60 minutes",
+    choices: ["30 minutes", "60 minutes", "100 minutes", "120 minutes"],
+    feedback: {
+      correct: "Correct! One hour equals 60 minutes.",
+      incorrect: "Not quite. There are 60 minutes in one hour."
+    }
+  },
+  {
+    question: "How many seconds are in one minute?",
+    answer: "60 seconds",
+    choices: ["60 seconds", "30 seconds", "10 seconds", "100 seconds"],
+    feedback: {
+      correct: "Correct! There are 60 seconds in one minute.",
+      incorrect: "Not quite. There are 60 seconds in one minute."
+    }
+  },
+  {
+    question: "Which unit would you use to measure the temperature of a room?",
+    answer: "Degrees Fahrenheit",
+    choices: ["Degrees Fahrenheit", "Inches", "Pounds", "Liters"],
+    feedback: {
+      correct: "Correct! Temperature is measured in degrees Fahrenheit.",
+      incorrect: "Not quite. Temperature is measured in degrees Fahrenheit or Celsius."
+    }
+  },
+  {
+    question: "What unit of measurement would you use to measure the weight of a watermelon?",
+    answer: "Kilograms",
+    choices: ["Kilograms", "Grams", "Liters", "Inches"],
+    feedback: {
+      correct: "Correct! A watermelon is best measured in kilograms.",
+      incorrect: "Not quite. Kilograms are used to measure heavier objects like a watermelon."
+    }
+  },
+  {
+    question: "If the hour hand is on 7 and the minute hand is on 12, what time is it?",
+    answer: "7:00",
+    choices: ["7:00", "6:00", "8:00", "7:30"],
+    feedback: {
+      correct: "Correct! The time shown is 7:00.",
+      incorrect: "Not quite. The hour hand is on 7, and the minute hand is on 12."
+    }
+  },
+  {
+    question: "How many minutes are in half an hour?",
+    answer: "30 minutes",
+    choices: ["15 minutes", "30 minutes", "45 minutes", "60 minutes"],
+    feedback: {
+      correct: "Correct! Half an hour equals 30 minutes.",
+      incorrect: "Not quite. There are 30 minutes in half an hour."
+    }
+  },
+  {
+    question: "Which unit would you use to measure the length of a book?",
+    answer: "Centimeters",
+    choices: ["Inches", "Centimeters", "Miles", "Feet"],
+    feedback: {
+      correct: "Correct! A book is usually measured in centimeters.",
+      incorrect: "Not quite. A book is typically measured in centimeters."
+    }
+  },
+  {
+    question: "What is the weight of a feather?",
+    answer: "Light",
+    choices: ["Heavy", "Light", "Soft", "Hard"],
+    feedback: {
+      correct: "Correct! A feather is light.",
+      incorrect: "Not quite. A feather is light in weight."
+    }
+  },
+  {
+    question: "Which of the following is best measured with a thermometer?",
+    answer: "Temperature",
+    choices: ["Length", "Weight", "Temperature", "Volume"],
+    feedback: {
+      correct: "Correct! Temperature is measured with a thermometer.",
+      incorrect: "Not quite. A thermometer measures temperature."
+    }
+  },
+  {
+    question: "What time is it when the clock shows the minute hand on 6 and the hour hand on 2?",
+    answer: "2:30",
+    choices: ["2:30", "2:00", "3:00", "2:15"],
+    feedback: {
+      correct: "Correct! The time is 2:30.",
+      incorrect: "Not quite. The minute hand is on 6, and the hour hand is on 2."
+    }
+  },
+  {
+    question: "Which of the following is a unit of length?",
+    answer: "Inches",
+    choices: ["Inches", "Pounds", "Cups", "Minutes"],
+    feedback: {
+      correct: "Correct! Inches are used to measure length.",
+      incorrect: "Not quite. Inches are used for measuring length."
+    }
+  },
+  {
+    question: "Which of these is the longest?",
+    answer: "A ruler",
+    choices: ["A ruler", "A pencil", "A paperclip", "A coin"],
+    feedback: {
+      correct: "Correct! A ruler is the longest.",
+      incorrect: "Not quite. A ruler is longer than a pencil, paperclip, or coin."
+    }
+  },
+  {
+    question: "How many minutes are in 1 hour and 30 minutes?",
+    answer: "90 minutes",
+    choices: ["60 minutes", "90 minutes", "120 minutes", "100 minutes"],
+    feedback: {
+      correct: "Correct! 1 hour and 30 minutes equals 90 minutes.",
+      incorrect: "Not quite. Add 60 minutes for the hour and 30 minutes for the extra time."
+    }
+  },
+  {
+    question: "How many hours are in 2 full days?",
+    answer: "48 hours",
+    choices: ["48 hours", "24 hours", "12 hours", "72 hours"],
+    feedback: {
+      correct: "Correct! 2 full days equals 48 hours.",
+      incorrect: "Not quite. 1 day has 24 hours, so 2 days have 48 hours."
+    }
+  },
+  {
+    question: "Which of these is the most appropriate for measuring the weight of an apple?",
+    answer: "Grams",
+    choices: ["Grams", "Liters", "Miles", "Inches"],
+    feedback: {
+      correct: "Correct! Grams are used to measure weight.",
+      incorrect: "Not quite. Apples are measured in grams."
+    }
+  }
+];
+
+
+  
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G2_Units.LA.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

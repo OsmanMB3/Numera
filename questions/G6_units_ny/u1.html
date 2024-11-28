@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1 - Ratios and Proportional Relationships</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ 
+ const questionsDatabase = [
+  {
+    question: "If there are 3 red apples and 5 green apples in a basket, what is the ratio of red apples to green apples?",
+    answer: "3:5",
+    choices: ["5:3", "3:5", "1:5", "5:1"],
+    feedback: {
+      correct: "Correct! The ratio of red apples to green apples is 3:5.",
+      incorrect: "Not quite. The correct ratio is the number of red apples to green apples, which is 3:5."
+    }
+  },
+  {
+    question: "A recipe calls for 4 cups of flour for every 2 cups of sugar. What is the ratio of flour to sugar?",
+    answer: "2:1",
+    choices: ["1:2", "2:1", "4:1", "1:4"],
+    feedback: {
+      correct: "Correct! The ratio of flour to sugar is 2:1.",
+      incorrect: "Not quite. The ratio is found by simplifying 4:2 to 2:1."
+    }
+  },
+  {
+    question: "If the ratio of cats to dogs in a pet store is 5:3, how many cats are there if there are 15 dogs?",
+    answer: "25",
+    choices: ["15", "25", "5", "35"],
+    feedback: {
+      correct: "Correct! Since the ratio is 5:3, you can set up a proportion to find that there are 25 cats.",
+      incorrect: "Not quite. Use the ratio to find how many cats there are when you know there are 15 dogs."
+    }
+  },
+  {
+    question: "A school has 4 teachers for every 100 students. How many teachers would there be for 500 students?",
+    answer: "20",
+    choices: ["10", "15", "20", "25"],
+    feedback: {
+      correct: "Correct! The ratio 4:100 can be used to scale up for 500 students, which gives 20 teachers.",
+      incorrect: "Not quite. Try using the ratio to scale the number of teachers for 500 students."
+    }
+  },
+  {
+    question: "Which of the following represents a proportion?",
+    answer: "4/5 = 8/10",
+    choices: ["2/3 = 4/5", "3/4 = 9/16", "4/5 = 8/10", "5/6 = 7/8"],
+    feedback: {
+      correct: "Correct! 4/5 equals 8/10, which is a proportion.",
+      incorrect: "Not quite. A proportion means two ratios are equivalent."
+    }
+  },
+  {
+    question: "If 12 students share 36 apples equally, what is the ratio of apples per student?",
+    answer: "3:1",
+    choices: ["1:3", "3:1", "12:36", "36:12"],
+    feedback: {
+      correct: "Correct! Each student gets 3 apples, so the ratio of apples per student is 3:1.",
+      incorrect: "Not quite. Divide 36 apples by 12 students to find the ratio."
+    }
+  },
+  {
+    question: "A factory produces 120 widgets in 3 hours. What is the ratio of widgets to hours?",
+    answer: "120:3",
+    choices: ["3:120", "120:3", "40:1", "1:40"],
+    feedback: {
+      correct: "Correct! The ratio of widgets to hours is 120:3.",
+      incorrect: "Not quite. The ratio is the number of widgets to the number of hours."
+    }
+  },
+  {
+    question: "If a school has 18 boys and 30 girls, what is the ratio of boys to the total number of students?",
+    answer: "18:48",
+    choices: ["18:48", "48:18", "18:30", "30:18"],
+    feedback: {
+      correct: "Correct! The ratio of boys to the total number of students is 18:48.",
+      incorrect: "Not quite. Add the number of boys and girls to get the total number of students."
+    }
+  },
+  {
+    question: "The ratio of apples to oranges is 2:3. If you have 6 apples, how many oranges do you have?",
+    answer: "9",
+    choices: ["9", "12", "15", "8"],
+    feedback: {
+      correct: "Correct! If the ratio is 2:3, for every 2 apples, you have 3 oranges. With 6 apples, you have 9 oranges.",
+      incorrect: "Not quite. Use the ratio to scale up the number of oranges."
+    }
+  },
+  {
+    question: "In a box of 30 marbles, 12 are red and the rest are blue. What is the ratio of red marbles to blue marbles?",
+    answer: "12:18",
+    choices: ["12:18", "18:12", "30:12", "12:30"],
+    feedback: {
+      correct: "Correct! There are 12 red marbles and 18 blue marbles, so the ratio is 12:18.",
+      incorrect: "Not quite. Subtract the number of red marbles from the total to find the number of blue marbles."
+    }
+  },
+  {
+    question: "A recipe calls for 3 cups of flour for every 5 cups of sugar. What is the ratio of flour to sugar?",
+    answer: "3:5",
+    choices: ["5:3", "3:5", "2:5", "5:2"],
+    feedback: {
+      correct: "Correct! The ratio of flour to sugar is 3:5.",
+      incorrect: "Not quite. The ratio of flour to sugar is 3 to 5."
+    }
+  },
+  {
+    question: "Which of the following ratios is equivalent to 4:5?",
+    answer: "8:10",
+    choices: ["4:5", "8:10", "2:3", "6:7"],
+    feedback: {
+      correct: "Correct! 8:10 is equivalent to 4:5.",
+      incorrect: "Not quite. Find the equivalent ratio by multiplying both parts by the same number."
+    }
+  },
+  {
+    question: "A box contains 20 red balls and 5 green balls. What is the ratio of green balls to red balls?",
+    answer: "5:20",
+    choices: ["5:20", "20:5", "4:1", "1:4"],
+    feedback: {
+      correct: "Correct! The ratio of green balls to red balls is 5:20.",
+      incorrect: "Not quite. The ratio of green balls to red balls is 5 to 20."
+    }
+  },
+  {
+    question: "In a bag of 50 candies, 10 are chocolate and the rest are gummy. What is the ratio of chocolate candies to gummy candies?",
+    answer: "10:40",
+    choices: ["10:40", "40:10", "20:30", "30:20"],
+    feedback: {
+      correct: "Correct! The ratio of chocolate to gummy candies is 10:40.",
+      incorrect: "Not quite. Subtract the chocolate candies from the total to find the gummy candies."
+    }
+  },
+  {
+    question: "There are 15 girls and 25 boys in a class. What is the ratio of boys to girls?",
+    answer: "25:15",
+    choices: ["15:25", "25:15", "15:10", "10:15"],
+    feedback: {
+      correct: "Correct! The ratio of boys to girls is 25:15.",
+      incorrect: "Not quite. The ratio of boys to girls is 25:15."
+    }
+  },
+  {
+    question: "A class has 16 students. If the ratio of boys to girls is 4:12, how many boys are in the class?",
+    answer: "4",
+    choices: ["4", "8", "12", "16"],
+    feedback: {
+      correct: "Correct! The ratio of boys to girls is 4:12, so there are 4 boys in the class.",
+      incorrect: "Not quite. Use the ratio to find the number of boys."
+    }
+  },
+  {
+    question: "A farm has 8 cows and 12 chickens. What is the ratio of cows to total animals?",
+    answer: "8:20",
+    choices: ["8:20", "12:8", "8:12", "20:8"],
+    feedback: {
+      correct: "Correct! The ratio of cows to total animals is 8:20.",
+      incorrect: "Not quite. The ratio is the number of cows to the total number of animals."
+    }
+  },
+  {
+    question: "A box has 6 pencils and 9 erasers. What is the ratio of erasers to pencils?",
+    answer: "9:6",
+    choices: ["6:9", "9:6", "3:2", "2:3"],
+    feedback: {
+      correct: "Correct! The ratio of erasers to pencils is 9:6.",
+      incorrect: "Not quite. The ratio of erasers to pencils is 9 to 6."
+    }
+  },
+  {
+    question: "What is the ratio of 4:6 simplified?",
+    answer: "2:3",
+    choices: ["2:3", "4:6", "1:2", "3:4"],
+    feedback: {
+      correct: "Correct! 4:6 simplifies to 2:3.",
+      incorrect: "Not quite. Simplify 4:6 by dividing both parts by 2."
+    }
+  }
+];
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G6_Units.NY.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Measurement and Data</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ const questionsDatabase = [
+  {
+    question: "Which unit would you use to measure the length of a pencil?",
+    answer: "Inches",
+    choices: ["Inches", "Pounds", "Gallons", "Liters"],
+    feedback: {
+      correct: "Correct! A pencil is measured in inches.",
+      incorrect: "Not quite. A pencil's length is usually measured in inches."
+    }
+  },
+  {
+    question: "How many inches are in 1 foot?",
+    answer: "12 inches",
+    choices: ["10 inches", "12 inches", "14 inches", "16 inches"],
+    feedback: {
+      correct: "Correct! There are 12 inches in 1 foot.",
+      incorrect: "Not quite. 1 foot equals 12 inches."
+    }
+  },
+  {
+    question: "Which of these is used to measure time?",
+    answer: "Clock",
+    choices: ["Ruler", "Thermometer", "Clock", "Scale"],
+    feedback: {
+      correct: "Correct! A clock is used to measure time.",
+      incorrect: "Not quite. A clock measures time."
+    }
+  },
+  {
+    question: "How many minutes are in 1 hour?",
+    answer: "60 minutes",
+    choices: ["30 minutes", "45 minutes", "60 minutes", "120 minutes"],
+    feedback: {
+      correct: "Correct! There are 60 minutes in 1 hour.",
+      incorrect: "Not quite. 1 hour equals 60 minutes."
+    }
+  },
+  {
+    question: "How many hours are in a day?",
+    answer: "24 hours",
+    choices: ["12 hours", "24 hours", "48 hours", "36 hours"],
+    feedback: {
+      correct: "Correct! There are 24 hours in a day.",
+      incorrect: "Not quite. There are 24 hours in a day."
+    }
+  },
+  {
+    question: "Which of these is the best tool to measure the weight of a bag of apples?",
+    answer: "Scale",
+    choices: ["Ruler", "Thermometer", "Scale", "Measuring cup"],
+    feedback: {
+      correct: "Correct! A scale is used to measure weight.",
+      incorrect: "Not quite. A scale is the tool used to measure weight."
+    }
+  },
+  {
+    question: "What is the correct unit to measure how long something is?",
+    answer: "Inches",
+    choices: ["Inches", "Pounds", "Cups", "Ounces"],
+    feedback: {
+      correct: "Correct! Length is measured in inches.",
+      incorrect: "Not quite. Length is measured in inches or centimeters."
+    }
+  },
+  {
+    question: "Which of these tools is used to measure the temperature?",
+    answer: "Thermometer",
+    choices: ["Clock", "Scale", "Thermometer", "Ruler"],
+    feedback: {
+      correct: "Correct! A thermometer is used to measure temperature.",
+      incorrect: "Not quite. A thermometer is used to measure temperature."
+    }
+  },
+  {
+    question: "Which is the correct unit to measure liquid?",
+    answer: "Cups",
+    choices: ["Inches", "Pounds", "Cups", "Feet"],
+    feedback: {
+      correct: "Correct! Liquids are measured in cups.",
+      incorrect: "Not quite. Liquids are usually measured in cups or liters."
+    }
+  },
+  {
+    question: "If it is 3 o'clock, how many hours until 6 o'clock?",
+    answer: "3 hours",
+    choices: ["2 hours", "3 hours", "4 hours", "5 hours"],
+    feedback: {
+      correct: "Correct! From 3 o'clock to 6 o'clock is 3 hours.",
+      incorrect: "Not quite. Count the hours between 3 o'clock and 6 o'clock."
+    }
+  },
+  {
+    question: "Which of these shapes has 3 corners?",
+    answer: "Triangle",
+    choices: ["Circle", "Square", "Triangle", "Rectangle"],
+    feedback: {
+      correct: "Correct! A triangle has 3 corners.",
+      incorrect: "Not quite. A triangle has 3 corners."
+    }
+  },
+  {
+    question: "How many days are in a week?",
+    answer: "7 days",
+    choices: ["5 days", "7 days", "10 days", "12 days"],
+    feedback: {
+      correct: "Correct! A week has 7 days.",
+      incorrect: "Not quite. A week has 7 days."
+    }
+  },
+  {
+    question: "How many seconds are in 1 minute?",
+    answer: "60 seconds",
+    choices: ["30 seconds", "60 seconds", "120 seconds", "90 seconds"],
+    feedback: {
+      correct: "Correct! 1 minute equals 60 seconds.",
+      incorrect: "Not quite. 1 minute equals 60 seconds."
+    }
+  },
+  {
+    question: "Which of these shapes has 4 straight sides and 4 corners?",
+    answer: "Square",
+    choices: ["Square", "Circle", "Triangle", "Rectangle"],
+    feedback: {
+      correct: "Correct! A square has 4 straight sides and 4 corners.",
+      incorrect: "Not quite. A square has 4 straight sides and 4 corners."
+    }
+  },
+  {
+    question: "What shape has 4 corners but no equal sides?",
+    answer: "Rectangle",
+    choices: ["Square", "Rectangle", "Triangle", "Circle"],
+    feedback: {
+      correct: "Correct! A rectangle has 4 corners but no equal sides.",
+      incorrect: "Not quite. A rectangle has unequal sides."
+    }
+  },
+  {
+    question: "If you have 5 apples and you eat 2, how many apples do you have left?",
+    answer: "3 apples",
+    choices: ["3 apples", "2 apples", "5 apples", "7 apples"],
+    feedback: {
+      correct: "Correct! After eating 2 apples, you have 3 apples left.",
+      incorrect: "Not quite. If you eat 2 apples from 5, you have 3 left."
+    }
+  },
+  {
+    question: "Which of these shapes has no corners?",
+    answer: "Circle",
+    choices: ["Square", "Circle", "Triangle", "Rectangle"],
+    feedback: {
+      correct: "Correct! A circle has no corners.",
+      incorrect: "Not quite. A circle has no corners, unlike the other shapes."
+    }
+  },
+  {
+    question: "How many corners does a triangle have?",
+    answer: "3 corners",
+    choices: ["2 corners", "3 corners", "4 corners", "5 corners"],
+    feedback: {
+      correct: "Correct! A triangle has 3 corners.",
+      incorrect: "Not quite. A triangle has 3 corners."
+    }
+  },
+  {
+    question: "Which tool would you use to measure the length of a table?",
+    answer: "Ruler",
+    choices: ["Ruler", "Thermometer", "Clock", "Scale"],
+    feedback: {
+      correct: "Correct! A ruler is used to measure the length of a table.",
+      incorrect: "Not quite. A ruler is the best tool for measuring length."
+    }
+  },
+  {
+    question: "How many minutes are in 2 hours?",
+    answer: "120 minutes",
+    choices: ["60 minutes", "120 minutes", "150 minutes", "240 minutes"],
+    feedback: {
+      correct: "Correct! 2 hours equals 120 minutes.",
+      incorrect: "Not quite. 1 hour equals 60 minutes, so 2 hours equals 120 minutes."
+    }
+  }
+];
+
+
+  
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G1_Units.LA.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

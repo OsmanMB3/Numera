@@ -34,177 +34,188 @@
    
    const questionsDatabase = [
   {
-    question: "Which of these is a circle? 🔵 🟢 🔴 🟡",
-    answer: "🔵",
-    choices: ["🔵", "🟢", "🔴", "🟡"],
+    question: "Which of these is a circle?",
+    answer: "⭕",
+    choices: ["⭕", "⭐️", "🔲", "🔺"],
     feedback: {
-      correct: "Correct! The circle is 🔵.",
-      incorrect: "Not quite. The circle is 🔵."
+      correct: "Correct! The circle is ⭕.",
+      incorrect: "Not quite. The circle is ⭕."
     }
   },
   {
-    question: "Which shape has 4 equal sides? 🟦 🟩 🟥 ⬛",
-    answer: "⬛",
-    choices: ["🟦", "🟩", "🟥", "⬛"],
+    question: "Which shape has 4 equal sides?",
+    answer: "🟦",
+    choices: ["🟦", "⏢", "🔺", "✭"],
     feedback: {
-      correct: "Correct! The square shape is ⬛.",
-      incorrect: "Not quite. The shape with 4 equal sides is a square (⬛)."
-    }
-  },
-  {
-    question: "Which shape is a triangle? 🔺 🟦 🟩 ⬛",
-    answer: "🔺",
-    choices: ["🔺", "🟦", "🟩", "⬛"],
-    feedback: {
-      correct: "Correct! The triangle shape is 🔺.",
-      incorrect: "Not quite. The shape with 3 sides is a triangle (🔺)."
-    }
-  },
-  {
-    question: "Which shape has no sides? 🟠 🔵 🟡 🔲",
-    answer: "🔵",
-    choices: ["🟠", "🔵", "🟡", "🔲"],
-    feedback: {
-      correct: "Correct! The circle (🔵) has no sides.",
-      incorrect: "Not quite. A circle has no sides."
-    }
-  },
-  {
-    question: "Which shape has 3 sides? 🔺 🟩 ⬛ 🟦",
-    answer: "🔺",
-    choices: ["🔺", "🟩", "⬛", "🟦"],
-    feedback: {
-      correct: "Correct! A triangle (🔺) has 3 sides.",
-      incorrect: "Not quite. A triangle has 3 sides."
-    }
-  },
-  {
-    question: "Which shape is a rectangle? ⬛ 🔲 🟩 🟦",
-    answer: "🔲",
-    choices: ["⬛", "🔲", "🟩", "🟦"],
-    feedback: {
-      correct: "Correct! The rectangle is 🔲.",
-      incorrect: "Not quite. A rectangle has opposite sides that are equal."
-    }
-  },
-  {
-    question: "Which shape is a hexagon? 🔶 🔺 🔵 🟨",
-    answer: "🟨",
-    choices: ["🔶", "🔺", "🔵", "🟨"],
-    feedback: {
-      correct: "Correct! A hexagon has 6 sides, and that is 🟨.",
-      incorrect: "Not quite. A hexagon has 6 sides."
-    }
-  },
-  {
-    question: "Which shape has 4 sides? 🟩 🟦 🔵 🔲",
-    answer: "🔲",
-    choices: ["🟩", "🟦", "🔵", "🔲"],
-    feedback: {
-      correct: "Correct! The shape with 4 sides is a square (🔲).",
-      incorrect: "Not quite. A square has 4 sides."
-    }
-  },
-  {
-    question: "Which shape is a diamond? 🔶 🟦 🟥 🟩",
-    answer: "🔶",
-    choices: ["🔶", "🟦", "🟥", "🟩"],
-    feedback: {
-      correct: "Correct! The diamond shape is 🔶.",
-      incorrect: "Not quite. A diamond looks like 🔶."
-    }
-  },
-  {
-    question: "Which of these shapes is round? 🔴 🟩 🟦 🔲",
-    answer: "🔴",
-    choices: ["🔴", "🟩", "🟦", "🔲"],
-    feedback: {
-      correct: "Correct! The round shape is 🔴.",
-      incorrect: "Not quite. The round shape is 🔴."
-    }
-  },
-  {
-    question: "Which shape has more sides? A triangle (🔺) or a square (⬛)?",
-    answer: "Square",
-    choices: ["Triangle", "Square", "Both have the same number of sides", "I don't know"],
-    feedback: {
-      correct: "Correct! A square has 4 sides, while a triangle has 3.",
-      incorrect: "Not quite. A square has more sides than a triangle."
-    }
-  },
-  {
-    question: "What is the name of this shape? 🔵",
-    answer: "Circle",
-    choices: ["Circle", "Square", "Triangle", "Rectangle"],
-    feedback: {
-      correct: "Correct! The shape is a circle.",
-      incorrect: "Not quite. The shape is a circle (🔵)."
-    }
-  },
-  {
-    question: "Which shape is a 3D object? ⬛ 🟩 🟦 🔲",
-    answer: "🟩",
-    choices: ["⬛", "🟩", "🟦", "🔲"],
-    feedback: {
-      correct: "Correct! The cube (🟩) is a 3D object.",
-      incorrect: "Not quite. A cube is a 3D object."
-    }
-  },
-  {
-    question: "How many sides does a square (⬛) have?",
-    answer: "4",
-    choices: ["2", "3", "4", "5"],
-    feedback: {
-      correct: "Correct! A square has 4 sides.",
-      incorrect: "Not quite. A square has 4 sides."
-    }
-  },
-  {
-    question: "Which of the following shapes has 4 equal sides? 🔲 🟩 🟦 🟥",
-    answer: "🔲",
-    choices: ["🔲", "🟩", "🟦", "🟥"],
-    feedback: {
-      correct: "Correct! The square (🔲) has 4 equal sides.",
+      correct: "Correct! The square has 4 equal sides (🟦).",
       incorrect: "Not quite. A square has 4 equal sides."
     }
   },
   {
-    question: "What shape is this? 🔺",
-    answer: "Triangle",
-    choices: ["Circle", "Square", "Triangle", "Rectangle"],
+    question: "Which shape is a triangle?",
+    answer: "🔺",
+    choices: ["🔺", "⭐️", "⭕", "🟦"],
     feedback: {
-      correct: "Correct! The shape is a triangle.",
-      incorrect: "Not quite. The shape is a triangle (🔺)."
+      correct: "Correct! The triangle is 🔺.",
+      incorrect: "Not quite. The triangle has 3 sides, like 🔺."
     }
   },
   {
-    question: "Which of the following shapes has no corners? 🔵 🟩 🟥 🔲",
-    answer: "🔵",
-    choices: ["🔵", "🟩", "🟥", "🔲"],
+    question: "Which shape has 3 sides?",
+    answer: "🔺",
+    choices: ["🔺", "🟩", "🔶", "🀆"],
     feedback: {
-      correct: "Correct! A circle (🔵) has no corners.",
+      correct: "Correct! The triangle (🔺) has 3 sides.",
+      incorrect: "Not quite. A triangle has 3 sides."
+    }
+  },
+  {
+    question: "Which of these shapes is a rectangle?",
+    answer: "▭",
+    choices: ["⬛", "⭐️", "🔶", "▭"],
+    feedback: {
+      correct: "Correct! A rectangle has 4 sides, like ⬛.",
+      incorrect: "Not quite. A rectangle has opposite sides that are equal."
+    }
+  },
+  {
+    question: "Which shape is a square?",
+    answer: "🟦",
+    choices: ["🟦", "⭐️", "☖", "⏢"],
+    feedback: {
+      correct: "Correct! A square has 4 equal sides (🟦).",
+      incorrect: "Not quite. A square has 4 equal sides."
+    }
+  },
+  {
+    question: "Which shape has 5 sides?",
+    answer: "⭔",
+    choices: ["🔶", "🔺", "⭔", "🟦"],
+    feedback: {
+      correct: "Correct! The shape with 5 sides is a pentagon (⭔).",
+      incorrect: "Not quite. A pentagon has 5 sides."
+    }
+  },
+  {
+    question: "Which shape has no corners?",
+    answer: "⭕",
+    choices: ["⭕", "🔲", "🔺", "⬛"],
+    feedback: {
+      correct: "Correct! A circle (⭕) has no corners.",
       incorrect: "Not quite. A circle has no corners."
     }
   },
   {
-    question: "Which of these shapes is a 2D shape? 🔶 🔺 🟩 🟦",
-    answer: "🔶",
-    choices: ["🔶", "🔺", "🟩", "🟦"],
+    question: "Which of these shapes is a 3D object?",
+    answer: "📦",
+    choices: ["📦", "🔶", "🟦", "🔺"],
     feedback: {
-      correct: "Correct! A diamond (🔶) is a 2D shape.",
-      incorrect: "Not quite. A 2D shape has only length and width, like a diamond (🔶)."
+      correct: "Correct! A cube (📦) is a 3D object.",
+      incorrect: "Not quite. A cube is a 3D object."
     }
   },
   {
-    question: "Which shape has 5 sides? 🟥 🔶 🟩 🟦",
-    answer: "🔶",
-    choices: ["🟥", "🔶", "🟩", "🟦"],
+    question: "Which shape has 4 corners?",
+    answer: "⬛",
+    choices: ["⬛", "⭔", "🔶", "⭕"],
     feedback: {
-      correct: "Correct! The shape with 5 sides is a pentagon (🔶).",
-      incorrect: "Not quite. A pentagon has 5 sides."
+      correct: "Correct! A square (⬛) has 4 corners.",
+      incorrect: "Not quite. A square has 4 corners."
     }
-  }
+  },
+  {
+    question: "What shape has 6 sides?",
+    answer: "⬣",
+    choices: ["⬣", "⬛", "🔺", "🟩"],
+    feedback: {
+      correct: "Correct! A hexagon has 6 sides (⬣).",
+      incorrect: "Not quite. A hexagon has 6 sides."
+    }
+  },
+  {
+    question: "Which shape has no straight edges?",
+    answer: "⭕",
+    choices: ["🟦", "🔺", "⭕", "⭐️"],
+    feedback: {
+      correct: "Correct! A circle (⭕) has no straight edges, it is curved all around.",
+      incorrect: "Not quite. A circle (⭕) has no straight edges, unlike the square or triangle."
+    }
+},
+  {
+    question: "Which shape is a diamond?",
+    answer: "🔶",
+    choices: ["🔶", "⭐️", "⭔", "🟩"],
+    feedback: {
+      correct: "Correct! The diamond shape is 🔶.",
+      incorrect: "Not quite. A diamond is represented by 🔶."
+    }
+  },
+  {
+    question: "Which shape has 2 equal sides?",
+    answer: "🔶",
+    choices: ["🔶", "🔺", "⬣", "🟩"],
+    feedback: {
+      correct: "Correct! A diamond (🔶) has equal sides.",
+      incorrect: "Not quite. A diamond has two equal sides."
+    }
+  },
+  {
+    question: "Which of these shapes has 4 straight sides?",
+    answer: "Rectangle",
+    choices: ["Rectangle", "Circle", "Triangle", "Hexagon"],
+    feedback: {
+      correct: "Correct! A rectangle has 4 straight sides.",
+      incorrect: "Not quite. A rectangle has 4 straight sides, while a circle has no sides."
+    }
+},
+{
+    question: "Which shape has 4 straight sides and 4 corners?",
+    answer: "Square",
+    choices: ["Square", "Circle", "Triangle", "Hexagon"],
+    feedback: {
+      correct: "Correct! A square has 4 straight sides and 4 corners.",
+      incorrect: "Not quite. A square has 4 straight sides and 4 corners, unlike the other shapes."
+    }
+},
+  {
+    question: "Which shape has only one side?",
+    answer: "⭕",
+    choices: ["⭕", "⭐️", "⬛", "🔶"],
+    feedback: {
+      correct: "Correct! A circle (⭕) has only one curved side.",
+      incorrect: "Not quite. A circle has only one continuous side."
+    }
+  },
+  {
+    question: "Which of these is not a polygon?",
+    answer: "⭕",
+    choices: ["⭕", "⬛", "🛑", "🔶"],
+    feedback: {
+      correct: "Correct! A circle (⭕) is not a polygon.",
+      incorrect: "Not quite. A circle is a curve, not a polygon."
+    }
+  },
+  {
+    question: "What is the name of the shape with 4 equal sides?",
+    answer: "Square",
+    choices: ["Square", "Circle", "Rectangle", "Triangle"],
+    feedback: {
+      correct: "Correct! The shape with 4 equal sides is a square.",
+      incorrect: "Not quite. A square has 4 equal sides."
+    }
+  }, 
+  {
+    question: "Which shape has more than 4 sides?",
+    answer: "Pentagon",
+    choices: ["Square", "Pentagon", "Triangle", "Circle"],
+    feedback: {
+      correct: "Correct! A pentagon has 5 sides.",
+      incorrect: "Not quite. A pentagon has 5 sides, which is more than a square or triangle."
+    }
+}
+
 ];
+
 
 
 let currentQuestionIndex = 0;

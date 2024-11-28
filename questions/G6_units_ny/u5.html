@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 5 - Statistics and Probability</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ 
+ const questionsDatabase = [
+  {
+    question: "What is the area of a rectangle with a length of 5 units and a width of 3 units?",
+    answer: "15",
+    choices: ["15", "8", "18", "20"],
+    feedback: {
+      correct: "Correct! The area of a rectangle is length × width, so 5 × 3 = 15.",
+      incorrect: "Not quite. Remember, area is found by multiplying length by width."
+    }
+  },
+  {
+    question: "What is the volume of a rectangular prism with a length of 4 units, a width of 3 units, and a height of 2 units?",
+    answer: "24",
+    choices: ["24", "12", "6", "8"],
+    feedback: {
+      correct: "Correct! The volume of a rectangular prism is length × width × height, so 4 × 3 × 2 = 24.",
+      incorrect: "Not quite. Try multiplying length, width, and height together."
+    }
+  },
+  {
+    question: "What is the surface area of a cube with a side length of 4 units?",
+    answer: "96",
+    choices: ["96", "64", "16", "36"],
+    feedback: {
+      correct: "Correct! The surface area of a cube is 6 × side², so 6 × 4² = 96.",
+      incorrect: "Not quite. Remember, surface area of a cube is 6 times the square of the side length."
+    }
+  },
+  {
+    question: "What is the formula for the area of a triangle?",
+    answer: "Area = 1/2 × base × height",
+    choices: [
+      "Area = base × height",
+      "Area = 1/2 × base × height",
+      "Area = 2 × base × height",
+      "Area = base + height"
+    ],
+    feedback: {
+      correct: "Correct! The area of a triangle is 1/2 × base × height.",
+      incorrect: "Not quite. Remember, the formula for the area of a triangle includes 1/2 × base × height."
+    }
+  },
+  {
+    question: "What is the perimeter of a rectangle with a length of 6 units and a width of 4 units?",
+    answer: "20",
+    choices: ["20", "24", "18", "12"],
+    feedback: {
+      correct: "Correct! The perimeter of a rectangle is 2 × (length + width), so 2 × (6 + 4) = 20.",
+      incorrect: "Not quite. Remember, perimeter is found by adding the length and width, then doubling it."
+    }
+  },
+  {
+    question: "Which of the following shapes has 180 degrees in its interior angles?",
+    answer: "Triangle",
+    choices: ["Rectangle", "Circle", "Triangle", "Square"],
+    feedback: {
+      correct: "Correct! The sum of the interior angles of a triangle is always 180 degrees.",
+      incorrect: "Not quite. A triangle has 180 degrees in its interior angles."
+    }
+  },
+  {
+    question: "Which of the following is a right angle?",
+    answer: "90°",
+    choices: ["45°", "90°", "60°", "120°"],
+    feedback: {
+      correct: "Correct! A right angle is 90°.",
+      incorrect: "Not quite. A right angle is 90°."
+    }
+  },
+  {
+    question: "How many faces does a rectangular prism have?",
+    answer: "6",
+    choices: ["6", "4", "8", "12"],
+    feedback: {
+      correct: "Correct! A rectangular prism has 6 faces.",
+      incorrect: "Not quite. A rectangular prism has 6 rectangular faces."
+    }
+  },
+  {
+    question: "What is the measure of each angle in an equilateral triangle?",
+    answer: "60°",
+    choices: ["45°", "60°", "90°", "120°"],
+    feedback: {
+      correct: "Correct! Each angle in an equilateral triangle measures 60°.",
+      incorrect: "Not quite. An equilateral triangle has 3 equal angles, each measuring 60°."
+    }
+  },
+  {
+    question: "What is the perimeter of a square with a side length of 5 units?",
+    answer: "20",
+    choices: ["20", "25", "15", "10"],
+    feedback: {
+      correct: "Correct! The perimeter of a square is 4 × side length, so 4 × 5 = 20.",
+      incorrect: "Not quite. Remember, the perimeter of a square is 4 times the length of one side."
+    }
+  },
+  {
+    question: "What is the volume of a cube with a side length of 3 units?",
+    answer: "27",
+    choices: ["27", "9", "12", "18"],
+    feedback: {
+      correct: "Correct! The volume of a cube is side³, so 3³ = 27.",
+      incorrect: "Not quite. Try cubing the side length to find the volume of the cube."
+    }
+  },
+  {
+    question: "What is the sum of the interior angles of a quadrilateral?",
+    answer: "360°",
+    choices: ["180°", "360°", "540°", "720°"],
+    feedback: {
+      correct: "Correct! The sum of the interior angles of any quadrilateral is 360°.",
+      incorrect: "Not quite. The sum of the interior angles of a quadrilateral is 360°."
+    }
+  },
+  {
+    question: "What is the name of a polygon with 8 sides?",
+    answer: "Octagon",
+    choices: ["Hexagon", "Heptagon", "Octagon", "Nonagon"],
+    feedback: {
+      correct: "Correct! A polygon with 8 sides is called an octagon.",
+      incorrect: "Not quite. A polygon with 8 sides is an octagon."
+    }
+  },
+  {
+    question: "Which of these shapes has 2 pairs of parallel sides?",
+    answer: "Rectangle",
+    choices: ["Rectangle", "Circle", "Triangle", "Square"],
+    feedback: {
+      correct: "Correct! A rectangle has 2 pairs of parallel sides.",
+      incorrect: "Not quite. A rectangle has 2 pairs of parallel sides."
+    }
+  },
+  {
+    question: "What is the surface area of a cube with a side length of 2 units?",
+    answer: "24",
+    choices: ["24", "12", "36", "48"],
+    feedback: {
+      correct: "Correct! The surface area of a cube is 6 × side², so 6 × 2² = 24.",
+      incorrect: "Not quite. The surface area of a cube is 6 times the square of the side length."
+    }
+  },
+  {
+    question: "Which of these shapes has only one line of symmetry?",
+    answer: "Isosceles triangle",
+    choices: ["Isosceles triangle", "Square", "Circle", "Equilateral triangle"],
+    feedback: {
+      correct: "Correct! An isosceles triangle has only one line of symmetry.",
+      incorrect: "Not quite. An isosceles triangle has one line of symmetry."
+    }
+  },
+  {
+    question: "What is the measure of the angle formed by two perpendicular lines?",
+    answer: "90°",
+    choices: ["45°", "60°", "90°", "120°"],
+    feedback: {
+      correct: "Correct! Perpendicular lines form a 90° angle.",
+      incorrect: "Not quite. Perpendicular lines intersect at 90°."
+    }
+  },
+  {
+    question: "Which shape has all angles equal and all sides equal?",
+    answer: "Square",
+    choices: ["Square", "Rectangle", "Circle", "Triangle"],
+    feedback: {
+      correct: "Correct! A square has all angles and sides equal.",
+      incorrect: "Not quite. A square has all equal sides and 90° angles."
+    }
+  },
+  {
+    question: "What is the perimeter of a triangle with sides 3 units, 4 units, and 5 units?",
+    answer: "12",
+    choices: ["12", "14", "10", "9"],
+    feedback: {
+      correct: "Correct! The perimeter of a triangle is the sum of its sides, 3 + 4 + 5 = 12.",
+      incorrect: "Not quite. Add the lengths of all three sides to find the perimeter."
+    }
+  }
+];
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G6_Units.NY.html?unit5score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

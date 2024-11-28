@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 4 - Geometry</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ 
+ const questionsDatabase= [
+  {
+    question: "Which of the following shapes has line symmetry?",
+    answer: "Square",
+    choices: ["Square", "Circle", "Triangle", "Hexagon"],
+    feedback: {
+      correct: "Correct! A square has line symmetry.",
+      incorrect: "Not quite. A square has line symmetry because it can be divided into two identical halves along the center."
+    }
+  },
+  {
+    question: "What do we call the line that divides a shape into two symmetrical parts?",
+    answer: "Line of symmetry",
+    choices: ["Line of symmetry", "Angle", "Perpendicular line", "Vertical line"],
+    feedback: {
+      correct: "Correct! The line of symmetry divides a shape into two equal parts.",
+      incorrect: "Not quite. The line of symmetry divides the shape into two identical halves."
+    }
+  },
+  {
+    question: "How many lines of symmetry does an equilateral triangle have?",
+    answer: "3",
+    choices: ["1", "2", "3", "4"],
+    feedback: {
+      correct: "Correct! An equilateral triangle has 3 lines of symmetry.",
+      incorrect: "Not quite. An equilateral triangle has 3 lines of symmetry."
+    }
+  },
+  {
+    question: "Which of these shapes has no line of symmetry?",
+    answer: "Scalene triangle",
+    choices: ["Isosceles triangle", "Equilateral triangle", "Scalene triangle", "Square"],
+    feedback: {
+      correct: "Correct! A scalene triangle has no line of symmetry.",
+      incorrect: "Not quite. A scalene triangle has no equal sides, and therefore no line of symmetry."
+    }
+  },
+  {
+    question: "How many lines of symmetry does a circle have?",
+    answer: "Infinite",
+    choices: ["1", "2", "Infinite", "4"],
+    feedback: {
+      correct: "Correct! A circle has infinite lines of symmetry.",
+      incorrect: "Not quite. A circle has an infinite number of lines of symmetry."
+    }
+  },
+  {
+    question: "Which of these shapes has exactly two lines of symmetry?",
+    answer: "Rectangle",
+    choices: ["Square", "Rectangle", "Triangle", "Circle"],
+    feedback: {
+      correct: "Correct! A rectangle has two lines of symmetry.",
+      incorrect: "Not quite. A rectangle has two lines of symmetry, one horizontal and one vertical."
+    }
+  },
+  {
+    question: "Which of these shapes has four lines of symmetry?",
+    answer: "Square",
+    choices: ["Rectangle", "Square", "Triangle", "Circle"],
+    feedback: {
+      correct: "Correct! A square has four lines of symmetry.",
+      incorrect: "Not quite. A square has four lines of symmetry, one for each side and two diagonal lines."
+    }
+  },
+  {
+    question: "How many lines of symmetry does a regular pentagon have?",
+    answer: "5",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! A regular pentagon has 5 lines of symmetry.",
+      incorrect: "Not quite. A regular pentagon has 5 lines of symmetry, one for each side."
+    }
+  },
+  {
+    question: "What do we call a shape that is identical on both sides of a line of symmetry?",
+    answer: "Symmetrical",
+    choices: ["Symmetrical", "Asymmetrical", "Congruent", "Similar"],
+    feedback: {
+      correct: "Correct! A shape that is identical on both sides of a line of symmetry is symmetrical.",
+      incorrect: "Not quite. A symmetrical shape looks the same on both sides of the line of symmetry."
+    }
+  },
+  {
+    question: "Which of the following shapes has no lines of symmetry?",
+    answer: "Scalene triangle",
+    choices: ["Equilateral triangle", "Isosceles triangle", "Scalene triangle", "Square"],
+    feedback: {
+      correct: "Correct! A scalene triangle has no lines of symmetry.",
+      incorrect: "Not quite. A scalene triangle has no equal sides, so it has no lines of symmetry."
+    }
+  },
+  {
+    question: "Which of these shapes can be folded along one of its lines of symmetry to create two identical halves?",
+    answer: "Rectangle",
+    choices: ["Circle", "Rectangle", "Hexagon", "Scalene triangle"],
+    feedback: {
+      correct: "Correct! A rectangle can be folded along one of its lines of symmetry to create two identical halves.",
+      incorrect: "Not quite. A rectangle has two lines of symmetry and can be folded along either one."
+    }
+  },
+  {
+    question: "Which shape is symmetrical along its diagonal?",
+    answer: "Rhombus",
+    choices: ["Square", "Rhombus", "Rectangle", "Triangle"],
+    feedback: {
+      correct: "Correct! A rhombus is symmetrical along its diagonal.",
+      incorrect: "Not quite. A rhombus has two lines of symmetry along its diagonals."
+    }
+  },
+  {
+    question: "Which of the following shapes has rotational symmetry?",
+    answer: "Circle",
+    choices: ["Square", "Circle", "Triangle", "Rectangle"],
+    feedback: {
+      correct: "Correct! A circle has rotational symmetry.",
+      incorrect: "Not quite. A circle can be rotated any way and still look the same."
+    }
+  },
+  {
+    question: "How many lines of symmetry does an isosceles triangle have?",
+    answer: "1",
+    choices: ["0", "1", "2", "3"],
+    feedback: {
+      correct: "Correct! An isosceles triangle has 1 line of symmetry.",
+      incorrect: "Not quite. An isosceles triangle has 1 line of symmetry that divides the two equal sides."
+    }
+  },
+  {
+    question: "Which shape has rotational symmetry of order 2?",
+    answer: "Rectangle",
+    choices: ["Square", "Circle", "Rectangle", "Triangle"],
+    feedback: {
+      correct: "Correct! A rectangle has rotational symmetry of order 2.",
+      incorrect: "Not quite. A rectangle has rotational symmetry of order 2 because it can be rotated 180 degrees and still look the same."
+    }
+  },
+  {
+    question: "Which of the following shapes has infinite lines of symmetry?",
+    answer: "Circle",
+    choices: ["Square", "Circle", "Equilateral triangle", "Rectangle"],
+    feedback: {
+      correct: "Correct! A circle has infinite lines of symmetry.",
+      incorrect: "Not quite. A circle has an infinite number of symmetrical lines."
+    }
+  },
+  {
+    question: "Which of these shapes is congruent to itself after a 180 degree rotation?",
+    answer: "Rectangle",
+    choices: ["Square", "Rectangle", "Circle", "Triangle"],
+    feedback: {
+      correct: "Correct! A rectangle is congruent to itself after a 180 degree rotation.",
+      incorrect: "Not quite. A rectangle has rotational symmetry of order 2."
+    }
+  },
+  {
+    question: "What kind of symmetry does an equilateral triangle have?",
+    answer: "Rotational symmetry and 3 lines of symmetry",
+    choices: ["Rotational symmetry and 3 lines of symmetry", "Only 1 line of symmetry", "No symmetry", "4 lines of symmetry"],
+    feedback: {
+      correct: "Correct! An equilateral triangle has both rotational symmetry and 3 lines of symmetry.",
+      incorrect: "Not quite. An equilateral triangle has 3 lines of symmetry and rotational symmetry."
+    }
+  },
+  {
+    question: "Which of the following shapes has two lines of symmetry and no rotational symmetry?",
+    answer: "Rectangle",
+    choices: ["Circle", "Square", "Rectangle", "Triangle"],
+    feedback: {
+      correct: "Correct! A rectangle has two lines of symmetry and no rotational symmetry.",
+      incorrect: "Not quite. A rectangle has two lines of symmetry."
+    }
+  }
+];
+
+  
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_Units.LA.html?unit4score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1 - Operations and Algebraic Thinking</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ 
+ const questionsDatabase = [
+  {
+    question: "What is the product of 7 and 8?",
+    answer: "56",
+    choices: ["56", "54", "48", "64"],
+    feedback: {
+      correct: "Correct! 7 times 8 equals 56.",
+      incorrect: "Not quite. Try multiplying 7 and 8 together."
+    }
+  },
+  {
+    question: "What is the result of 56 divided by 7?",
+    answer: "8",
+    choices: ["7", "8", "6", "9"],
+    feedback: {
+      correct: "Correct! 56 divided by 7 equals 8.",
+      incorrect: "Not quite. Try dividing 56 by 7."
+    }
+  },
+  {
+    question: "If you have 4 groups of 6 apples, how many apples do you have in total?",
+    answer: "24",
+    choices: ["20", "24", "28", "30"],
+    feedback: {
+      correct: "Correct! 4 times 6 equals 24.",
+      incorrect: "Not quite. Try multiplying 4 by 6."
+    }
+  },
+  {
+    question: "What is 72 divided by 8?",
+    answer: "9",
+    choices: ["9", "8", "7", "6"],
+    feedback: {
+      correct: "Correct! 72 divided by 8 equals 9.",
+      incorrect: "Not quite. Try dividing 72 by 8."
+    }
+  },
+  {
+    question: "What is the product of 6 and 9?",
+    answer: "54",
+    choices: ["54", "52", "48", "60"],
+    feedback: {
+      correct: "Correct! 6 times 9 equals 54.",
+      incorrect: "Not quite. Try multiplying 6 and 9 together."
+    }
+  },
+  {
+    question: "If you divide 63 by 7, what is the quotient?",
+    answer: "9",
+    choices: ["9", "8", "7", "10"],
+    feedback: {
+      correct: "Correct! 63 divided by 7 equals 9.",
+      incorrect: "Not quite. Try dividing 63 by 7."
+    }
+  },
+  {
+    question: "What is 48 divided by 6?",
+    answer: "8",
+    choices: ["6", "7", "8", "9"],
+    feedback: {
+      correct: "Correct! 48 divided by 6 equals 8.",
+      incorrect: "Not quite. Try dividing 48 by 6."
+    }
+  },
+  {
+    question: "What is the product of 5 and 12?",
+    answer: "60",
+    choices: ["60", "58", "55", "65"],
+    feedback: {
+      correct: "Correct! 5 times 12 equals 60.",
+      incorrect: "Not quite. Try multiplying 5 and 12."
+    }
+  },
+  {
+    question: "How many groups of 4 are there in 36?",
+    answer: "9",
+    choices: ["8", "9", "10", "7"],
+    feedback: {
+      correct: "Correct! 36 divided by 4 equals 9.",
+      incorrect: "Not quite. Try dividing 36 by 4."
+    }
+  },
+  {
+    question: "What is 10 times 8?",
+    answer: "80",
+    choices: ["80", "70", "90", "75"],
+    feedback: {
+      correct: "Correct! 10 times 8 equals 80.",
+      incorrect: "Not quite. Try multiplying 10 and 8."
+    }
+  },
+  {
+    question: "What is the quotient of 45 divided by 5?",
+    answer: "9",
+    choices: ["9", "8", "7", "10"],
+    feedback: {
+      correct: "Correct! 45 divided by 5 equals 9.",
+      incorrect: "Not quite. Try dividing 45 by 5."
+    }
+  },
+  {
+    question: "What is 24 divided by 3?",
+    answer: "8",
+    choices: ["7", "8", "9", "6"],
+    feedback: {
+      correct: "Correct! 24 divided by 3 equals 8.",
+      incorrect: "Not quite. Try dividing 24 by 3."
+    }
+  },
+  {
+    question: "How many groups of 3 can you make from 27?",
+    answer: "9",
+    choices: ["9", "8", "7", "10"],
+    feedback: {
+      correct: "Correct! 27 divided by 3 equals 9.",
+      incorrect: "Not quite. Try dividing 27 by 3."
+    }
+  },
+  {
+    question: "What is the result of 8 times 6?",
+    answer: "48",
+    choices: ["48", "50", "40", "60"],
+    feedback: {
+      correct: "Correct! 8 times 6 equals 48.",
+      incorrect: "Not quite. Try multiplying 8 and 6."
+    }
+  },
+  {
+    question: "What is 56 divided by 7?",
+    answer: "8",
+    choices: ["8", "9", "7", "6"],
+    feedback: {
+      correct: "Correct! 56 divided by 7 equals 8.",
+      incorrect: "Not quite. Try dividing 56 by 7."
+    }
+  },
+  {
+    question: "What is the product of 9 and 4?",
+    answer: "36",
+    choices: ["36", "40", "30", "45"],
+    feedback: {
+      correct: "Correct! 9 times 4 equals 36.",
+      incorrect: "Not quite. Try multiplying 9 and 4."
+    }
+  },
+  {
+    question: "What is 64 divided by 8?",
+    answer: "8",
+    choices: ["7", "8", "9", "10"],
+    feedback: {
+      correct: "Correct! 64 divided by 8 equals 8.",
+      incorrect: "Not quite. Try dividing 64 by 8."
+    }
+  },
+  {
+    question: "What is 56 divided by 8?",
+    answer: "7",
+    choices: ["7", "8", "6", "9"],
+    feedback: {
+      correct: "Correct! 56 divided by 8 equals 7.",
+      incorrect: "Not quite. Try dividing 56 by 8."
+    }
+  },
+  {
+    question: "What is 12 times 3?",
+    answer: "36",
+    choices: ["36", "38", "40", "33"],
+    feedback: {
+      correct: "Correct! 12 times 3 equals 36.",
+      incorrect: "Not quite. Try multiplying 12 and 3."
+    }
+  },
+  {
+    question: "What is the result of 72 divided by 9?",
+    answer: "8",
+    choices: ["8", "7", "9", "6"],
+    feedback: {
+      correct: "Correct! 72 divided by 9 equals 8.",
+      incorrect: "Not quite. Try dividing 72 by 9."
+    }
+  }
+];
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G3_Units.LA.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

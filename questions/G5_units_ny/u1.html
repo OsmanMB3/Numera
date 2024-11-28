@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1 - Operations and Algebraic Thinking</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+
+const questionsDatabase = [
+  {
+    question: "Which expression represents the product of 4 and 5?",
+    answer: "4 × 5",
+    choices: ["5 + 4", "4 × 5", "5 × 4", "4 - 5"],
+    feedback: {
+      correct: "Correct! 4 × 5 represents the product of 4 and 5.",
+      incorrect: "Not quite. The product of two numbers is the result of multiplication."
+    }
+  },
+  {
+    question: "What is the value of 12 × 3?",
+    answer: "36",
+    choices: ["24", "36", "48", "42"],
+    feedback: {
+      correct: "Correct! 12 × 3 equals 36.",
+      incorrect: "Not quite. Try multiplying 12 by 3 again."
+    }
+  },
+  {
+    question: "Which of the following is the equation that represents 5 more than a number?",
+    answer: "x + 5",
+    choices: ["x + 5", "x - 5", "5x", "5 ÷ x"],
+    feedback: {
+      correct: "Correct! x + 5 means 5 more than x.",
+      incorrect: "Not quite. Try adding 5 to the number."
+    }
+  },
+  {
+    question: "What is the sum of 16 and 27?",
+    answer: "43",
+    choices: ["42", "43", "44", "45"],
+    feedback: {
+      correct: "Correct! 16 + 27 equals 43.",
+      incorrect: "Not quite. Try adding 16 and 27 again."
+    }
+  },
+  {
+    question: "Which of the following is the correct way to represent '5 less than 10'?",
+    answer: "10 - 5",
+    choices: ["10 + 5", "10 - 5", "5 + 10", "5 - 10"],
+    feedback: {
+      correct: "Correct! 10 - 5 represents 5 less than 10.",
+      incorrect: "Not quite. Try subtracting 5 from 10."
+    }
+  },
+  {
+    question: "If you multiply a number by 1, what is the result?",
+    answer: "The number itself",
+    choices: ["0", "1", "The number itself", "The number doubled"],
+    feedback: {
+      correct: "Correct! Multiplying by 1 leaves the number unchanged.",
+      incorrect: "Not quite. Try multiplying by 1 and see what happens."
+    }
+  },
+  {
+    question: "What is the result of 48 ÷ 6?",
+    answer: "8",
+    choices: ["7", "8", "9", "6"],
+    feedback: {
+      correct: "Correct! 48 ÷ 6 equals 8.",
+      incorrect: "Not quite. Try dividing 48 by 6 again."
+    }
+  },
+  {
+    question: "Which of these is a pattern of numbers that increases by 5?",
+    answer: "5, 10, 15, 20",
+    choices: ["5, 6, 7, 8", "10, 20, 30, 40", "5, 10, 15, 20", "10, 15, 20, 25"],
+    feedback: {
+      correct: "Correct! 5, 10, 15, 20 increases by 5.",
+      incorrect: "Not quite. Check the difference between the numbers."
+    }
+  },
+  {
+    question: "What is 50 divided by 5?",
+    answer: "10",
+    choices: ["5", "10", "15", "20"],
+    feedback: {
+      correct: "Correct! 50 ÷ 5 equals 10.",
+      incorrect: "Not quite. Try dividing 50 by 5."
+    }
+  },
+  {
+    question: "Which number is a factor of 18?",
+    answer: "3",
+    choices: ["1", "3", "9", "All of the above"],
+    feedback: {
+      correct: "Correct! 1, 3, and 9 are all factors of 18.",
+      incorrect: "Not quite. Try listing the factors of 18."
+    }
+  },
+  {
+    question: "Which of these numbers is divisible by 2?",
+    answer: "24",
+    choices: ["15", "22", "24", "33"],
+    feedback: {
+      correct: "Correct! 24 is divisible by 2.",
+      incorrect: "Not quite. Try dividing each number by 2."
+    }
+  },
+  {
+    question: "What is the product of 7 and 9?",
+    answer: "63",
+    choices: ["56", "63", "72", "90"],
+    feedback: {
+      correct: "Correct! 7 × 9 equals 63.",
+      incorrect: "Not quite. Try multiplying 7 by 9 again."
+    }
+  },
+  {
+    question: "What is 36 divided by 4?",
+    answer: "9",
+    choices: ["6", "9", "12", "8"],
+    feedback: {
+      correct: "Correct! 36 ÷ 4 equals 9.",
+      incorrect: "Not quite. Try dividing 36 by 4 again."
+    }
+  },
+  {
+    question: "What is the next number in this pattern: 2, 4, 6, 8, ...?",
+    answer: "10",
+    choices: ["10", "12", "9", "11"],
+    feedback: {
+      correct: "Correct! The pattern increases by 2, so the next number is 10.",
+      incorrect: "Not quite. Check the difference between each number."
+    }
+  },
+  {
+    question: "Which of these numbers is a multiple of 10?",
+    answer: "30",
+    choices: ["25", "30", "35", "40"],
+    feedback: {
+      correct: "Correct! 30 is a multiple of 10.",
+      incorrect: "Not quite. Check which numbers are divisible by 10."
+    }
+  },
+  {
+    question: "What is the sum of 24 and 18?",
+    answer: "42",
+    choices: ["40", "42", "44", "46"],
+    feedback: {
+      correct: "Correct! 24 + 18 equals 42.",
+      incorrect: "Not quite. Try adding 24 and 18 again."
+    }
+  },
+  {
+    question: "What is the difference between 30 and 17?",
+    answer: "13",
+    choices: ["13", "14", "15", "16"],
+    feedback: {
+      correct: "Correct! 30 - 17 equals 13.",
+      incorrect: "Not quite. Try subtracting 17 from 30."
+    }
+  },
+  {
+    question: "Which of the following is a true statement about 7 × 4?",
+    answer: "It equals 28",
+    choices: ["It equals 25", "It equals 28", "It equals 30", "It equals 35"],
+    feedback: {
+      correct: "Correct! 7 × 4 equals 28.",
+      incorrect: "Not quite. Try multiplying 7 by 4 again."
+    }
+  },
+  {
+    question: "Which number is a factor of 36?",
+    answer: "6",
+    choices: ["4", "6", "7", "9"],
+    feedback: {
+      correct: "Correct! 6 is a factor of 36.",
+      incorrect: "Not quite. Try listing the factors of 36."
+    }
+  },
+  {
+    question: "What is 5 × 6?",
+    answer: "30",
+    choices: ["25", "30", "35", "40"],
+    feedback: {
+      correct: "Correct! 5 × 6 equals 30.",
+      incorrect: "Not quite. Try multiplying 5 by 6 again."
+    }
+  },
+  {
+    question: "What is 50 ÷ 2?",
+    answer: "25",
+    choices: ["20", "25", "30", "35"],
+    feedback: {
+      correct: "Correct! 50 ÷ 2 equals 25.",
+      incorrect: "Not quite. Try dividing 50 by 2."
+    }
+  },
+  {
+    question: "What is the product of 9 and 3?",
+    answer: "27",
+    choices: ["27", "30", "32", "35"],
+    feedback: {
+      correct: "Correct! 9 × 3 equals 27.",
+      incorrect: "Not quite. Try multiplying 9 by 3 again."
+    }
+  }
+];
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G5_Units.NY.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

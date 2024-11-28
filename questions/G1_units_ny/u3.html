@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Measurement and Data</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+      const questionsDatabase = [
+  {
+    question: "Which object is longer?",
+    answer: "Pencil",
+    choices: ["Pencil", "Eraser", "Ruler", "Paperclip"],
+    feedback: {
+      correct: "Correct! A pencil is longer than the eraser.",
+      incorrect: "Not quite. A pencil is longer than the eraser."
+    }
+  },
+  {
+    question: "Which object is shorter?",
+    answer: "Paperclip",
+    choices: ["Pencil", "Eraser", "Ruler", "Paperclip"],
+    feedback: {
+      correct: "Correct! A paperclip is shorter than the other objects.",
+      incorrect: "Not quite. The paperclip is the shortest object."
+    }
+  },
+  {
+    question: "If you have 3 pencils, how many total pencil lengths do you have?",
+    answer: "3",
+    choices: ["1", "2", "3", "4"],
+    feedback: {
+      correct: "Correct! You have 3 pencils, so you have 3 lengths.",
+      incorrect: "Not quite. You have 3 pencils, so that’s 3 lengths."
+    }
+  },
+  {
+    question: "What unit of measurement would you use to measure the length of a pencil?",
+    answer: "Centimeters",
+    choices: ["Inches", "Feet", "Centimeters", "Yards"],
+    feedback: {
+      correct: "Correct! We use centimeters to measure the length of small objects like pencils.",
+      incorrect: "Not quite. We use centimeters to measure the length of small objects."
+    }
+  },
+  {
+    question: "Which is longer, 1 foot or 1 inch?",
+    answer: "1 foot",
+    choices: ["1 foot", "1 inch", "They are the same", "None of these"],
+    feedback: {
+      correct: "Correct! 1 foot is longer than 1 inch.",
+      incorrect: "Not quite. 1 foot is longer than 1 inch."
+    }
+  },
+  {
+    question: "If it takes 5 minutes to get to school, how long does it take to get there twice?",
+    answer: "10 minutes",
+    choices: ["5 minutes", "10 minutes", "15 minutes", "20 minutes"],
+    feedback: {
+      correct: "Correct! It takes 10 minutes to go there twice.",
+      incorrect: "Not quite. 5 minutes + 5 minutes = 10 minutes."
+    }
+  },
+  {
+    question: "What time is it when the clock shows 3:00?",
+    answer: "3:00",
+    choices: ["1:00", "2:00", "3:00", "4:00"],
+    feedback: {
+      correct: "Correct! The time is 3:00 when the clock shows 3:00.",
+      incorrect: "Not quite. Look at the clock; it shows 3:00."
+    }
+  },
+  {
+    question: "What is the time 1 hour after 2:00?",
+    answer: "3:00",
+    choices: ["2:00", "3:00", "4:00", "5:00"],
+    feedback: {
+      correct: "Correct! 1 hour after 2:00 is 3:00.",
+      incorrect: "Not quite. Adding 1 hour to 2:00 gives you 3:00."
+    }
+  },
+  {
+    question: "How many minutes are in 1 hour?",
+    answer: "60",
+    choices: ["30", "40", "50", "60"],
+    feedback: {
+      correct: "Correct! 1 hour equals 60 minutes.",
+      incorrect: "Not quite. 1 hour has 60 minutes."
+    }
+  },
+  {
+    question: "How many seconds are in 1 minute?",
+    answer: "60",
+    choices: ["30", "40", "50", "60"],
+    feedback: {
+      correct: "Correct! 1 minute equals 60 seconds.",
+      incorrect: "Not quite. 1 minute is made up of 60 seconds."
+    }
+  },
+  {
+    question: "Which object would you measure with a ruler?",
+    answer: "Pencil",
+    choices: ["Pencil", "Apple", "Book", "Chair"],
+    feedback: {
+      correct: "Correct! You use a ruler to measure the length of a pencil.",
+      incorrect: "Not quite. A pencil can be measured with a ruler."
+    }
+  },
+  {
+    question: "Which of the following objects is the longest?",
+    answer: "Ruler",
+    choices: ["Ruler", "Pencil", "Paperclip", "Eraser"],
+    feedback: {
+      correct: "Correct! A ruler is the longest object in the list.",
+      incorrect: "Not quite. The ruler is the longest object."
+    }
+  },
+  {
+    question: "Which unit would you use to measure the height of a building?",
+    answer: "Meters",
+    choices: ["Millimeters", "Centimeters", "Meters", "Kilometers"],
+    feedback: {
+      correct: "Correct! We use meters to measure the height of buildings.",
+      incorrect: "Not quite. Meters are used to measure the height of buildings."
+    }
+  },
+  {
+    question: "Which shape has no corners?",
+    answer: "Circle",
+    choices: ["Circle", "Square", "Triangle", "Rectangle"],
+    feedback: {
+      correct: "Correct! A circle has no corners.",
+      incorrect: "Not quite. A circle has no corners, unlike the other shapes."
+    }
+  },
+  {
+    question: "How many sides does a rectangle have?",
+    answer: "4",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! A rectangle has 4 sides.",
+      incorrect: "Not quite. A rectangle has 4 sides."
+    }
+  },
+  {
+    question: "What is the time on the clock when the minute hand points to 6?",
+    answer: "30 minutes",
+    choices: ["10 minutes", "20 minutes", "30 minutes", "40 minutes"],
+    feedback: {
+      correct: "Correct! The minute hand points to 30 minutes when it is at 6.",
+      incorrect: "Not quite. The minute hand at 6 means 30 minutes past the hour."
+    }
+  },
+  {
+    question: "What is the first thing you need to do when you measure an object?",
+    answer: "Place the starting point of the ruler at one end of the object.",
+    choices: ["Place the starting point of the ruler at one end of the object.", "Look at the object", "Make a guess", "Use a calculator"],
+    feedback: {
+      correct: "Correct! Always place the starting point of the ruler at one end of the object.",
+      incorrect: "Not quite. Start by placing the ruler at one end of the object."
+    }
+  },
+  {
+    question: "If it is 2:30, what time will it be 30 minutes later?",
+    answer: "3:00",
+    choices: ["2:00", "2:30", "3:00", "3:30"],
+    feedback: {
+      correct: "Correct! 30 minutes after 2:30 is 3:00.",
+      incorrect: "Not quite. Add 30 minutes to 2:30 to get 3:00."
+    }
+  },
+  {
+    question: "How many hours are in one day?",
+    answer: "24",
+    choices: ["12", "24", "36", "48"],
+    feedback: {
+      correct: "Correct! There are 24 hours in one day.",
+      incorrect: "Not quite. There are 24 hours in a full day."
+    }
+  },
+  {
+  question: "What time does the clock show when the hour hand is on 5 and the minute hand is on 12?",
+  answer: "5:00",
+  choices: ["4:00", "5:00", "6:00", "7:00"],
+  feedback: {
+    correct: "Correct! The hour hand at 5 and the minute hand at 12 shows 5:00.",
+    incorrect: "Not quite. The correct time is 5:00, with the hour hand on 5 and the minute hand on 12."
+  }
+}
+
+];
+
+   
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G1_Units.NY.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

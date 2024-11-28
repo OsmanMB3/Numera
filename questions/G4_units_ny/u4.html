@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 4 - Measurement and Data</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+const questionsDatabase = [
+  {
+    question: "How many inches are in 2 feet?",
+    answer: "24",
+    choices: ["12", "24", "36", "48"],
+    feedback: {
+      correct: "Correct! 1 foot equals 12 inches, so 2 feet is 24 inches.",
+      incorrect: "Not quite. Try multiplying 12 inches by 2."
+    }
+  },
+  {
+    question: "How many minutes are in 3 hours?",
+    answer: "180",
+    choices: ["120", "180", "240", "360"],
+    feedback: {
+      correct: "Correct! 1 hour equals 60 minutes, so 3 hours is 180 minutes.",
+      incorrect: "Not quite. Try multiplying 60 minutes by 3."
+    }
+  },
+  {
+    question: "How many seconds are in 2 minutes?",
+    answer: "120",
+    choices: ["60", "120", "180", "240"],
+    feedback: {
+      correct: "Correct! 1 minute equals 60 seconds, so 2 minutes is 120 seconds.",
+      incorrect: "Not quite. Try multiplying 60 seconds by 2."
+    }
+  },
+  {
+    question: "Which of the following is the correct way to convert 5 feet to inches?",
+    answer: "5 feet × 12 = 60 inches",
+    choices: ["5 feet × 12 = 60 inches", "5 feet × 10 = 50 inches", "5 feet ÷ 12 = 0.4167 inches", "5 feet ÷ 10 = 0.5 inches"],
+    feedback: {
+      correct: "Correct! There are 12 inches in a foot, so 5 feet equals 60 inches.",
+      incorrect: "Not quite. Try multiplying 5 by 12 to convert feet to inches."
+    }
+  },
+  {
+    question: "If a rectangle has a length of 6 cm and a width of 4 cm, what is its perimeter?",
+    answer: "20 cm",
+    choices: ["10 cm", "12 cm", "20 cm", "24 cm"],
+    feedback: {
+      correct: "Correct! The perimeter is calculated as 2 × (6 + 4) = 20 cm.",
+      incorrect: "Not quite. Try using the formula for the perimeter of a rectangle: 2 × (length + width)."
+    }
+  },
+  {
+    question: "Which of the following is the correct way to convert 200 grams to kilograms?",
+    answer: "200 grams ÷ 1000 = 0.2 kilograms",
+    choices: ["200 grams ÷ 1000 = 0.2 kilograms", "200 grams × 1000 = 200,000 kilograms", "200 grams ÷ 10 = 20 kilograms", "200 grams × 100 = 20,000 kilograms"],
+    feedback: {
+      correct: "Correct! 1000 grams equals 1 kilogram, so 200 grams is 0.2 kilograms.",
+      incorrect: "Not quite. Try dividing by 1000 to convert grams to kilograms."
+    }
+  },
+  {
+    question: "Which of these is a correct way to measure the area of a rectangle?",
+    answer: "Length × Width",
+    choices: ["Length + Width", "Length × Width", "Length ÷ Width", "Width ÷ Length"],
+    feedback: {
+      correct: "Correct! The area of a rectangle is calculated by multiplying its length by its width.",
+      incorrect: "Not quite. The area is the product of length and width."
+    }
+  },
+  {
+    question: "How many milliliters are in 1 liter?",
+    answer: "1000",
+    choices: ["500", "1000", "1500", "2000"],
+    feedback: {
+      correct: "Correct! 1 liter equals 1000 milliliters.",
+      incorrect: "Not quite. 1 liter is equal to 1000 milliliters."
+    }
+  },
+  {
+    question: "What is the unit of measurement for the weight of an apple?",
+    answer: "Grams",
+    choices: ["Grams", "Liters", "Centimeters", "Inches"],
+    feedback: {
+      correct: "Correct! The weight of an apple is typically measured in grams.",
+      incorrect: "Not quite. The weight is measured in grams."
+    }
+  },
+  {
+    question: "Which tool would you use to measure the length of a pencil?",
+    answer: "Ruler",
+    choices: ["Ruler", "Thermometer", "Scale", "Stopwatch"],
+    feedback: {
+      correct: "Correct! A ruler is used to measure length.",
+      incorrect: "Not quite. You would use a ruler to measure length."
+    }
+  },
+  {
+    question: "How do you find the perimeter of a triangle with sides of 3 cm, 4 cm, and 5 cm?",
+    answer: "Add the lengths of the sides: 3 + 4 + 5 = 12 cm",
+    choices: ["3 + 4 + 5 = 12 cm", "3 × 4 × 5 = 60 cm", "3 + 5 = 8 cm", "4 × 5 = 20 cm"],
+    feedback: {
+      correct: "Correct! The perimeter is the sum of the sides: 3 + 4 + 5 = 12 cm.",
+      incorrect: "Not quite. Try adding the lengths of the sides together."
+    }
+  },
+  {
+    question: "What is the area of a square with sides of 5 cm?",
+    answer: "25 cm²",
+    choices: ["10 cm²", "15 cm²", "25 cm²", "50 cm²"],
+    feedback: {
+      correct: "Correct! The area of a square is side × side, so 5 × 5 = 25 cm².",
+      incorrect: "Not quite. The area is calculated by squaring the side length."
+    }
+  },
+  {
+    question: "Which of the following shows the correct conversion for time?",
+    answer: "60 minutes = 1 hour",
+    choices: ["60 minutes = 1 hour", "30 minutes = 1 hour", "90 minutes = 2 hours", "120 minutes = 1 hour"],
+    feedback: {
+      correct: "Correct! 60 minutes equals 1 hour.",
+      incorrect: "Not quite. 60 minutes equals 1 hour."
+    }
+  },
+  {
+    question: "If you are measuring the weight of an object, which tool would you use?",
+    answer: "Scale",
+    choices: ["Thermometer", "Scale", "Ruler", "Clock"],
+    feedback: {
+      correct: "Correct! A scale is used to measure weight.",
+      incorrect: "Not quite. A scale is used to measure weight."
+    }
+  },
+  {
+    question: "How many milliliters are in 3 liters?",
+    answer: "3000",
+    choices: ["1000", "3000", "5000", "10,000"],
+    feedback: {
+      correct: "Correct! 1 liter equals 1000 milliliters, so 3 liters is 3000 milliliters.",
+      incorrect: "Not quite. 1 liter equals 1000 milliliters."
+    }
+  },
+  {
+    question: "Which of the following shows the conversion for length?",
+    answer: "1 meter = 100 centimeters",
+    choices: ["1 meter = 100 centimeters", "1 meter = 10 centimeters", "1 centimeter = 10 millimeters", "1 kilometer = 100 meters"],
+    feedback: {
+      correct: "Correct! 1 meter equals 100 centimeters.",
+      incorrect: "Not quite. 1 meter equals 100 centimeters."
+    }
+  },
+  {
+    question: "Which of the following is a tool for measuring temperature?",
+    answer: "Thermometer",
+    choices: ["Thermometer", "Ruler", "Scale", "Clock"],
+    feedback: {
+      correct: "Correct! A thermometer is used to measure temperature.",
+      incorrect: "Not quite. A thermometer measures temperature."
+    }
+  },
+  {
+    question: "What is the unit of measurement for the volume of water?",
+    answer: "Liters",
+    choices: ["Milliliters", "Liters", "Kilograms", "Meters"],
+    feedback: {
+      correct: "Correct! The volume of water is typically measured in liters.",
+      incorrect: "Not quite. The volume is measured in liters."
+    }
+  },
+  {
+    question: "How do you measure the perimeter of a rectangle?",
+    answer: "Add the lengths of all four sides.",
+    choices: ["Multiply the length and width", "Add the lengths of all four sides", "Multiply the length by 2", "Add the length and width once"],
+    feedback: {
+      correct: "Correct! To find the perimeter, add the lengths of all four sides.",
+      incorrect: "Not quite. You find the perimeter by adding all four sides."
+    }
+  }
+];
+
+
+  
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_Units.NY.html?unit4score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

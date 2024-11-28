@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - The Number System</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ 
+ const questionsDatabase = [
+  {
+    question: "What is the result of 12 ÷ 3?",
+    answer: "4",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! 12 ÷ 3 equals 4.",
+      incorrect: "Not quite. Try dividing 12 by 3."
+    }
+  },
+  {
+    question: "Which of the following is equivalent to 2/3 ÷ 1/4?",
+    answer: "8/3",
+    choices: ["2/3", "8/3", "6/7", "4/5"],
+    feedback: {
+      correct: "Correct! 2/3 ÷ 1/4 equals 8/3.",
+      incorrect: "Not quite. To divide fractions, multiply by the reciprocal of the second fraction."
+    }
+  },
+  {
+    question: "What is 6.25 ÷ 0.5?",
+    answer: "12.5",
+    choices: ["12", "12.5", "10", "14"],
+    feedback: {
+      correct: "Correct! 6.25 ÷ 0.5 equals 12.5.",
+      incorrect: "Not quite. Try dividing 6.25 by 0.5."
+    }
+  },
+  {
+    question: "Which of the following is a rational number?",
+    answer: "5/8",
+    choices: ["5/8", "√2", "π", "√3"],
+    feedback: {
+      correct: "Correct! 5/8 is a rational number.",
+      incorrect: "Not quite. A rational number can be written as a fraction."
+    }
+  },
+  {
+    question: "What is 350 × 6?",
+    answer: "2100",
+    choices: ["2100", "2000", "1800", "2200"],
+    feedback: {
+      correct: "Correct! 350 × 6 equals 2100.",
+      incorrect: "Not quite. Try multiplying 350 by 6."
+    }
+  },
+  {
+    question: "Which of the following is the correct result of 1/2 × 3/4?",
+    answer: "3/8",
+    choices: ["3/8", "1/4", "1/2", "2/3"],
+    feedback: {
+      correct: "Correct! 1/2 × 3/4 equals 3/8.",
+      incorrect: "Not quite. Multiply the numerators and the denominators separately."
+    }
+  },
+  {
+    question: "What is the decimal equivalent of 7/10?",
+    answer: "0.7",
+    choices: ["0.7", "0.70", "0.75", "0.7"],
+    feedback: {
+      correct: "Correct! 7/10 equals 0.7.",
+      incorrect: "Not quite. 7 divided by 10 gives 0.7."
+    }
+  },
+  {
+    question: "If 15 ÷ x = 5, what is the value of x?",
+    answer: "3",
+    choices: ["2", "3", "4", "5"],
+    feedback: {
+      correct: "Correct! 15 ÷ 3 equals 5.",
+      incorrect: "Not quite. Try solving for x in the equation 15 ÷ x = 5."
+    }
+  },
+  {
+    question: "Which of these is the greatest number?",
+    answer: "3/4",
+    choices: ["1/2", "3/4", "2/3", "5/8"],
+    feedback: {
+      correct: "Correct! 3/4 is the greatest.",
+      incorrect: "Not quite. Compare the fractions to find the greatest one."
+    }
+  },
+  {
+    question: "Which fraction is equivalent to 5/10?",
+    answer: "1/2",
+    choices: ["1/2", "3/5", "2/5", "2/3"],
+    feedback: {
+      correct: "Correct! 5/10 is equivalent to 1/2.",
+      incorrect: "Not quite. Simplify 5/10 to find the equivalent fraction."
+    }
+  },
+  {
+    question: "What is 4.5 ÷ 0.5?",
+    answer: "9",
+    choices: ["9", "8", "7", "6"],
+    feedback: {
+      correct: "Correct! 4.5 ÷ 0.5 equals 9.",
+      incorrect: "Not quite. Try dividing 4.5 by 0.5."
+    }
+  },
+  {
+    question: "What is the result of 0.75 × 4?",
+    answer: "3",
+    choices: ["3", "4", "2", "5"],
+    feedback: {
+      correct: "Correct! 0.75 × 4 equals 3.",
+      incorrect: "Not quite. Try multiplying 0.75 by 4."
+    }
+  },
+  {
+    question: "Which of these is a mixed number?",
+    answer: "2 1/4",
+    choices: ["2 1/4", "1/2", "3/4", "1 1/2"],
+    feedback: {
+      correct: "Correct! 2 1/4 is a mixed number.",
+      incorrect: "Not quite. A mixed number has a whole number and a fraction."
+    }
+  },
+  {
+    question: "If a recipe calls for 2/3 cup of sugar for every 1/2 cup of flour, what is the ratio of sugar to flour?",
+    answer: "2/3:1/2",
+    choices: ["2/3:1/2", "1/2:2/3", "2:3", "3:2"],
+    feedback: {
+      correct: "Correct! The ratio of sugar to flour is 2/3:1/2.",
+      incorrect: "Not quite. The ratio is based on the amounts in the recipe."
+    }
+  },
+  {
+    question: "What is 3/8 + 1/4?",
+    answer: "5/8",
+    choices: ["5/8", "3/4", "1/2", "7/8"],
+    feedback: {
+      correct: "Correct! 3/8 + 1/4 equals 5/8.",
+      incorrect: "Not quite. Find a common denominator and add the fractions."
+    }
+  },
+  {
+    question: "Which of these fractions is greater than 1/2?",
+    answer: "3/4",
+    choices: ["1/4", "2/3", "3/4", "1/2"],
+    feedback: {
+      correct: "Correct! 3/4 is greater than 1/2.",
+      incorrect: "Not quite. Compare the fractions to see which one is greater."
+    }
+  },
+  {
+    question: "What is 5 ÷ 1/4?",
+    answer: "20",
+    choices: ["20", "25", "10", "5"],
+    feedback: {
+      correct: "Correct! 5 ÷ 1/4 equals 20.",
+      incorrect: "Not quite. Try dividing 5 by 1/4."
+    }
+  },
+  {
+    question: "Which of these is a fraction that is less than 1?",
+    answer: "1/2",
+    choices: ["1/2", "2/3", "1", "5/4"],
+    feedback: {
+      correct: "Correct! 1/2 is less than 1.",
+      incorrect: "Not quite. Fractions like 1/2 are less than 1."
+    }
+  },
+  {
+    question: "What is the result of 3/4 ÷ 1/2?",
+    answer: "3/2",
+    choices: ["3/2", "1/4", "1/2", "2/3"],
+    feedback: {
+      correct: "Correct! 3/4 ÷ 1/2 equals 3/2.",
+      incorrect: "Not quite. Try dividing 3/4 by 1/2."
+    }
+  }
+];
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G6_Units.NY.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

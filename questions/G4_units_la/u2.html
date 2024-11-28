@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Number and Operations in Base Ten</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ 
+ const questionsDatabase= [
+  {
+    question: "What is the value of the digit 6 in the number 468?",
+    answer: "60",
+    choices: ["6", "60", "600", "6000"],
+    feedback: {
+      correct: "Correct! The value of the digit 6 is 60 in the number 468.",
+      incorrect: "Not quite. The value of the digit 6 in 468 is 60."
+    }
+  },
+  {
+    question: "What is the value of the digit 3 in the number 3,285?",
+    answer: "300",
+    choices: ["3", "30", "300", "3000"],
+    feedback: {
+      correct: "Correct! The value of the digit 3 is 300 in the number 3,285.",
+      incorrect: "Not quite. The value of the digit 3 is 300 in 3,285."
+    }
+  },
+  {
+    question: "What is 236 + 74?",
+    answer: "310",
+    choices: ["310", "300", "320", "330"],
+    feedback: {
+      correct: "Correct! 236 plus 74 equals 310.",
+      incorrect: "Not quite. Try adding 236 and 74 again."
+    }
+  },
+  {
+    question: "What is 849 - 532?",
+    answer: "317",
+    choices: ["317", "327", "307", "337"],
+    feedback: {
+      correct: "Correct! 849 minus 532 equals 317.",
+      incorrect: "Not quite. Try subtracting 532 from 849 again."
+    }
+  },
+  {
+    question: "Which of the following numbers is in the thousands place of 5,687?",
+    answer: "5",
+    choices: ["5", "6", "8", "7"],
+    feedback: {
+      correct: "Correct! The digit in the thousands place of 5,687 is 5.",
+      incorrect: "Not quite. The thousands place in 5,687 is 5."
+    }
+  },
+  {
+    question: "What is 73 × 6?",
+    answer: "438",
+    choices: ["438", "423", "450", "430"],
+    feedback: {
+      correct: "Correct! 73 multiplied by 6 equals 438.",
+      incorrect: "Not quite. Try multiplying 73 by 6 again."
+    }
+  },
+  {
+    question: "What is 512 ÷ 8?",
+    answer: "64",
+    choices: ["64", "62", "66", "60"],
+    feedback: {
+      correct: "Correct! 512 divided by 8 equals 64.",
+      incorrect: "Not quite. Try dividing 512 by 8 again."
+    }
+  },
+  {
+    question: "What is the value of the digit 7 in the number 7,421?",
+    answer: "7000",
+    choices: ["700", "70", "7000", "70000"],
+    feedback: {
+      correct: "Correct! The value of the digit 7 in 7,421 is 7000.",
+      incorrect: "Not quite. The value of the digit 7 in 7,421 is 7000."
+    }
+  },
+  {
+    question: "What is the result of 192 + 508?",
+    answer: "700",
+    choices: ["700", "690", "710", "720"],
+    feedback: {
+      correct: "Correct! 192 plus 508 equals 700.",
+      incorrect: "Not quite. Try adding 192 and 508 again."
+    }
+  },
+  {
+    question: "What is 819 ÷ 9?",
+    answer: "91",
+    choices: ["91", "81", "92", "90"],
+    feedback: {
+      correct: "Correct! 819 divided by 9 equals 91.",
+      incorrect: "Not quite. Try dividing 819 by 9 again."
+    }
+  },
+  {
+    question: "Which of the following is equivalent to 3/4?",
+    answer: "0.75",
+    choices: ["0.75", "0.25", "0.5", "1.25"],
+    feedback: {
+      correct: "Correct! 3/4 is equivalent to 0.75.",
+      incorrect: "Not quite. 3/4 is equal to 0.75."
+    }
+  },
+  {
+    question: "What is the fraction equivalent of 0.5?",
+    answer: "1/2",
+    choices: ["1/2", "1/4", "3/4", "2/3"],
+    feedback: {
+      correct: "Correct! 0.5 is equivalent to 1/2.",
+      incorrect: "Not quite. 0.5 is equal to 1/2."
+    }
+  },
+  {
+    question: "Which of the following fractions is greater than 1/2?",
+    answer: "3/4",
+    choices: ["1/4", "1/2", "3/4", "2/3"],
+    feedback: {
+      correct: "Correct! 3/4 is greater than 1/2.",
+      incorrect: "Not quite. 3/4 is greater than 1/2."
+    }
+  },
+  {
+    question: "What is the sum of 3/5 and 1/5?",
+    answer: "4/5",
+    choices: ["4/5", "2/5", "3/5", "5/5"],
+    feedback: {
+      correct: "Correct! 3/5 plus 1/5 equals 4/5.",
+      incorrect: "Not quite. Try adding 3/5 and 1/5 again."
+    }
+  },
+  {
+    question: "What is 800 + 625?",
+    answer: "1425",
+    choices: ["1425", "1500", "1300", "1400"],
+    feedback: {
+      correct: "Correct! 800 plus 625 equals 1425.",
+      incorrect: "Not quite. Try adding 800 and 625 again."
+    }
+  },
+  {
+    question: "What is the value of the digit 2 in 267?",
+    answer: "20",
+    choices: ["2", "20", "200", "2000"],
+    feedback: {
+      correct: "Correct! The value of the digit 2 in 267 is 20.",
+      incorrect: "Not quite. The value of the digit 2 in 267 is 20."
+    }
+  },
+  {
+    question: "What is the value of the digit 4 in 749?",
+    answer: "40",
+    choices: ["4", "40", "400", "4000"],
+    feedback: {
+      correct: "Correct! The value of the digit 4 in 749 is 40.",
+      incorrect: "Not quite. The value of the digit 4 in 749 is 40."
+    }
+  },
+  {
+    question: "What is the sum of 560 + 440?",
+    answer: "1000",
+    choices: ["1000", "1100", "950", "1020"],
+    feedback: {
+      correct: "Correct! 560 plus 440 equals 1000.",
+      incorrect: "Not quite. Try adding 560 and 440 again."
+    }
+  },
+  {
+    question: "What is the value of 8 × 50?",
+    answer: "400",
+    choices: ["400", "350", "450", "500"],
+    feedback: {
+      correct: "Correct! 8 multiplied by 50 equals 400.",
+      incorrect: "Not quite. Try multiplying 8 by 50 again."
+    }
+  },
+  {
+    question: "What is 480 ÷ 8?",
+    answer: "60",
+    choices: ["60", "70", "50", "55"],
+    feedback: {
+      correct: "Correct! 480 divided by 8 equals 60.",
+      incorrect: "Not quite. Try dividing 480 by 8 again."
+    }
+  }
+];
+
+  
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_Units.LA.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

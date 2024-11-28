@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 3 - Number and Operations—Fractions</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+
+const questionsDatabase = [
+  {
+    question: "Which of these is an example of 1/2?",
+    answer: "🍕 with 1/2 sliced",
+    choices: ["🍕 with 1/2 sliced", "🍕 with 3/4 sliced", "🍕 with 1/3 sliced", "🍕 with no slices"],
+    feedback: {
+      correct: "Correct! A half-sliced pizza represents 1/2.",
+      incorrect: "Not quite. The pizza with 1/2 sliced represents 1/2."
+    }
+  },
+  {
+    question: "Which of these shows a fraction of 3/4?",
+    answer: "🍪 with 3 out of 4 pieces",
+    choices: ["🍪 with 3 out of 4 pieces", "🍪 with 1 out of 2 pieces", "🍪 with 2 out of 5 pieces", "🍪 with 1 out of 4 pieces"],
+    feedback: {
+      correct: "Correct! 3 out of 4 pieces of the cookie represents 3/4.",
+      incorrect: "Not quite. The correct fraction is 3/4, which shows 3 out of 4 parts."
+    }
+  },
+  {
+    question: "Which fraction represents a pizza divided into 4 equal parts, where 1 part is eaten?",
+    answer: "1/4",
+    choices: ["1/4", "2/4", "3/4", "1/2"],
+    feedback: {
+      correct: "Correct! 1/4 represents 1 part out of 4 equal parts.",
+      incorrect: "Not quite. 1/4 means one part of a whole divided into 4 equal parts."
+    }
+  },
+  {
+    question: "If you have 5/8 of a chocolate bar, how many parts of the bar are left?",
+    answer: "3/8",
+    choices: ["3/8", "5/8", "4/8", "6/8"],
+    feedback: {
+      correct: "Correct! If 5/8 is eaten, 3/8 of the chocolate bar is left.",
+      incorrect: "Not quite. If 5/8 is eaten, the remaining part is 3/8."
+    }
+  },
+  {
+    question: "Which of the following shows the fraction 2/3?",
+    answer: "🍎🍎🍏",
+    choices: ["🍎🍎🍏", "🍏🍏🍏", "🍎🍏🍎", "🍏🍎🍎"],
+    feedback: {
+      correct: "Correct! Two out of three apples are shown here, representing 2/3.",
+      incorrect: "Not quite. 2/3 means 2 parts out of 3 total parts."
+    }
+  },
+  {
+    question: "Which fraction represents 1 part out of 5 equal parts?",
+    answer: "1/5",
+    choices: ["1/2", "1/5", "2/5", "1/4"],
+    feedback: {
+      correct: "Correct! 1/5 represents one part out of five equal parts.",
+      incorrect: "Not quite. The fraction 1/5 shows 1 part of a whole divided into 5 equal parts."
+    }
+  },
+  {
+    question: "If a whole pizza is divided into 8 equal slices and you eat 3, what fraction of the pizza is left?",
+    answer: "5/8",
+    choices: ["5/8", "3/8", "6/8", "2/8"],
+    feedback: {
+      correct: "Correct! 5/8 of the pizza is left after eating 3 slices.",
+      incorrect: "Not quite. If 3 slices are eaten from 8, the remaining fraction is 5/8."
+    }
+  },
+  {
+    question: "Which of the following fractions represents the largest portion?",
+    answer: "1/2",
+    choices: ["1/4", "1/3", "1/2", "1/5"],
+    feedback: {
+      correct: "Correct! 1/2 represents the largest portion.",
+      incorrect: "Not quite. 1/2 represents the largest fraction here."
+    }
+  },
+  {
+    question: "What fraction of a shape is shaded if 2 out of 4 parts are colored?",
+    answer: "2/4",
+    choices: ["2/4", "1/4", "1/2", "3/4"],
+    feedback: {
+      correct: "Correct! 2 out of 4 parts means the fraction is 2/4.",
+      incorrect: "Not quite. The fraction is 2/4 because 2 parts out of 4 are shaded."
+    }
+  },
+  {
+    question: "If you have a cake divided into 4 equal pieces and you eat 1 piece, what fraction of the cake is left?",
+    answer: "3/4",
+    choices: ["3/4", "2/4", "1/4", "4/4"],
+    feedback: {
+      correct: "Correct! 3/4 of the cake is left.",
+      incorrect: "Not quite. If 1 out of 4 pieces is eaten, 3 pieces are left, which is 3/4."
+    }
+  },
+  {
+    question: "Which fraction represents 2 equal parts of a whole divided into 5 parts?",
+    answer: "2/5",
+    choices: ["1/5", "2/5", "3/5", "4/5"],
+    feedback: {
+      correct: "Correct! 2/5 means 2 parts out of 5.",
+      incorrect: "Not quite. The fraction 2/5 represents 2 parts out of 5."
+    }
+  },
+  {
+    question: "Which of the following is equivalent to 4/8?",
+    answer: "1/2",
+    choices: ["1/4", "2/4", "1/2", "2/3"],
+    feedback: {
+      correct: "Correct! 4/8 is equivalent to 1/2.",
+      incorrect: "Not quite. 4/8 simplifies to 1/2."
+    }
+  },
+  {
+    question: "How do we write the fraction for 6 equal parts out of 8?",
+    answer: "6/8",
+    choices: ["6/8", "1/8", "8/6", "8/8"],
+    feedback: {
+      correct: "Correct! The fraction is 6/8.",
+      incorrect: "Not quite. The correct fraction is 6/8 for 6 parts out of 8."
+    }
+  },
+  {
+    question: "If you have a fraction of 3/4, how many parts are there in total?",
+    answer: "4",
+    choices: ["3", "4", "5", "6"],
+    feedback: {
+      correct: "Correct! There are 4 total parts in the fraction 3/4.",
+      incorrect: "Not quite. 3/4 has a total of 4 parts."
+    }
+  },
+  {
+    question: "Which of the following is the equivalent of 2/4?",
+    answer: "1/2",
+    choices: ["1/2", "2/5", "3/4", "4/5"],
+    feedback: {
+      correct: "Correct! 2/4 simplifies to 1/2.",
+      incorrect: "Not quite. 2/4 is equivalent to 1/2."
+    }
+  },
+  {
+    question: "What is 1/2 of a pie?",
+    answer: "One half of the pie",
+    choices: ["One fourth of the pie", "One half of the pie", "One third of the pie", "One sixth of the pie"],
+    feedback: {
+      correct: "Correct! 1/2 represents one half of the pie.",
+      incorrect: "Not quite. 1/2 represents one half of the pie."
+    }
+  },
+  {
+    question: "Which shape is divided into 3 equal parts?",
+    answer: "1/3",
+    choices: ["1/2", "1/3", "2/3", "1/4"],
+    feedback: {
+      correct: "Correct! 1/3 represents one part of a shape divided into 3 equal parts.",
+      incorrect: "Not quite. 1/3 represents one part of 3 equal parts."
+    }
+  },
+  {
+    question: "How do you write a fraction with 3 parts out of 5?",
+    answer: "3/5",
+    choices: ["3/5", "5/3", "1/5", "4/5"],
+    feedback: {
+      correct: "Correct! The fraction is 3/5.",
+      incorrect: "Not quite. The fraction is 3/5 for 3 parts out of 5."
+    }
+  },
+  {
+    question: "Which of the following represents a fraction of a whole that is divided into 4 equal parts?",
+    answer: "1/4",
+    choices: ["1/4", "2/4", "3/4", "4/4"],
+    feedback: {
+      correct: "Correct! 1/4 represents one part of a whole divided into 4 equal parts.",
+      incorrect: "Not quite. 1/4 is the fraction for one part out of 4."
+    }
+  }
+];
+
+  
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G3_Units.NY.html?unit3score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

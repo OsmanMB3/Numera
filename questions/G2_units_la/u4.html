@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 4 - Geometry</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ 
+ const grade2MathQuestions = [
+  {
+    question: "What is 45 + 33?",
+    answer: "78",
+    choices: ["65", "78", "88", "90"],
+    feedback: {
+      correct: "Correct! 45 + 33 equals 78.",
+      incorrect: "Not quite. Try adding 45 and 33 again."
+    }
+  },
+  {
+    question: "What is 98 - 26?",
+    answer: "72",
+    choices: ["72", "66", "80", "90"],
+    feedback: {
+      correct: "Correct! 98 - 26 equals 72.",
+      incorrect: "Not quite. Try subtracting 26 from 98 again."
+    }
+  },
+  {
+    question: "What is the sum of 56 and 17?",
+    answer: "73",
+    choices: ["73", "72", "80", "65"],
+    feedback: {
+      correct: "Correct! The sum of 56 and 17 is 73.",
+      incorrect: "Not quite. Try adding 56 and 17 again."
+    }
+  },
+  {
+    question: "What is 87 minus 53?",
+    answer: "34",
+    choices: ["34", "45", "60", "30"],
+    feedback: {
+      correct: "Correct! 87 - 53 equals 34.",
+      incorrect: "Not quite. Subtract 53 from 87 again."
+    }
+  },
+  {
+    question: "What is 120 + 249?",
+    answer: "369",
+    choices: ["359", "369", "379", "389"],
+    feedback: {
+      correct: "Correct! 120 + 249 equals 369.",
+      incorrect: "Not quite. Try adding 120 and 249 again."
+    }
+  },
+  {
+    question: "Which number is 10 less than 76?",
+    answer: "66",
+    choices: ["66", "70", "80", "60"],
+    feedback: {
+      correct: "Correct! 10 less than 76 is 66.",
+      incorrect: "Not quite. Subtract 10 from 76."
+    }
+  },
+  {
+    question: "Which number is 10 more than 45?",
+    answer: "55",
+    choices: ["45", "55", "65", "50"],
+    feedback: {
+      correct: "Correct! 10 more than 45 is 55.",
+      incorrect: "Not quite. Add 10 to 45."
+    }
+  },
+  {
+    question: "What is 600 + 358?",
+    answer: "958",
+    choices: ["958", "930", "945", "900"],
+    feedback: {
+      correct: "Correct! 600 + 358 equals 958.",
+      incorrect: "Not quite. Try adding 600 and 358 again."
+    }
+  },
+  {
+    question: "What is 930 - 185?",
+    answer: "745",
+    choices: ["735", "745", "750", "755"],
+    feedback: {
+      correct: "Correct! 930 - 185 equals 745.",
+      incorrect: "Not quite. Try subtracting 185 from 930 again."
+    }
+  },
+  {
+    question: "How many tens are in 360?",
+    answer: "36",
+    choices: ["36", "30", "26", "38"],
+    feedback: {
+      correct: "Correct! 360 has 36 tens.",
+      incorrect: "Not quite. Try dividing 360 by 10."
+    }
+  },
+  {
+    question: "How many ones are in 475?",
+    answer: "5",
+    choices: ["5", "10", "7", "0"],
+    feedback: {
+      correct: "Correct! 475 has 5 ones.",
+      incorrect: "Not quite. Look at the ones digit in 475."
+    }
+  },
+  {
+    question: "What is the value of the digit 7 in the number 472?",
+    answer: "70",
+    choices: ["7", "70", "700", "7,000"],
+    feedback: {
+      correct: "Correct! The value of the digit 7 in 472 is 70.",
+      incorrect: "Not quite. The value of 7 is 70 in the number 472."
+    }
+  },
+  {
+    question: "What is 1 hour and 15 minutes in minutes?",
+    answer: "75 minutes",
+    choices: ["60 minutes", "75 minutes", "90 minutes", "80 minutes"],
+    feedback: {
+      correct: "Correct! 1 hour and 15 minutes is 75 minutes.",
+      incorrect: "Not quite. Convert 1 hour to minutes and add 15."
+    }
+  },
+  {
+    question: "Which object is longer: a pencil or a paper clip?",
+    answer: "Pencil",
+    choices: ["Pencil", "Paper clip", "They are the same length", "Neither"],
+    feedback: {
+      correct: "Correct! A pencil is usually longer than a paper clip.",
+      incorrect: "Not quite. A pencil is longer than a paper clip."
+    }
+  },
+  {
+    question: "What time does the clock show if the minute hand is on 12 and the hour hand is on 3?",
+    answer: "3:00",
+    choices: ["3:00", "3:15", "2:00", "4:00"],
+    feedback: {
+      correct: "Correct! The time shown is 3:00.",
+      incorrect: "Not quite. The minute hand is on 12, and the hour hand is on 3."
+    }
+  },
+  {
+    question: "Which of these is a quarter of a dollar?",
+    answer: "25 cents",
+    choices: ["25 cents", "50 cents", "10 cents", "1 cent"],
+    feedback: {
+      correct: "Correct! 25 cents is a quarter of a dollar.",
+      incorrect: "Not quite. A quarter is worth 25 cents."
+    }
+  },
+  {
+    question: "If you have 3 dimes, how much money do you have?",
+    answer: "30 cents",
+    choices: ["30 cents", "15 cents", "10 cents", "35 cents"],
+    feedback: {
+      correct: "Correct! 3 dimes equals 30 cents.",
+      incorrect: "Not quite. A dime is worth 10 cents."
+    }
+  },
+  {
+    question: "Which of these shapes has 4 sides and 4 corners?",
+    answer: "Square",
+    choices: ["Square", "Circle", "Triangle", "Hexagon"],
+    feedback: {
+      correct: "Correct! A square has 4 sides and 4 corners.",
+      incorrect: "Not quite. A square has 4 sides and 4 corners."
+    }
+  },
+  {
+    question: "How many corners does a triangle have?",
+    answer: "3",
+    choices: ["3", "4", "2", "5"],
+    feedback: {
+      correct: "Correct! A triangle has 3 corners.",
+      incorrect: "Not quite. A triangle has 3 corners."
+    }
+  },
+  {
+    question: "What shape has no corners?",
+    answer: "Circle",
+    choices: ["Square", "Rectangle", "Circle", "Triangle"],
+    feedback: {
+      correct: "Correct! A circle has no corners.",
+      incorrect: "Not quite. A circle has no corners."
+    }
+  }
+];
+
+  
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G2_Units.LA.html?unit4score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

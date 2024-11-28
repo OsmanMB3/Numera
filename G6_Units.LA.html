@@ -5,112 +5,172 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Numera - Grade 6 Mathematical Mastery</title>
     <style>
-        :root {
-            --primary-color: #000033;
-            --header-color: white;
-        }
-        body {
-            font-family: 'Georgia', serif;
-            margin: 0;
-            padding: 0;
-            background-color: white;
-        }
-        .header {
-            position: relative;
-            background-color: var(--header-color);
-            color: var(--primary-color);
-            padding: 10px;
-            text-align: center;
-        }
-        .content {
-            margin: 30px;
-            padding: 20px;
-        }
-        .box {
-            padding: 20px;
-            border: 2px solid var(--primary-color);
-            border-radius: 15px;
-            color: var(--primary-color);
-            background-color: var(--header-color);
-            margin: 20px 0;
-            transition: border 0.3s ease;
-            position: relative;
-        }
-        .box:hover {
-            border: 4px solid var(--primary-color);
-        }
-        .launch-button {
-            padding: 10px 20px;
-            border: 2px solid var(--primary-color);
-            background-color: var(--header-color);
-            color: var(--primary-color);
-            cursor: pointer;
-            font-size: 1rem;
-            border-radius: 15px;
-            transition: border 0.3s ease;
-            position: absolute;
-            bottom: 10px;
-            right: 10px;
-        }
-        .launch-button:hover {
-            border: 4px solid var(--primary-color);
-        }
-        .footer {
-            text-align: center;
-            background-color: var(--header-color);
-            color: var(--primary-color);
-        }
-    </style>
+		:root {
+			--primary-color: #000033;
+			--header-color: white;
+		}
+
+		body {
+			font-family: 'Georgia', serif;
+			margin: 0;
+			padding: 0;
+			background-color: white;
+		}
+
+		.header {
+			position: relative;
+			background-color: var(--header-color);
+			color: var(--primary-color);
+			padding: 10px;
+			text-align: center;
+		}
+
+		.content {
+			margin: 30px;
+			padding: 20px;
+		}
+
+		.box {
+			padding: 20px;
+			border: 2px solid var(--primary-color);
+			border-radius: 15px;
+			color: var(--primary-color);
+			background-color: var(--header-color);
+			margin: 20px 0;
+			transition: border 0.3s ease;
+			position: relative;
+		}
+
+		.box:hover {
+			border: 4px solid var(--primary-color);
+		}
+
+		.launch-button {
+			padding: 10px 20px;
+			border: 2px solid var(--primary-color);
+			background-color: var(--header-color);
+			color: var(--primary-color);
+			cursor: pointer;
+			font-size: 1rem;
+			border-radius: 15px;
+			transition: border 0.3s ease;
+			position: absolute;
+			bottom: 10px;
+			right: 10px;
+		}
+
+		.launch-button:hover {
+			border: 4px solid var(--primary-color);
+		}
+
+		.footer {
+			text-align: center;
+			background-color: var(--header-color);
+			color: var(--primary-color);
+			position: fixed;
+			left: 0;
+			bottom: 0;
+			width: 100%;
+			height: 60px;
+		}
+</style>
 </head>
 <body>
     <header class="header">
         <h1>Numera</h1>
-        <h2> Enriching Minds with Mathematics</h2>
+		<h2>Grade 6: Math Curriculum</h2>
     </header>
     <div class="content">
-        <div class="box">
+		<div class="box" id="unit1-box">
             <h2>Ratios and Proportional Relationships</h2>
             <ul>
                 <li>A. Understanding ratio concepts, using reasoning with rates and proportions.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('ratios')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('u1.html')">
+				Launch
+			</button>
         </div>
-        <div class="box">
+		<div class="box" id="unit2-box">
             <h2>The Number System</h2>
             <ul>
                 <li>A. Dividing fractions, understanding integers, and placing them on the number line.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('numbers')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('u2.html')">
+				Launch
+			</button>
         </div>
-        <div class="box">
+		<div class="box" id="unit3-box">
             <h2>Expressions and Equations</h2>
             <ul>
                 <li>A. Expressions, equations, and inequalities using variables.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('expressions')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('u3.html')">
+				Launch
+			</button>
         </div>
-        <div class="box">
+		<div class="box" id="unit4-box">
             <h2>Geometry</h2>
             <ul>
                 <li>A. Solving real-world mathematical problems involving area, surface area, and volume.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('geometry')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('u4.html')">
+				Launch
+			</button>
         </div>
-        <div class="box">
+		<div class="box" id="unit5-box">
             <h2>Statistics and Probability</h2>
             <ul>
                 <li>A. Developing understanding of statistical variability, distribution summaries.</li>
             </ul>
-            <button class="launch-button" onclick="launchCurriculum('statistics')">Launch</button>
+            <button class="launch-button" onclick="launchCurriculum('u5.html')">
+				Launch
+			</button>
         </div>
     </div>
     <footer class="footer">
-        <p>Numera, Inc &copy; 2024</p>
-    </footer>
-    <script>
-        function launchCurriculum(section) {
-            console.log(`Launching ${section}`);
-        }
-    </script>
+		<p>Numera, Inc &copy; 2024</p>
+	</footer>
+
+	<script>
+		// Function to launch the selected unit
+		function launchCurriculum(unit) {
+			const path = `questions/G6_units_la/${unit}`;
+			window.location.href = path;
+		}
+
+		// Function to display scores for each unit based on URL parameters
+		function displayScore() {
+			const urlParams = new URLSearchParams(window.location.search);
+			const scores = {
+				unit1: urlParams.get("unit1score"),
+				unit2: urlParams.get("unit2score"),
+				unit3: urlParams.get("unit3score"),
+				unit4: urlParams.get("unit4score"),
+                unit5: urlParams.get("unit5score"),
+
+			};
+
+			Object.entries(scores).forEach(([unit, score], index) => {
+				if (score !== null) {
+					const unitBox = document.getElementById(`unit${index + 1}-box`);
+					const scoreDisplay = document.createElement("div");
+					scoreDisplay.classList.add("score-display");
+					scoreDisplay.innerHTML = `
+								<p>Your last score: ${score}/20</p>
+								<button class="launch-button" onclick="launchCurriculum('u${
+									index + 1
+								}.html')">Try Again</button>
+							`;
+					// Remove any existing score display to prevent duplication
+					const existingScore = unitBox.querySelector(".score-display");
+					if (existingScore) existingScore.remove();
+					unitBox.appendChild(scoreDisplay);
+				}
+			});
+		}
+
+		// Call the function to display scores on page load
+		displayScore();
+	</script>
 </body>
 </html>

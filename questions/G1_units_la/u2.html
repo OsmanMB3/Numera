@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 2 - Number and Operations in Base Ten</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ 
+ const questionsDatabase = [
+  {
+    question: "What is the value of the digit 4 in 46?",
+    answer: "40",
+    choices: ["40", "4", "46", "4 tens"],
+    feedback: {
+      correct: "Correct! The digit 4 represents 40.",
+      incorrect: "Not quite. The digit 4 represents 40 in the number 46."
+    }
+  },
+  {
+    question: "What is 35 + 20?",
+    answer: "55",
+    choices: ["55", "56", "54", "50"],
+    feedback: {
+      correct: "Correct! 35 + 20 equals 55.",
+      incorrect: "Not quite. Try adding 35 and 20 again."
+    }
+  },
+  {
+    question: "What is the value of the digit 2 in 25?",
+    answer: "20",
+    choices: ["2", "20", "25", "2 tens"],
+    feedback: {
+      correct: "Correct! The digit 2 represents 20.",
+      incorrect: "Not quite. The digit 2 represents 20 in the number 25."
+    }
+  },
+  {
+    question: "What is 70 + 8?",
+    answer: "78",
+    choices: ["76", "77", "78", "79"],
+    feedback: {
+      correct: "Correct! 70 + 8 equals 78.",
+      incorrect: "Not quite. Try adding 70 and 8 again."
+    }
+  },
+  {
+    question: "Which number has 4 tens and 7 ones?",
+    answer: "47",
+    choices: ["47", "74", "40", "70"],
+    feedback: {
+      correct: "Correct! 47 has 4 tens and 7 ones.",
+      incorrect: "Not quite. Look for the number with 4 tens and 7 ones."
+    }
+  },
+  {
+    question: "What number comes before 101?",
+    answer: "100",
+    choices: ["100", "101", "99", "102"],
+    feedback: {
+      correct: "Correct! The number before 101 is 100.",
+      incorrect: "Not quite. The number before 101 is 100."
+    }
+  },
+  {
+    question: "What is 100 + 15?",
+    answer: "115",
+    choices: ["115", "120", "105", "125"],
+    feedback: {
+      correct: "Correct! 100 + 15 equals 115.",
+      incorrect: "Not quite. Try adding 100 and 15 again."
+    }
+  },
+  {
+    question: "What is the value of the digit 7 in 76?",
+    answer: "70",
+    choices: ["70", "7", "76", "7 tens"],
+    feedback: {
+      correct: "Correct! The digit 7 represents 70.",
+      incorrect: "Not quite. The digit 7 represents 70 in the number 76."
+    }
+  },
+  {
+    question: "Which number has 3 tens and 5 ones?",
+    answer: "35",
+    choices: ["35", "53", "50", "43"],
+    feedback: {
+      correct: "Correct! 35 has 3 tens and 5 ones.",
+      incorrect: "Not quite. Look for the number with 3 tens and 5 ones."
+    }
+  },
+  {
+    question: "How many tens are in 89?",
+    answer: "8",
+    choices: ["8", "9", "10", "7"],
+    feedback: {
+      correct: "Correct! There are 8 tens in 89.",
+      incorrect: "Not quite. 89 contains 8 tens."
+    }
+  },
+  {
+    question: "What is the value of the digit 9 in 79?",
+    answer: "9 ones",
+    choices: ["9 ones", "90", "9", "79"],
+    feedback: {
+      correct: "Correct! The digit 9 represents 9 ones.",
+      incorrect: "Not quite. The digit 9 represents 9 ones."
+    }
+  },
+  {
+    question: "What is 50 + 12?",
+    answer: "62",
+    choices: ["62", "52", "60", "61"],
+    feedback: {
+      correct: "Correct! 50 + 12 equals 62.",
+      incorrect: "Not quite. Try adding 50 and 12 again."
+    }
+  },
+  {
+    question: "What number comes after 99?",
+    answer: "100",
+    choices: ["100", "101", "99", "98"],
+    feedback: {
+      correct: "Correct! The number after 99 is 100.",
+      incorrect: "Not quite. The number after 99 is 100."
+    }
+  },
+  {
+    question: "What is 40 + 30?",
+    answer: "70",
+    choices: ["70", "60", "80", "75"],
+    feedback: {
+      correct: "Correct! 40 + 30 equals 70.",
+      incorrect: "Not quite. Try adding 40 and 30 again."
+    }
+  },
+  {
+    question: "How many tens are in 72?",
+    answer: "7",
+    choices: ["6", "7", "8", "9"],
+    feedback: {
+      correct: "Correct! There are 7 tens in 72.",
+      incorrect: "Not quite. 72 contains 7 tens."
+    }
+  },
+  {
+    question: "What number has 2 tens and 4 ones?",
+    answer: "24",
+    choices: ["24", "42", "14", "34"],
+    feedback: {
+      correct: "Correct! 24 has 2 tens and 4 ones.",
+      incorrect: "Not quite. Look for the number with 2 tens and 4 ones."
+    }
+  },
+  {
+    question: "What is the value of the digit 5 in 58?",
+    answer: "50",
+    choices: ["50", "5", "58", "5 tens"],
+    feedback: {
+      correct: "Correct! The digit 5 represents 50.",
+      incorrect: "Not quite. The digit 5 represents 50 in the number 58."
+    }
+  },
+  {
+    question: "Which number has 6 tens and 3 ones?",
+    answer: "63",
+    choices: ["63", "36", "39", "73"],
+    feedback: {
+      correct: "Correct! 63 has 6 tens and 3 ones.",
+      incorrect: "Not quite. Look for the number with 6 tens and 3 ones."
+    }
+  },
+  {
+    question: "What is 80 + 7?",
+    answer: "87",
+    choices: ["87", "88", "80", "90"],
+    feedback: {
+      correct: "Correct! 80 + 7 equals 87.",
+      incorrect: "Not quite. Try adding 80 and 7 again."
+    }
+  },
+  {
+    question: "What number has 9 tens and 4 ones?",
+    answer: "94",
+    choices: ["94", "49", "42", "24"],
+    feedback: {
+      correct: "Correct! 94 has 9 tens and 4 ones.",
+      incorrect: "Not quite. Look for the number with 9 tens and 4 ones."
+    }
+  }
+];
+
+  
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G1_Units.LA.html?unit2score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

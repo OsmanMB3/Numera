@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 4 - Measurement and Data</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ 
+ const questionsDatabase = [
+  // Unit 4: Measurement and Data
+  {
+    question: "How many inches are in 2 feet?",
+    answer: "24",
+    choices: ["12", "18", "24", "36"],
+    feedback: {
+      correct: "Correct! There are 12 inches in one foot, so 2 feet equals 24 inches.",
+      incorrect: "Not quite. Remember, 1 foot equals 12 inches."
+    }
+  },
+  {
+    question: "Which of these measurements is equivalent to 1 liter?",
+    answer: "1000 milliliters",
+    choices: ["500 milliliters", "1000 milliliters", "10 milliliters", "100 milliliters"],
+    feedback: {
+      correct: "Correct! 1 liter equals 1000 milliliters.",
+      incorrect: "Not quite. Try remembering the conversion between liters and milliliters."
+    }
+  },
+  {
+    question: "Which unit would you use to measure the weight of a book?",
+    answer: "Grams",
+    choices: ["Grams", "Liters", "Centimeters", "Kilograms"],
+    feedback: {
+      correct: "Correct! Grams are used to measure smaller weights, like a book.",
+      incorrect: "Not quite. Think about the weight of a book and which unit is appropriate."
+    }
+  },
+  {
+    question: "What is the perimeter of a rectangle with length 5 cm and width 3 cm?",
+    answer: "16 cm",
+    choices: ["16 cm", "15 cm", "18 cm", "20 cm"],
+    feedback: {
+      correct: "Correct! Perimeter = 2 × (Length + Width), so 2 × (5 + 3) = 16 cm.",
+      incorrect: "Not quite. Use the formula for the perimeter of a rectangle."
+    }
+  },
+  {
+    question: "If you have 3 quarters, 2 dimes, and 1 nickel, how much money do you have in total?",
+    answer: "$1.05",
+    choices: ["$1.05", "$0.75", "$1.25", "$0.95"],
+    feedback: {
+      correct: "Correct! 3 quarters ($0.75), 2 dimes ($0.20), and 1 nickel ($0.05) add up to $1.05.",
+      incorrect: "Not quite. Add the values of each coin together."
+    }
+  },
+  {
+    question: "How many grams are in 1 kilogram?",
+    answer: "1000",
+    choices: ["100", "500", "1000", "10"],
+    feedback: {
+      correct: "Correct! 1 kilogram equals 1000 grams.",
+      incorrect: "Not quite. Remember, 1 kilogram equals 1000 grams."
+    }
+  },
+  {
+    question: "If a piece of string is 3 meters long, how many centimeters long is it?",
+    answer: "300 cm",
+    choices: ["100 cm", "200 cm", "300 cm", "400 cm"],
+    feedback: {
+      correct: "Correct! 1 meter equals 100 centimeters, so 3 meters is 300 cm.",
+      incorrect: "Not quite. Convert meters to centimeters by multiplying by 100."
+    }
+  },
+  {
+    question: "Which of these units would you use to measure the length of a pencil?",
+    answer: "Centimeters",
+    choices: ["Meters", "Centimeters", "Kilometers", "Milliliters"],
+    feedback: {
+      correct: "Correct! Centimeters are used to measure small lengths, like a pencil.",
+      incorrect: "Not quite. Think about the size of the pencil and the appropriate unit of measure."
+    }
+  },
+  {
+    question: "Which of these data sets represents the greatest value?",
+    answer: "12, 15, 18, 21, 25",
+    choices: ["5, 10, 15, 20", "8, 12, 15, 18", "12, 15, 18, 21, 25", "1, 5, 10, 15"],
+    feedback: {
+      correct: "Correct! 12, 15, 18, 21, 25 has the greatest value in the data set.",
+      incorrect: "Not quite. Look at the numbers in each set and compare them."
+    }
+  },
+  {
+    question: "What is the area of a rectangle that has a length of 7 cm and a width of 4 cm?",
+    answer: "28 cm²",
+    choices: ["28 cm²", "14 cm²", "24 cm²", "21 cm²"],
+    feedback: {
+      correct: "Correct! Area = Length × Width, so 7 × 4 = 28 cm².",
+      incorrect: "Not quite. Use the formula for the area of a rectangle."
+    }
+  },
+  {
+    question: "How many days are in 3 weeks?",
+    answer: "21",
+    choices: ["14", "21", "28", "30"],
+    feedback: {
+      correct: "Correct! 1 week has 7 days, so 3 weeks have 21 days.",
+      incorrect: "Not quite. Multiply the number of weeks by 7."
+    }
+  },
+  {
+    question: "If a box contains 2 liters of water, how many milliliters of water are there?",
+    answer: "2000 milliliters",
+    choices: ["200 milliliters", "500 milliliters", "1000 milliliters", "2000 milliliters"],
+    feedback: {
+      correct: "Correct! 1 liter equals 1000 milliliters, so 2 liters equals 2000 milliliters.",
+      incorrect: "Not quite. Convert liters to milliliters by multiplying by 1000."
+    }
+  },
+  {
+    question: "Which of these fractions represents half of an hour?",
+    answer: "30 minutes",
+    choices: ["15 minutes", "30 minutes", "45 minutes", "60 minutes"],
+    feedback: {
+      correct: "Correct! Half of an hour is 30 minutes.",
+      incorrect: "Not quite. Remember, there are 60 minutes in an hour, and half of that is 30."
+    }
+  },
+  {
+    question: "How many milliliters are in 2 liters?",
+    answer: "2000",
+    choices: ["200", "500", "1000", "2000"],
+    feedback: {
+      correct: "Correct! 2 liters equals 2000 milliliters.",
+      incorrect: "Not quite. Multiply the number of liters by 1000 to convert to milliliters."
+    }
+  },
+  {
+    question: "What is the total volume of a cylinder that has a radius of 3 cm and a height of 4 cm?",
+    answer: "36π cm³",
+    choices: ["36π cm³", "12 cm³", "15 cm³", "24 cm³"],
+    feedback: {
+      correct: "Correct! The volume of a cylinder is given by the formula V = πr²h. In this case, 3² × 4π = 36π cm³.",
+      incorrect: "Not quite. Use the formula for the volume of a cylinder."
+    }
+  },
+  {
+    question: "Which of these shapes has the greatest perimeter?",
+    answer: "Rectangle",
+    choices: ["Square", "Rectangle", "Circle", "Triangle"],
+    feedback: {
+      correct: "Correct! A rectangle has the greatest perimeter when comparing all the shapes.",
+      incorrect: "Not quite. Compare the perimeters of each shape."
+    }
+  },
+  {
+    question: "Which unit is used to measure the volume of a liquid?",
+    answer: "Liter",
+    choices: ["Liter", "Kilogram", "Celsius", "Pound"],
+    feedback: {
+      correct: "Correct! The unit used to measure liquid volume is a liter.",
+      incorrect: "Not quite. Liquid volume is measured in liters."
+    }
+  },
+  {
+    question: "What is the perimeter of a square with side lengths of 5 cm?",
+    answer: "20 cm",
+    choices: ["20 cm", "15 cm", "25 cm", "30 cm"],
+    feedback: {
+      correct: "Correct! Perimeter = 4 × side length. So, 4 × 5 = 20 cm.",
+      incorrect: "Not quite. Use the formula for the perimeter of a square."
+    }
+  },
+  {
+    question: "If a pizza has a radius of 8 inches, what is the circumference?",
+    answer: "16π inches",
+    choices: ["16π inches", "8π inches", "24π inches", "32π inches"],
+    feedback: {
+      correct: "Correct! The formula for circumference is C = 2πr. In this case, 2 × π × 8 = 16π inches.",
+      incorrect: "Not quite. Use the formula for circumference: C = 2πr."
+    }
+  },
+  {
+    question: "How many minutes are in 2 hours?",
+    answer: "120",
+    choices: ["60", "120", "180", "240"],
+    feedback: {
+      correct: "Correct! There are 60 minutes in an hour, so 2 hours is 120 minutes.",
+      incorrect: "Not quite. Multiply the number of hours by 60."
+    }
+  }
+];
+
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G5_Units.NY.html?unit4score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unit 1 - Operations and Algebraic Thinking</title>
+    <link rel="stylesheet" href="../styles.css" />
+</head>
+<body>
+  <div class="question-container">
+    <div class="progress-bar">
+      <div class="progress" id="progress"></div>
+    </div>
+    <div class="score-display">Score: <span id="score">0</span>/20</div>
+    <div class="question-box">
+      <h3>Question <span id="question-number">1</span>/20:</h3>
+      <p id="question-text">Loading question...</p>
+      <div id="answer-options-container"></div>
+    </div>
+  </div>
+
+  <div id="feedback-modal" class="feedback-modal">
+    <h2 id="feedback-title"></h2>
+    <p id="feedback-message"></p>
+    <button
+      class="choice-button"
+      id="continue-button"
+      onclick="closeFeedback()"
+    >
+      Continue
+    </button>
+  </div>
+    <script>
+ 
+ const questionsDatabase = [
+  {
+    question: "What is 45 × 6?",
+    answer: "270",
+    choices: ["270", "240", "300", "260"],
+    feedback: {
+      correct: "Correct! 45 multiplied by 6 equals 270.",
+      incorrect: "Not quite. Try multiplying 45 by 6 again."
+    }
+  },
+  {
+    question: "What is 288 ÷ 8?",
+    answer: "36",
+    choices: ["36", "34", "38", "32"],
+    feedback: {
+      correct: "Correct! 288 divided by 8 equals 36.",
+      incorrect: "Not quite. Try dividing 288 by 8 again."
+    }
+  },
+  {
+    question: "If you have 96 pencils and you distribute them equally among 12 students, how many pencils does each student get?",
+    answer: "8",
+    choices: ["6", "8", "10", "12"],
+    feedback: {
+      correct: "Correct! 96 divided by 12 equals 8.",
+      incorrect: "Not quite. Divide 96 by 12 to find the correct answer."
+    }
+  },
+  {
+    question: "What is 784 ÷ 7?",
+    answer: "112",
+    choices: ["112", "120", "100", "110"],
+    feedback: {
+      correct: "Correct! 784 divided by 7 equals 112.",
+      incorrect: "Not quite. Try dividing 784 by 7 again."
+    }
+  },
+  {
+    question: "What is the product of 54 × 8?",
+    answer: "432",
+    choices: ["432", "428", "450", "400"],
+    feedback: {
+      correct: "Correct! 54 multiplied by 8 equals 432.",
+      incorrect: "Not quite. Try multiplying 54 by 8 again."
+    }
+  },
+  {
+    question: "If you have 120 dollars and you spend 25 dollars each day, how many days will you be able to spend that much?",
+    answer: "4",
+    choices: ["4", "5", "3", "6"],
+    feedback: {
+      correct: "Correct! 120 divided by 25 equals 4 days.",
+      incorrect: "Not quite. Try dividing 120 by 25 to find the correct answer."
+    }
+  },
+  {
+    question: "What is 9 × 14?",
+    answer: "126",
+    choices: ["126", "118", "134", "140"],
+    feedback: {
+      correct: "Correct! 9 multiplied by 14 equals 126.",
+      incorrect: "Not quite. Try multiplying 9 by 14 again."
+    }
+  },
+  {
+    question: "What is the result of 576 ÷ 12?",
+    answer: "48",
+    choices: ["48", "50", "40", "46"],
+    feedback: {
+      correct: "Correct! 576 divided by 12 equals 48.",
+      incorrect: "Not quite. Try dividing 576 by 12 again."
+    }
+  },
+  {
+    question: "How many 6's fit into 72?",
+    answer: "12",
+    choices: ["12", "14", "10", "9"],
+    feedback: {
+      correct: "Correct! 72 divided by 6 equals 12.",
+      incorrect: "Not quite. Try dividing 72 by 6 again."
+    }
+  },
+  {
+    question: "What is 64 × 9?",
+    answer: "576",
+    choices: ["576", "540", "630", "560"],
+    feedback: {
+      correct: "Correct! 64 multiplied by 9 equals 576.",
+      incorrect: "Not quite. Try multiplying 64 by 9 again."
+    }
+  },
+  {
+    question: "If you have 192 apples and you pack them in boxes with 16 apples per box, how many boxes do you need?",
+    answer: "12",
+    choices: ["12", "14", "16", "15"],
+    feedback: {
+      correct: "Correct! 192 divided by 16 equals 12 boxes.",
+      incorrect: "Not quite. Try dividing 192 by 16 to find the correct number of boxes."
+    }
+  },
+  {
+    question: "What is 312 ÷ 13?",
+    answer: "24",
+    choices: ["24", "20", "22", "26"],
+    feedback: {
+      correct: "Correct! 312 divided by 13 equals 24.",
+      incorrect: "Not quite. Try dividing 312 by 13 again."
+    }
+  },
+  {
+    question: "What is the product of 48 and 6?",
+    answer: "288",
+    choices: ["288", "280", "300", "260"],
+    feedback: {
+      correct: "Correct! 48 multiplied by 6 equals 288.",
+      incorrect: "Not quite. Try multiplying 48 by 6 again."
+    }
+  },
+  {
+    question: "If you have 1,000 dollars and you divide it equally among 5 friends, how much does each friend get?",
+    answer: "200",
+    choices: ["200", "250", "150", "220"],
+    feedback: {
+      correct: "Correct! 1,000 divided by 5 equals 200.",
+      incorrect: "Not quite. Try dividing 1,000 by 5 again."
+    }
+  },
+  {
+    question: "What is 81 ÷ 9?",
+    answer: "9",
+    choices: ["9", "8", "7", "10"],
+    feedback: {
+      correct: "Correct! 81 divided by 9 equals 9.",
+      incorrect: "Not quite. Try dividing 81 by 9 again."
+    }
+  },
+  {
+    question: "What is the result of 256 ÷ 8?",
+    answer: "32",
+    choices: ["32", "28", "34", "30"],
+    feedback: {
+      correct: "Correct! 256 divided by 8 equals 32.",
+      incorrect: "Not quite. Try dividing 256 by 8 again."
+    }
+  },
+  {
+    question: "What is 18 × 7?",
+    answer: "126",
+    choices: ["126", "140", "120", "130"],
+    feedback: {
+      correct: "Correct! 18 multiplied by 7 equals 126.",
+      incorrect: "Not quite. Try multiplying 18 by 7 again."
+    }
+  },
+  {
+    question: "What is 72 ÷ 9?",
+    answer: "8",
+    choices: ["8", "9", "10", "7"],
+    feedback: {
+      correct: "Correct! 72 divided by 9 equals 8.",
+      incorrect: "Not quite. Try dividing 72 by 9 again."
+    }
+  },
+  {
+    question: "If you have 40 cookies and you share them equally between 5 people, how many cookies does each person get?",
+    answer: "8",
+    choices: ["8", "7", "9", "10"],
+    feedback: {
+      correct: "Correct! 40 divided by 5 equals 8.",
+      incorrect: "Not quite. Try dividing 40 by 5 again."
+    }
+  },
+  {
+    question: "What is 156 ÷ 12?",
+    answer: "13",
+    choices: ["13", "14", "15", "12"],
+    feedback: {
+      correct: "Correct! 156 divided by 12 equals 13.",
+      incorrect: "Not quite. Try dividing 156 by 12 again."
+    }
+  }
+];
+
+  
+let currentQuestionIndex = 0;
+      let score = 0;
+
+      function displayNextQuestion() {
+        if (currentQuestionIndex >= questionsDatabase.length) return;
+
+        const questionObject = questionsDatabase[currentQuestionIndex];
+        document.getElementById("question-number").innerText =
+          currentQuestionIndex + 1;
+        document.getElementById("question-text").innerText =
+          questionObject.question;
+        const answerOptionsContainer = document.getElementById(
+          "answer-options-container"
+        );
+        answerOptionsContainer.innerHTML = "";
+
+        const shuffledChoices = [...questionObject.choices];
+        for (let i = shuffledChoices.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [shuffledChoices[i], shuffledChoices[j]] = [
+            shuffledChoices[j],
+            shuffledChoices[i],
+          ];
+        }
+
+        for (let choice of shuffledChoices) {
+          const choiceButton = document.createElement("button");
+          choiceButton.classList.add("choice-button");
+          choiceButton.innerText = choice;
+          choiceButton.onclick = () => checkAnswer(choice, questionObject);
+          answerOptionsContainer.appendChild(choiceButton);
+        }
+
+        updateProgress();
+      }
+
+      function checkAnswer(userAnswer, questionObject) {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        if (userAnswer === questionObject.answer) {
+          score++;
+          document.getElementById("score").innerText = score;
+          feedbackTitle.innerText = "🌟 Correct! 🌟";
+          feedbackMessage.innerText = questionObject.feedback.correct;
+        } else {
+          feedbackTitle.innerText = "Keep Going! 💪";
+          feedbackMessage.innerText = questionObject.feedback.incorrect;
+        }
+
+        feedbackModal.style.display = "block";
+      }
+
+      function closeFeedback() {
+        document.getElementById("feedback-modal").style.display = "none";
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < questionsDatabase.length) {
+          displayNextQuestion();
+        } else {
+          showFinalScore();
+        }
+      }
+
+      function updateProgress() {
+        const progress =
+          ((currentQuestionIndex + 1) / questionsDatabase.length) * 100;
+        document.getElementById("progress").style.width = `${progress}%`;
+      }
+
+      function showFinalScore() {
+        const feedbackModal = document.getElementById("feedback-modal");
+        const feedbackTitle = document.getElementById("feedback-title");
+        const feedbackMessage = document.getElementById("feedback-message");
+
+        feedbackTitle.innerText = "Quiz Complete! 🎉";
+        feedbackMessage.innerHTML = `
+          Your score: ${score}/${questionsDatabase.length} (${(
+          (score / questionsDatabase.length) *
+          100
+        ).toFixed(1)}%)<br><br>
+          ${
+            score / questionsDatabase.length >= 0.8
+              ? "Outstanding work! You're a math superstar! 🌟"
+              : score / questionsDatabase.length >= 0.6
+              ? "Good job! Keep practicing to become even better! 💪"
+              : "Keep practicing! You'll get better every time! 🌱"
+          }<br><br>
+        `;
+        feedbackModal.style.display = "block";
+
+        // Replace the continue button to avoid duplication
+        const continueButton = document.getElementById("continue-button");
+        continueButton.onclick = returnToUnits;
+      }
+
+      function returnToUnits() {
+        window.location.href = `../../G4_Units.LA.html?unit1score=${score}`;
+      }
+
+      displayNextQuestion();
+    </script>
+  </body>
+</html>
