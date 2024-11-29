@@ -5,216 +5,192 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Numera</title>
     <style>
-        /* Root Variables for Color Palette */
         :root {
-            --primary-blue: #5B8DEE; /* Friendly blue */
-            --secondary-blue: #A7C7FF; /* Lighter blue */
-            --text-dark: #ffffff; /* White text */
-            --background-light: #F9FAFE; /* Light blue-grey */
-            --button-hover: #407BCF; /* Darker blue for hover */
-            --white: #faf3f3;
-            --accent-dark: #000033; /* Dark accent color */
+            --primary-color: #000033;
+            --header-color: #FAFAFA;
+            --deep-blue: #000080;
+            --light-grey: #ECF0F1;
+            --black: rgba(0, 0, 0, 0.1);
         }
 
-        /* General Styles */
         body {
-            font-family: 'Nunito', sans-serif;
+            font-family: 'Georgia', serif;
             margin: 0;
             padding: 0;
-            background-color: var(--background-light);
-            color: var(--text-dark);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            background-color: var(--header-color);
         }
 
-        /* Header */
-        header {
-            background-color: var(--primary-blue);
-            color: var(--white);
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        .header {
+            position: relative;
+            background-color: var(--header-color);
+            color: var(--primary-color);
+            padding: 10px;
+            text-align: left;
         }
 
         .header__title {
             margin: 0;
-            font-size: 2.8rem;
-            font-weight: 800;
-            letter-spacing: -1px;
+            display: inline-block;
         }
 
         .header__sub-title {
-            margin: 5px 0 0;
-            font-size: 1.2rem;
-            font-weight: 400;
-            opacity: 0.9;
+            font-size: 14px;
+            margin: 0;
+            display: block;
         }
 
-        .nav-links {
-            display: flex;
-            gap: 25px;
+        .header__link {
+            position: absolute;
+            right: 10px;
+            top: 10px;
         }
 
-        .nav-links a {
+        .header__link a {
             text-decoration: none;
-            color: var(--white);
-            font-size: 1.1rem;
-            font-weight: 600;
-            transition: color 0.3s ease-in-out;
-        }
-
-        .nav-links a:hover {
-            color: var(--secondary-blue);
-        }
-
-        /* Content Area */
-        .content {
-            text-align: center;
-            padding: 60px 20px;
-            flex: 1;
+            color: #000033;
+            font-weight: bold;
+            font-size: 18px;
             position: relative;
-            overflow: hidden; /* Prevent bubbles from showing outside the content area */
+            transition: all 0.5s ease-in-out;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .header__link a::after {
+            content: "";
+            position: absolute;
+            bottom: -3px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: #000033;
+            transition: all 0.3s ease-in-out;
+            transform: scaleX(0);
+            transform-origin: 0% 50%;
+        }
+
+        .header__link a:hover::after {
+            transform: scaleX(1);
+            background-color: #973bd1;
+        }
+
+        .header__link a:hover {
+            color: #973bd1;
+            text-shadow: 0px 0px 5px #FFFFFF;
+        }
+
+        .footer {
+            text-align: center;
+            background-color: var(--header-color);
+            color: var(--primary-color);
+        }
+
+        .content {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 5px 5px 15px var(--black);
+        }
+
+        .content > div {
+            flex-basis: 45%;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 5px 5px 15px var(--black);
+            color: var(--primary-color);
+            background-color: var(--header-color);
+            margin: 0 10px;
+        }
+
+        .extra {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .welcome-statement {
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: var(--primary-blue);
             margin-bottom: 20px;
+            text-align: center;
         }
 
         .google-login {
-            display: inline-block;
-            padding: 14px 30px;
-            background-color: var(--accent-dark);
+            padding: 10px 20px;
             border: none;
-            border-radius: 12px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--text-dark);
-            cursor: pointer;
-            text-decoration: none;
+            border-radius: 4px;
+            text-align: center;
             transition: background-color 0.3s ease;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            background-color: var(--primary-color);
+            color: var(--header-color);
+        }
+
+        .google-login a {
+            color: var(--header-color);
+            text-decoration: none;
+            font-weight: bold;
+            font-family: 'Georgia', serif;
         }
 
         .google-login:hover {
-            background-color: var(--secondary-blue);
-            color: var(--white);
+            background-color: var(--deep-blue);
         }
 
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 20px;
-            background-color: var(--primary-blue);
-            color: var(--white);
-            font-size: 0.9rem;
-            box-shadow: 0px -4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Floating Shapes */
-        .floating-shape {
-            position: absolute;
-            background-color: var(--secondary-blue);
-            opacity: 0.8;
-            border-radius: 50%;
-            z-index: 0;
-            animation: float 4s infinite ease-in-out; /* Increased speed */
-        }
-
-        /* Unique bubbles */
-        .floating-shape:nth-child(1) {
-            top: 10%;
-            left: 5%;
-            width: 60px;
-            height: 60px;
-            animation-delay: 0s;
-        }
-
-        .floating-shape:nth-child(2) {
-            top: 20%;
-            right: 10%;
-            width: 100px;
-            height: 100px;
-            animation-delay: 0.5s;
-        }
-
-        .floating-shape:nth-child(3) {
-            top: 40%;
-            left: 15%;
-            width: 80px;
-            height: 80px;
-            animation-delay: 1s;
-        }
-
-        .floating-shape:nth-child(4) {
-            bottom: 15%;
-            right: 5%;
-            width: 120px;
-            height: 120px;
-            animation-delay: 1.5s;
-        }
-
-        .floating-shape:nth-child(5) {
-            bottom: 10%;
-            left: 25%;
-            width: 90px;
-            height: 90px;
-            animation-delay: 2s;
-        }
-
-        .floating-shape:nth-child(6) {
-            top: 5%;
-            right: 20%;
-            width: 70px;
-            height: 70px;
-            animation-delay: 2.5s;
-        }
-
-        /* Float Animation */
-        @keyframes float {
-            0%, 100% {
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
                 transform: translateY(0);
             }
-            50% {
-                transform: translateY(-30px);
-            }
+        }
+
+        .animated {
+            animation: slideIn 3s;
         }
     </style>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap">
 </head>
 
 <body>
-    <header>
-        <div>
-            <h1 class="header__title">Numera</h1>
-            <div class="header__sub-title">Bridging Numbers and Minds</div>
-        </div>
-        <nav class="nav-links">
-            <a href="about.html">About Us</a>
-            <a href="team.html">Our Team</a>
-        </nav>
+    <header class="header">
+        <h1 class="header__title">Numera</h1>
+        <div class="header__sub-title">Bridging Numbers and Minds</div>
+        <div class="header__link"><a href="our_team.html">Our Team</a></div>
     </header>
 
     <div class="content">
-        <!-- Floating bubbles -->
-        <div class="floating-shape"></div>
-        <div class="floating-shape"></div>
-        <div class="floating-shape"></div>
-        <div class="floating-shape"></div>
-        <div class="floating-shape"></div>
-        <div class="floating-shape"></div>
+        <div class="main">
+            <section class="section animated">
+                <h2 class="section__title">About</h2>
+                <p class="section__content">Numera is a revolutionary learning platform that brings together creativity, interaction, and pedagogy to help students from Kindergarten to 6th grade excel in mathematics. Our platform fosters a love for numbers, problem-solving, and critical thinking, empowering students to thrive in a technology-driven world. At Numera, we believe that every child is unique, and we aim to offer personalized, engaging, and enjoyable learning experiences that cater to individual learning styles and paces.</p>
+            </section>
 
-        <h2 class="welcome-statement">Welcome to Numera</h2>
-        <a href="city_selection_page.html" target="_blank" class="google-login">Continue</a>
+            <section class="section animated">
+                <h2 class="section__title">Features</h2>
+                <ul class="feature-list">
+                    <li class="feature-list__item">Personalized Learning Paths: Our adaptive technology tailors math lessons to each student's skill level, optimizing their learning potential.</li>
+                    <li class="feature-list__item">Captivating Virtual Lessons: Our platform transforms abstract mathematical concepts into visually appealing, understandable lessons that enhance comprehension and retention.</li>
+                    <li class="feature-list__item">Gamified Assessments: We gamify assessments to make learning fun and engaging, which boosts students' motivation and enjoyment of math.</li>
+                    <li class="feature-list__item">Real-Time Progress Tracking: Parents and educators can monitor students' progress in real-time, allowing for timely feedback and intervention.</li>
+                </ul>
+            </section>
+        </div>
+
+        <div class="extra animated">
+            <h2 class="welcome-statement">Welcome to Numera</h2>
+            <div class="google-login">
+                <a href="city_selection_page.html" target="_blank">Continue</a>
+            </div>
+        </div>
     </div>
 
-    <footer>
-        <p>&copy; 2024 Numera, Inc. | Established in MMXXIII</p>
+    <footer class="footer">
+        <p class="footer__content">Numera, Inc &copy; 2024 | Established in MMXXIII</p>
     </footer>
 </body>
 </html>
+
+
