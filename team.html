@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Our Team - Numera</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<style>
-    :root {
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Our Team - Numera</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <style>
+      :root {
         --primary-color: #000033; /* Deep navy for text and hover */
         --header-color: #fff; /* White background for header and footer */
         --card-bg: #f9f9f9; /* Light grey for card background */
         --shadow: rgba(0, 0, 0, 0.1); /* Light shadow for cards */
         --hover-shadow: rgba(0, 0, 0, 0.2); /* Shadow on hover */
-    }
+      }
 
-    body {
-        font-family: 'Georgia', serif;
+      body {
+        font-family: "Georgia", serif;
         margin: 0;
         padding: 0;
         background-color: var(--header-color);
@@ -23,39 +26,39 @@
         flex-direction: column;
         align-items: center;
         line-height: 1.6;
-    }
+      }
 
-    .header {
+      .header {
         background-color: var(--header-color);
         color: var(--primary-color);
         text-align: center;
         padding: 30px 20px;
         width: 100%;
         box-shadow: 0px 4px 8px var(--shadow);
-    }
+      }
 
-    .header__title {
+      .header__title {
         margin: 0;
         font-size: 2.5rem;
         font-weight: bold;
-    }
+      }
 
-    .header__subtitle {
+      .header__subtitle {
         margin: 10px 0 0;
         font-size: 1.2rem;
         font-weight: normal;
         color: var(--primary-color);
-    }
+      }
 
-    .team-container {
+      .team-container {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         margin: 40px 20px;
         gap: 30px;
-    }
+      }
 
-    .team-member {
+      .team-member {
         background-color: var(--card-bg);
         border-radius: 15px;
         box-shadow: 0px 4px 10px var(--shadow);
@@ -67,34 +70,34 @@
         flex-direction: column;
         justify-content: space-between; /* Push contact-links to the bottom */
         height: 350px; /* Set a fixed height for consistency */
-    }
+      }
 
-    .team-member:hover {
+      .team-member:hover {
         transform: translateY(-10px);
         box-shadow: 0px 6px 15px var(--hover-shadow);
-    }
+      }
 
-    .team-member h3 {
+      .team-member h3 {
         margin: 10px 0 5px;
         font-size: 1.4rem;
         font-weight: bold;
         color: var(--primary-color);
-    }
+      }
 
-    .team-member p {
+      .team-member p {
         margin: 5px 0;
         font-size: 1rem;
         color: #333;
-    }
+      }
 
-    .team-member .contact-links {
+      .team-member .contact-links {
         display: flex;
         justify-content: center;
         gap: 15px;
         margin-top: 15px;
-    }
+      }
 
-    .team-member .contact-links a {
+      .team-member .contact-links a {
         text-decoration: none;
         color: var(--primary-color);
         font-size: 1.1rem;
@@ -102,72 +105,80 @@
         padding: 5px 10px;
         transition: color 0.3s, background-color 0.3s;
         border-radius: 5px;
-    }
+      }
 
-    .team-member .contact-links a i {
+      .team-member .contact-links a i {
         font-size: 20px;
-    }
+      }
 
-    .team-member .contact-links a:hover {
+      .team-member .contact-links a:hover {
         background-color: var(--primary-color);
         color: var(--header-color);
-    }
+      }
 
-    .footer {
+      .footer {
         text-align: center;
         background-color: var(--header-color);
         color: var(--primary-color);
         padding: 20px;
         width: 100%;
         box-shadow: 0px -4px 6px var(--shadow);
-    }
-</style>
-
-</head>
-<body>
+      }
+    </style>
+  </head>
+  <body>
     <!-- Header Section -->
     <header class="header">
-        <h1 class="header__title">Our Team</h1>
-        <h3 class="header__subtitle">At Numera</h3>
+      <h1 class="header__title">Our Team</h1>
+      <h3 class="header__subtitle">At Numera</h3>
     </header>
 
     <!-- Team Cards Section -->
     <div class="team-container">
-        <!-- Team Member 1 -->
-        <div class="team-member">
-            <h3>Osman Moussa-bahdon</h3>
-            <p>Founder & Lead Developer</p>
-            <p>Osman is the visionary founder of Numera, leading the team with passion and innovation.</p>
-            <div class="contact-links">
-                <a href="mailto:o.moussabahdon@gmail.com">Gmail</a>
-                <a href="https://instagram.com/o.smann_" target="_blank"><i class="fab fa-instagram"></i></a>
-            </div>
+      <!-- Team Member 1 -->
+      <div class="team-member">
+        <h3>Osman Moussa-Bahdon</h3>
+        <p>Founder & Lead Developer</p>
+        <p>
+          Osman is the visionary founder of Numera, leading the team with
+          passion and innovation.
+        </p>
+        <div class="contact-links">
+          <a href="mailto:o.moussabahdon@gmail.com">Gmail</a>
+          <a href="https://instagram.com/o.smann_" target="_blank"
+            ><i class="fab fa-instagram"></i
+          ></a>
         </div>
-        <!-- Team Member 2 -->
-        <div class="team-member">
-            <h3>Emily Johnson</h3>
-            <p>Chief Educator</p>
-            <p>Emily crafts engaging learning materials for our students.</p>
-            <div class="contact-links">
-                <a href="mailto:emily@gmail.com">Gmail</a>
-                <a href="https://instagram.com/emily" target="_blank"><i class="fab fa-instagram"></i></a>
-            </div>
+      </div>
+      <!-- Team Member 2 -->
+      <div class="team-member">
+        <h3>Awo-Ayan Moussa-Bahdon</h3>
+        <p>Chief Educator</p>
+        <p>Emily crafts engaging learning materials for our students.</p>
+        <div class="contact-links">
+          <a href="mailto:emily@gmail.com">Gmail</a>
+          <a href="https://instagram.com/emily" target="_blank"
+            ><i class="fab fa-instagram"></i
+          ></a>
         </div>
-        <!-- Team Member 3 -->
-        <div class="team-member">
-            <h3>Michael Brown</h3>
-            <p>Head of Marketing</p>
-            <p>Michael ensures Numera reaches a wide audience.</p>
-            <div class="contact-links">
-                <a href="mailto:michael@gmail.com">Gmail</a>
-                <a href="https://instagram.com/michael" target="_blank"><i class="fab fa-instagram"></i></a>
-            </div>
+      </div>
+      <!-- Team Member 3 -->
+      <div class="team-member">
+        <h3>Michael Brown</h3>
+        <p>Head of Marketing</p>
+        <p>Michael ensures Numera reaches a wide audience.</p>
+        <div class="contact-links">
+          <a href="mailto:michael@gmail.com">Gmail</a>
+          <a href="https://instagram.com/michael" target="_blank"
+            ><i class="fab fa-instagram"></i
+          ></a>
         </div>
+      </div>
     </div>
 
     <!-- Footer Section -->
     <footer class="footer">
-        <p>Numera, Inc &copy; 2024 | Established in MMXXIII</p>
+      <p>Numera, Inc &copy; 2024 | Established in MMXXIII</p>
     </footer>
-</body>
+  </body>
 </html>
