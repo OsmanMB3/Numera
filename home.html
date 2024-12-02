@@ -12,14 +12,14 @@
         --light-grey: #ecf0f1;
         --black: rgba(0, 0, 0, 0.1);
       }
-
+    
       body {
         font-family: "Georgia", serif;
         margin: 0;
         padding: 0;
         background-color: var(--header-color);
       }
-
+    
       .header {
         position: relative;
         background-color: var(--header-color);
@@ -27,24 +27,24 @@
         padding: 10px;
         text-align: left;
       }
-
+    
       .header__title {
         margin: 0;
         display: inline-block;
       }
-
+    
       .header__sub-title {
         font-size: 14px;
         margin: 0;
         display: block;
       }
-
+    
       .header__link {
         position: absolute;
         right: 10px;
         top: 10px;
       }
-
+    
       .header__link a {
         text-decoration: none;
         color: #000033;
@@ -54,7 +54,7 @@
         transition: all 0.5s ease-in-out;
         font-family: "Times New Roman", Times, serif;
       }
-
+    
       .header__link a::after {
         content: "";
         position: absolute;
@@ -67,23 +67,23 @@
         transform: scaleX(0);
         transform-origin: 0% 50%;
       }
-
+    
       .header__link a:hover::after {
         transform: scaleX(1);
         background-color: #973bd1;
       }
-
+    
       .header__link a:hover {
         color: #973bd1;
         text-shadow: 0px 0px 5px #ffffff;
       }
-
+    
       .footer {
         text-align: center;
         background-color: var(--header-color);
         color: var(--primary-color);
       }
-
+    
       .content {
         display: flex;
         justify-content: space-between;
@@ -91,30 +91,41 @@
         padding: 20px;
         border-radius: 15px;
         box-shadow: 5px 5px 15px var(--black);
+        flex-wrap: wrap;
       }
-
+    
       .content > div {
-        flex-basis: 45%;
+        flex-basis: 100%;
         padding: 30px;
         border-radius: 15px;
         box-shadow: 5px 5px 15px var(--black);
         color: var(--primary-color);
         background-color: var(--header-color);
-        margin: 0 10px;
+        margin-bottom: 20px;
       }
-
+    
+      @media (min-width: 768px) {
+        .content > div {
+          flex-basis: 45%;
+          margin: 0 10px;
+        }
+      }
+    
       .extra {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
       }
-
+    
       .welcome-statement {
         margin-bottom: 20px;
         text-align: center;
+        font-size: 24px;
+        font-weight: bold;
+        margin-top: 20px;
       }
-
+    
       .google-login {
         padding: 10px 20px;
         border: none;
@@ -125,18 +136,18 @@
         background-color: var(--primary-color);
         color: var(--header-color);
       }
-
+    
       .google-login a {
         color: var(--header-color);
         text-decoration: none;
         font-weight: bold;
         font-family: "Georgia", serif;
       }
-
+    
       .google-login:hover {
         background-color: var(--deep-blue);
       }
-
+    
       @keyframes slideIn {
         from {
           opacity: 0;
@@ -147,11 +158,29 @@
           transform: translateY(0);
         }
       }
-
+    
       .animated {
         animation: slideIn 3s;
       }
+    
+      .welcome-statement {
+        font-size: 28px; /* Make it bigger */
+        margin-top: 40px; /* Lower the text */
+      }
+    
+      @media (max-width: 768px) {
+        .header {
+          text-align: center;
+        }
+    
+        .header__link {
+          position: absolute;
+          right: 10px;
+          top: 10px;
+        }
+      }
     </style>
+    
   </head>
 
   <body>
