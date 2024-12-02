@@ -34,13 +34,14 @@
       }
     
       .header__sub-title {
-        font-size: 14px;
+        font-size: 18px;
         margin: 0;
         display: block;
       }
     
       .header__link {
         position: absolute;
+        padding-right: 10px;
         right: 10px;
         top: 10px;
       }
@@ -91,24 +92,16 @@
         padding: 20px;
         border-radius: 15px;
         box-shadow: 5px 5px 15px var(--black);
-        flex-wrap: wrap;
       }
     
       .content > div {
-        flex-basis: 100%;
+        flex-basis: 45%;
         padding: 30px;
         border-radius: 15px;
         box-shadow: 5px 5px 15px var(--black);
         color: var(--primary-color);
         background-color: var(--header-color);
-        margin-bottom: 20px;
-      }
-    
-      @media (min-width: 768px) {
-        .content > div {
-          flex-basis: 45%;
-          margin: 0 10px;
-        }
+        margin: 0 10px;
       }
     
       .extra {
@@ -121,9 +114,6 @@
       .welcome-statement {
         margin-bottom: 20px;
         text-align: center;
-        font-size: 24px;
-        font-weight: bold;
-        margin-top: 20px;
       }
     
       .google-login {
@@ -163,20 +153,36 @@
         animation: slideIn 3s;
       }
     
-      .welcome-statement {
-        font-size: 28px; /* Make it bigger */
-        margin-top: 40px; /* Lower the text */
-      }
-    
+      /* Mobile Styles */
       @media (max-width: 768px) {
+        .content {
+          flex-direction: column;
+          margin: 15px;
+          padding: 10px;
+        }
+    
+        .content > div {
+          flex-basis: 100%;
+          margin: 10px 0;
+        }
+    
         .header {
           text-align: center;
         }
     
         .header__link {
           position: absolute;
-          right: 10px;
-          top: 10px;
+          padding-right: 10px;
+          margin-top: 10px;
+        }
+    
+        .header__title {
+          display: block;
+          font-size: 30px;
+        }
+    
+        .header__sub-title {
+          font-size: 20px;
         }
       }
     </style>
@@ -191,6 +197,12 @@
     </header>
 
     <div class="content">
+      <div class="extra animated">
+        <h2 class="welcome-statement">Welcome to Numera</h2>
+        <div class="google-login">
+          <a href="city_selection_page.html" target="_blank">Continue</a>
+        </div>
+      </div>
       <div class="main">
         <section class="section animated">
           <h2 class="section__title">About</h2>
@@ -233,12 +245,7 @@
         </section>
       </div>
 
-      <div class="extra animated">
-        <h2 class="welcome-statement">Welcome to Numera</h2>
-        <div class="google-login">
-          <a href="city_selection_page.html" target="_blank">Continue</a>
-        </div>
-      </div>
+    
     </div>
 
     <footer class="footer">
